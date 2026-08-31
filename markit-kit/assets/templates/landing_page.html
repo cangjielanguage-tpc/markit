@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{{SITE_TITLE}}</title>
+    <script>
+        const AVAILABLE_LANGUAGES = {{LANGUAGES_JSON}};
+        const DEFAULT_LANGUAGE = '{{DEFAULT_LANGUAGE}}';
+        
+        function extractPrimaryLanguage(langCode) {
+            return langCode.split('-')[0].toLowerCase();
+        }
+        
+        function detectBrowserLanguage() {
+            const browserLang = navigator.language || navigator.userLanguage;
+            if (!browserLang) return null;
+            
+            const primary = extractPrimaryLanguage(browserLang);
+            
+            if (AVAILABLE_LANGUAGES.includes(browserLang)) {
+                return browserLang;
+            }
+            
+            if (AVAILABLE_LANGUAGES.includes(primary)) {
+                return primary;
+            }
+            
+            return null;
+        }
+        
+        function redirect() {
+            const preferred = localStorage.getItem('preferred-language');
+            if (preferred && AVAILABLE_LANGUAGES.includes(preferred)) {
+                window.location.href = './' + preferred + '/index.html';
+                return;
+            }
+            
+            const browserLang = detectBrowserLanguage();
+            if (browserLang) {
+                window.location.href = './' + browserLang + '/index.html';
+                return;
+            }
+            
+            window.location.href = './' + DEFAULT_LANGUAGE + '/index.html';
+        }
+        
+        redirect();
+    </script>
+</head>
+<body>
+</body>
+</html>

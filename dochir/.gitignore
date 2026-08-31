@@ -1,0 +1,9 @@
+# Build and dependency files
+cjpm.lock
+
+# Macro call files
+*.macrocall
+
+# Runtime data
+target/
+output/

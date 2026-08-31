@@ -1,0 +1,19 @@
+[package]
+  cjc-version = "1.1.0"
+  name = "markit_kit"
+  organization = ""
+  description = "Reusable Markit rendering and publishing toolkit"
+  version = "1.0.0"
+  target-dir = ""
+  script-dir = ""
+  output-type = "static"
+  compile-option = "--debug-macro -Woff unused --static-std"
+  override-compile-option = ""
+  link-option = ""
+  package-configuration = {}
+
+[dependencies]
+  markit = { path = "../markit", output-type = "static" }
+  seajson = { version = "1.4.8", output-type = "static" }
+  mermaid4cj = { path = "../mermaid4cj", output-type = "static" }
+  codehl = { path = "../codehl", output-type = "static" }

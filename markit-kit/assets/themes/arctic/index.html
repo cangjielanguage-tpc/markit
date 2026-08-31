@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{TITLE}}</title>
+    <style>
+        body {
+            font-family: "Inter", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji", "Microsoft YaHei", "SimSun", "PingFang SC", "WenQuanYi Micro Hei", sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+        .breadcrumb {
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 10px;
+            padding: 12px 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            border-left: 4px solid #3498db;
+        }
+        li.directory {
+            border-left-color: #f39c12;
+            background: #fef9e7;
+        }
+        li.file {
+            border-left-color: #27ae60;
+            background: #eafaf1;
+        }
+        li.parent-dir {
+            border-left-color: #95a5a6;
+            background: #ecf0f1;
+        }
+        a {
+            text-decoration: none;
+            color: #2c3e50;
+            font-size: 16px;
+            font-weight: 500;
+        }
+        a:hover {
+            color: #3498db;
+        }
+        .count {
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .empty {
+            text-align: center;
+            color: #7f8c8d;
+            font-style: italic;
+            padding: 40px;
+        }
+    </style>
+    <!-- Custom CSS Assets -->
+    {{customCssAssets}}
+</head>
+<body>
+    <div class="container">
+        <h1>📚 {{TITLE}}</h1>
+        {{BREADCRUMB}}
+        {{CONTENT}}
+    </div>
+    <!-- Custom JS Assets -->
+    {{customJsAssets}}
+</body>
+</html>

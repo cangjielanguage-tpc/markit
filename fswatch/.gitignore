@@ -1,0 +1,5 @@
+# Temporary folders
+tmp/
+temp/
+.cache
+native/lib/

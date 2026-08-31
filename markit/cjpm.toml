@@ -1,0 +1,21 @@
+[package]
+cjc-version = "1.1.0"
+name = "markit"
+description = "Streaming incremental Markdown parser core for Cangjie"
+version = "0.1.0"
+authors = ["zichexuelan"]
+target-dir = ""
+src-dir = ""
+output-type = "static"
+compile-option = "-Woff unused"
+override-compile-option = ""
+link-option = ""
+include = ["src"]
+exclude = []
+package-configuration = { }
+
+[dependencies]
+seajson = { version = "1.4.8", output-type = "static" }
+mathtex = { path = "../mathtex", output-type = "static" }
+codehl = { path = "../codehl", output-type = "static" }
+mermaid4cj = { path = "../mermaid4cj", output-type = "static" }

@@ -1,0 +1,69 @@
+{
+  "title": "Markit",
+  "i18n": {
+    "default": "zh",
+    "target": "zh",
+    "home": "首页",
+    "documentation": "文档"
+  },
+  "theme": "arctic",
+  "format": "website",
+  "codeBlock": {
+    "group": true,
+    "autoAnchor": true
+  },
+  "toc": true,
+  "list": {
+    "autoAnchor": true,
+    "orderedList": {
+      "multiLevel": true
+    }
+  },
+  "math": {
+    "autoAnchor": true
+  },
+  "table": {
+    "threeLine": true,
+    "autoAnchor": true
+  },
+  "block": {
+    "autoAnchor": true
+  },
+  "heading": {
+    "closable": true,
+    "number": {
+      "enabled": true,
+      "resetFor": "directory",
+      "startFrom": [1, 1, 1, 1, 1, 1]
+    }
+  },
+  "summary": {
+    "file": "markit.md",
+    "showDrafts": true
+  },
+  "website": {
+    "assets": {
+      "styles": ["assets/ai-stream-demo.css"],
+      "scripts": ["assets/ai-stream-demo.js"]
+    },
+    "git": {
+      "prefix": "https://gitcode.com/zichexuelan/markit/blob/main/docs"
+    },
+    "chapter": {
+      "navigation": true,
+      "prevText": "上一章节",
+      "nextText": "下一章节"
+    },
+    "statistic": {
+      "totalTexts": true,
+      "totalTextsTemplate": "本文共 {total} 字",
+      "spentTime": true,
+      "spentTimeTemplate": "预计耗时 {total}{unit}",
+      "second": "秒",
+      "minute": "分钟"
+    },
+    "repos": {
+      "gitcode": "https://gitcode.com/zichexuelan/markit"
+    }
+  }
+}

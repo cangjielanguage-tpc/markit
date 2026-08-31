@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="{{lang}}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}}</title>
+    <link rel="icon" type="image/x-icon" href="{{faviconPath}}">
+    <meta name="markit-root" content="{{rootPath}}">
+    {{hreflangTags}}
+    <!-- Theme initialization script to prevent flash -->
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme-mode') || 'auto';
+            if (savedTheme === 'dark' || (savedTheme === 'auto' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            } else {
+                document.documentElement.setAttribute('data-theme', 'light');
+            }
+        })();
+    </script>
+    
+    <!-- Theme CSS -->
+    <link rel="stylesheet" href="{{themeCssPath}}">
+    <!-- Custom CSS Assets -->
+    {{customCssAssets}}
+</head>
+<body>
+    <div class="website-container">
+        <!-- Top Navigation Bar -->
+        <header class="top-nav">
+            <div class="nav-left">
+                <button id="sidebar-toggle" class="sidebar-toggle" data-tooltip="{{sidebarToggleTooltip}}">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+                <h1 class="site-title"><a href="{{homeLink}}" class="site-title-link">{{siteTitle}}</a></h1>
+                <nav class="top-nav-links">
+                    {{topNavLinks}}
+                </nav>
+            </div>
+            <div class="nav-right">
+                {{languageSwitcher}}
+                <button id="search-trigger" class="search-trigger" data-search-trigger data-tooltip="{{searchTriggerText}}" aria-label="{{searchTriggerText}}">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                    <span class="search-shortcut-hint">
+                        <kbd class="shortcut-key">⌘</kbd>
+                        <kbd class="shortcut-key">K</kbd>
+                    </span>
+                </button>
+                {{repoButtons}}
+                <button id="theme-toggle" class="theme-toggle" data-tooltip="{{themeToggleTooltip}}">
+                    <svg class="theme-icon sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                    <svg class="theme-icon moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <span class="theme-icon auto-icon">A</span>
+                </button>
+            </div>
+        </header>
+        
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-nav">
+                {{navigation}}
+            </div>
+        </nav>
+        
+        <main class="main-content">
+            {{content}}
+        </main>
+    </div>
+    
+    <!-- Search Modal -->
+    <div id="search-modal" class="search-modal">
+        <div class="search-modal-backdrop"></div>
+        <div class="search-modal-content">
+            <div class="search-modal-header">
+                <input 
+                    type="text" 
+                    id="search-modal-input" 
+                    class="search-modal-input" 
+                    placeholder="{{searchPlaceholder}}"
+                    aria-label="{{searchPlaceholder}}"
+                    autocomplete="off"
+                />
+                <button id="search-modal-close" class="search-modal-close" data-tooltip="{{searchCloseText}}" aria-label="{{searchCloseText}}">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="search-modal-results" id="search-modal-results">
+                <div class="search-modal-hint">{{searchHintText}}</div>
+            </div>
+            <div class="search-modal-footer" id="search-modal-footer" style="display: none;">
+                <div class="search-modal-pagination">
+                    <button id="search-prev-page" class="search-page-btn" disabled>{{previousText}}</button>
+                    <span id="search-page-info" class="search-page-info"></span>
+                    <button id="search-next-page" class="search-page-btn" disabled>{{nextText}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Back to Top Button -->
+    <button id="back-to-top" class="back-to-top" title="{{backToTopText}}" aria-label="{{backToTopText}}">
+        <svg class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+            <path d="M544.32 264.96a40.128 40.128 0 0 0-64.64 0L300.288 510.272a8 8 0 0 0 6.464 12.736h59.52c2.56 0 4.928-1.28 6.4-3.264l102.336-139.904v511.168c0 4.416 3.584 8 8 8h56a8 8 0 0 0 8-8v-513.92l104.32 142.656a8 8 0 0 0 6.4 3.2h59.52a8 8 0 0 0 6.4-12.672L544.384 264.96z m-423.232-59.968h781.824c4.992 0 9.088-3.584 9.088-8v-56c0-4.416-4.096-8-9.088-8H121.088c-4.992 0-9.088 3.584-9.088 8v56c0 4.48 4.096 8 9.088 8z" fill="currentColor"></path>
+        </svg>
+    </button>
+    
+    <!-- Markit widgets bundle -->
+    <script src="{{markitJsPath}}" defer></script>
+    <script>
+        (function () {
+            function setExpandedState(folder, expanded) {
+                if (!folder) {
+                    return;
+                }
+                folder.classList.toggle('collapsed', !expanded);
+                folder.classList.toggle('expanded', expanded);
+                folder.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+            }
+
+            function setFolderState(folderId, expanded, trigger) {
+                var list = document.getElementById(folderId);
+                var folder = trigger ? trigger.closest('.nav-folder') : document.querySelector('[data-nav-folder="' + folderId + '"]');
+                var toggle = trigger || (folder ? folder.querySelector('[aria-controls="' + folderId + '"]') : null);
+
+                if (list) {
+                    list.classList.toggle('collapsed', !expanded);
+                    list.classList.toggle('expanded', expanded);
+                }
+                setExpandedState(folder, expanded);
+                if (toggle) {
+                    toggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+                }
+            }
+
+            window.toggleFolder = function (folderId, trigger) {
+                var list = document.getElementById(folderId);
+                if (!list) {
+                    return;
+                }
+                setFolderState(folderId, list.classList.contains('collapsed'), trigger || null);
+            };
+
+            function setSectionState(sectionId, expanded, trigger) {
+                var section = document.getElementById(sectionId);
+                if (!section) {
+                    return;
+                }
+                section.classList.toggle('collapsed', !expanded);
+                section.classList.toggle('expanded', expanded);
+                var title = trigger || section.querySelector('.nav-section-title');
+                if (title) {
+                    title.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+                }
+            }
+
+            window.toggleNavSection = function (sectionId, trigger, event) {
+                if (event) {
+                    event.preventDefault();
+                    event.stopImmediatePropagation();
+                }
+                var section = document.getElementById(sectionId);
+                if (!section) {
+                    return;
+                }
+                setSectionState(sectionId, section.classList.contains('collapsed'), trigger || null);
+            }
+
+            function bindNavigationKeyboard() {
+                document.querySelectorAll('.nav-folder[role="button"]').forEach(function (folder) {
+                    folder.addEventListener('keydown', function (event) {
+                        if (event.key === 'Enter' || event.key === ' ') {
+                            event.preventDefault();
+                            var folderId = folder.getAttribute('aria-controls');
+                            if (folderId) {
+                                window.toggleFolder(folderId, folder);
+                            }
+                        }
+                    });
+                });
+            }
+
+            function activeNavScrollTarget(sidebar) {
+                var activeItem = sidebar.querySelector('.nav-item.active');
+                if (!activeItem) {
+                    return null;
+                }
+
+                for (var i = 0; i < activeItem.children.length; i++) {
+                    var child = activeItem.children[i];
+                    if (child.classList && (child.classList.contains('nav-link') || child.classList.contains('nav-file-link'))) {
+                        return child;
+                    }
+                    if (child.classList && child.classList.contains('summary-nav-folder')) {
+                        var folderLink = child.querySelector('.nav-folder-link');
+                        if (folderLink) {
+                            return folderLink;
+                        }
+                    }
+                }
+                return null;
+            }
+
+            function scrollActiveNavItemIntoView() {
+                var sidebar = document.getElementById('sidebar');
+                if (!sidebar || sidebar.classList.contains('collapsed')) {
+                    return;
+                }
+
+                var active = activeNavScrollTarget(sidebar);
+                if (!active) {
+                    return;
+                }
+
+                var sidebarRect = sidebar.getBoundingClientRect();
+                var activeRect = active.getBoundingClientRect();
+                var padding = 24;
+                var above = activeRect.top < sidebarRect.top + padding;
+                var below = activeRect.bottom > sidebarRect.bottom - padding;
+
+                if (!above && !below) {
+                    return;
+                }
+
+                var centeredTop = sidebar.scrollTop +
+                    (activeRect.top - sidebarRect.top) -
+                    (sidebar.clientHeight / 2) +
+                    (activeRect.height / 2);
+                sidebar.scrollTop = Math.max(0, centeredTop);
+            }
+
+            scrollActiveNavItemIntoView();
+
+            window.addEventListener('DOMContentLoaded', function () {
+                bindNavigationKeyboard();
+            });
+        })();
+
+        window.addEventListener('DOMContentLoaded', function () {
+            var toolbar = document.createElement('div');
+            toolbar.className = 'markit-anchor-toolbar';
+            toolbar.setAttribute('aria-hidden', 'true');
+
+            var referenceButton = document.createElement('button');
+            referenceButton.type = 'button';
+            referenceButton.className = 'markit-anchor-copy';
+            referenceButton.setAttribute('aria-label', '{{copyReferenceLinkText}}');
+            var anchorIcon = '<svg aria-hidden="true" focusable="false" class="markit-anchor-copy-icon" viewBox="0 0 1024 1024" width="14" height="14"><path d="M680.192 497.408l-257.536-198.4-125.184 125.184 198.144 257.28 184.576-184.064zM418.048 253.952l18.432-18.688 12.288-12.032-25.856-25.856L196.352 424.96l25.6 25.6 29.696-30.72 1.28-1.28 165.12-164.608z m81.664 473.856l-0.512 0.512-15.104 15.104 25.6 25.6 257.28-257.536-25.6-25.344-6.656 6.912-0.512 0.256-0.512 0.256-7.424 7.68-0.768 0.512-225.792 226.048z m-16.384-456.192l219.648 169.216 16.128-16.128 1.792-1.792c11.264-11.264 30.208-11.264 41.472 0l67.072 67.072 0.512 0.512c11.264 11.52 11.264 30.464 0 41.728L701.44 660.992l182.784 182.784c11.776 11.264 11.776 30.208 0 41.728-11.52 11.776-30.208 11.776-41.728 0l-182.784-182.784-128.512 128.768h-0.256c-11.52 11.264-30.208 11.264-41.728 0L422.912 765.44l-1.536-1.28c-11.52-11.52-11.52-30.464 0-41.728l17.92-17.92-169.472-219.648L242.688 512l-0.512 0.256c-11.776 11.264-30.208 11.264-41.472 0l-66.304-65.536-1.536-1.536c-11.52-11.776-11.52-30.208 0-41.984L401.92 135.168c11.264-11.52 30.208-11.52 41.472 0l67.328 66.816v0.256c11.52 11.776 11.52 29.696 0 41.984l-27.392 27.392z" fill="currentColor"></path></svg>';
+
+            var blockButton = document.createElement('button');
+            blockButton.type = 'button';
+            blockButton.className = 'markit-block-copy';
+            blockButton.setAttribute('aria-label', '{{copyBlockMarkdownText}}');
+            blockButton.setAttribute('data-tooltip', '{{copyBlockMarkdownText}}');
+            var copyIcon = '<svg aria-hidden="true" focusable="false" viewBox="0 0 16 16" width="14" height="14" fill="currentColor"><path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"></path><path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path></svg>';
+            var checkIcon = '<svg aria-hidden="true" focusable="false" viewBox="0 0 16 16" width="14" height="14" fill="currentColor"><path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.75.75 0 0 1 1.06-1.06L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"></path></svg>';
+            blockButton.innerHTML = copyIcon;
+
+            toolbar.appendChild(referenceButton);
+            toolbar.appendChild(blockButton);
+            document.body.appendChild(toolbar);
+
+            var activeTarget = null;
+            var activePositionTarget = null;
+            var hideTimer = 0;
+            var copyFeedbackToken = 0;
+
+            function clearHideTimer() {
+                if (hideTimer !== 0) {
+                    window.clearTimeout(hideTimer);
+                    hideTimer = 0;
+                }
+            }
+
+            function clearCopiedState() {
+                copyFeedbackToken += 1;
+                referenceButton.classList.remove('copied');
+                referenceButton.style.width = '';
+                if (activeTarget) {
+                    setReferenceButtonContent(activeTarget.id);
+                }
+                blockButton.classList.remove('copied');
+                blockButton.innerHTML = copyIcon;
+            }
+
+            function setReferenceButtonContent(label) {
+                referenceButton.innerHTML = anchorIcon + '<span class="markit-anchor-copy-label"></span>';
+                referenceButton.querySelector('.markit-anchor-copy-label').textContent = label;
+            }
+
+            function referenceFor(target) {
+                return '[' + target.id.replace(/\]/g, '\\]') + '](#' + target.id + ')';
+            }
+
+            function markdownSourceBytes(source) {
+                if (source.dataset.encoding === 'hex') {
+                    if (!source._markitBytes) {
+                        var hex = (source.textContent || '').trim();
+                        var bytes = new Uint8Array(Math.floor(hex.length / 2));
+                        for (var i = 0; i < bytes.length; i += 1) {
+                            bytes[i] = parseInt(hex.slice(i * 2, i * 2 + 2), 16);
+                        }
+                        source._markitBytes = bytes;
+                    }
+                    return source._markitBytes;
+                }
+                var sourceText = typeof source.value === 'string' ? source.value : (source.textContent || '');
+                return new TextEncoder().encode(sourceText);
+            }
+
+            function blockMarkdownFor(target) {
+                var source = document.getElementById('markit-page-markdown-source');
+                var start = Number(target.dataset.sourceStartByte);
+                var end = Number(target.dataset.sourceEndByte);
+                if (!source || !Number.isFinite(start) || !Number.isFinite(end) || end <= start) {
+                    return '';
+                }
+                var decoder = new TextDecoder('utf-8');
+                var bytes = markdownSourceBytes(source);
+                return decoder.decode(bytes.slice(start, end)).trim();
+            }
+
+            function setToolbarPosition(target, positionTarget) {
+                var anchorValue = target.id;
+                var referenceValue = referenceFor(target);
+                referenceButton.style.width = '';
+                setReferenceButtonContent(anchorValue);
+                referenceButton.setAttribute('title', referenceValue);
+                referenceButton.setAttribute('data-tooltip', referenceValue);
+                referenceButton.dataset.copyValue = referenceValue;
+
+                var blockValue = blockMarkdownFor(target);
+                blockButton.dataset.copyValue = blockValue;
+                blockButton.disabled = !blockValue;
+
+                toolbar.classList.add('visible');
+                toolbar.setAttribute('aria-hidden', 'false');
+
+                var targetRect = (positionTarget || target).getBoundingClientRect();
+                var toolbarRect = toolbar.getBoundingClientRect();
+                var left = targetRect.left - toolbarRect.width - 12;
+                var topOffset = targetRect.height > 44 ? 10 : (targetRect.height - toolbarRect.height) / 2;
+                var top = targetRect.top + Math.max(0, topOffset);
+
+                toolbar.style.left = Math.max(8, left) + 'px';
+                toolbar.style.top = Math.max(68, top) + 'px';
+            }
+
+            function showToolbar(target, positionTarget) {
+                if (!target || !target.id) {
+                    return;
+                }
+                clearHideTimer();
+                activeTarget = target;
+                activePositionTarget = positionTarget || target;
+                clearCopiedState();
+                setToolbarPosition(target, activePositionTarget);
+            }
+
+            function hideToolbarSoon() {
+                clearHideTimer();
+                hideTimer = window.setTimeout(function () {
+                    activeTarget = null;
+                    activePositionTarget = null;
+                    clearCopiedState();
+                    toolbar.classList.remove('visible');
+                    toolbar.setAttribute('aria-hidden', 'true');
+                }, 120);
+            }
+
+            function copyFromButton(button) {
+                var value = button.dataset.copyValue || '';
+                if (!value) {
+                    return;
+                }
+                navigator.clipboard.writeText(value).then(function () {
+                    var token = copyFeedbackToken + 1;
+                    copyFeedbackToken = token;
+                    button.classList.add('copied');
+                    if (button === referenceButton) {
+                        button.style.width = button.getBoundingClientRect().width + 'px';
+                        setReferenceButtonContent('{{copiedText}} ✓');
+                        button.setAttribute('data-tooltip', '{{copiedText}}');
+                        button.setAttribute('title', '{{copiedText}}');
+                    } else {
+                        button.innerHTML = checkIcon;
+                    }
+                    setTimeout(function () {
+                        if (copyFeedbackToken !== token) {
+                            return;
+                        }
+                        button.classList.remove('copied');
+                        if (button === referenceButton && activeTarget) {
+                            referenceButton.style.width = '';
+                            setReferenceButtonContent(activeTarget.id);
+                            var referenceValue = referenceFor(activeTarget);
+                            referenceButton.setAttribute('data-tooltip', referenceValue);
+                            referenceButton.setAttribute('title', referenceValue);
+                        } else if (button === blockButton) {
+                            blockButton.innerHTML = copyIcon;
+                        }
+                    }, 1200);
+                });
+            }
+
+            function bindAnchorTrigger(trigger, target) {
+                trigger.addEventListener('mouseenter', function () {
+                    showToolbar(target, trigger);
+                });
+                trigger.addEventListener('mouseleave', hideToolbarSoon);
+                trigger.addEventListener('focusin', function () {
+                    showToolbar(target, trigger);
+                });
+                trigger.addEventListener('focusout', hideToolbarSoon);
+            }
+
+            document.querySelectorAll('.markit-anchor-target[id], .content h1[id], .content h2[id], .content h3[id], .content h4[id], .content h5[id], .content h6[id]').forEach(function (target) {
+                bindAnchorTrigger(target, target);
+            });
+
+            document.querySelectorAll('.content table').forEach(function (table) {
+                var tableAnchor = table.querySelector('thead th.markit-anchor-target[id], th.markit-anchor-target[id]');
+                if (tableAnchor) {
+                    bindAnchorTrigger(table, tableAnchor);
+                }
+            });
+
+            toolbar.addEventListener('mouseenter', clearHideTimer);
+            toolbar.addEventListener('mouseleave', hideToolbarSoon);
+            referenceButton.addEventListener('click', function (event) {
+                event.preventDefault();
+                event.stopPropagation();
+                copyFromButton(referenceButton);
+            });
+            blockButton.addEventListener('click', function (event) {
+                event.preventDefault();
+                event.stopPropagation();
+                copyFromButton(blockButton);
+            });
+            window.addEventListener('scroll', function () {
+                if (activeTarget) {
+                    setToolbarPosition(activeTarget, activePositionTarget || activeTarget);
+                }
+            }, { passive: true });
+            window.addEventListener('resize', function () {
+                if (activeTarget) {
+                    setToolbarPosition(activeTarget, activePositionTarget || activeTarget);
+                }
+            });
+        });
+    </script>
+    
+    <!-- Math CSS used by mathtex output -->
+    {{katexAssets}}
+    
+    <!-- Search Index Data -->
+    <script src="{{searchIndexPath}}" defer></script>
+    
+    <!-- Custom JS Assets -->
+    {{customJsAssets}}
+
+    {{devScript}}
+</body>
+</html>

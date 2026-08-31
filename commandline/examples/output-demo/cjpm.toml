@@ -1,0 +1,13 @@
+[package]
+  cjc-version = "1.0.0"
+  name = "commandline_output_demo"
+  description = "Output macro demo for commandline"
+  version = "0.0.1"
+  output-type = "executable"
+  compile-option = "--debug-macro -Woff unused"
+  override-compile-option = ""
+  link-option = ""
+  package-configuration = {}
+
+[dependencies]
+  commandline = { path = "../.." }

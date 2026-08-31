@@ -1,0 +1,193 @@
+%YAML 1.2
+---
+# http://www.sublimetext.com/docs/3/syntax.html
+name: antlr4
+file_extensions:
+  - g
+  - g4
+scope: source.antlr
+contexts:
+  main:
+    - include: strings
+    - include: comments
+    - include: options-list
+    - match: \b(import|lexer|parser|grammar|throws|catch|finally|mode)\b
+      scope: keyword.other.antlr
+    - match: \btokens\b
+      captures:
+        0: keyword.other.tokens.antlr
+      push:
+        - meta_scope: meta.tokens.antlr
+        - match: '(?<=\})'
+          pop: true
+        - include: lexer-rule-reference
+        - include: comments
+    - match: \bchannels\b
+      captures:
+        0: keyword.other.channels.antlr
+      push:
+        - meta_scope: meta.channels.antlr
+        - match: '(?<=\})'
+          captures:
+            0: punctuation.section.options.end.antlr
+          pop: true
+        - include: comments
+        - match: \w+
+          scope: constant.language.channel.antlr
+    - match: '(\@[[:alpha:]]+)(::([\p{L}]+))?'
+      captures:
+        1: entity.name.block.action.named.antlr
+        2: support.constant.action.named.antlr
+      push:
+        - meta_scope: meta.action.named.antlr
+        - match: '(?<=\})'
+          pop: true
+        - match: "{"
+          push:
+            - meta_scope: meta.action.block.antlr
+            - match: "}"
+              pop: true
+            - include: comments
+            - include: action
+    - match: '^(\s*)(fragment)?(\s*)([[:upper:]][[:alnum:]_]*)'
+      captures:
+        2: keyword.other.antlr
+        4: entity.name.function.lexer.antlr
+      push:
+        - meta_scope: meta.rule.lexer.antlr
+        - match: (?<=\;)
+          pop: true
+        - match: '(->)\s*([\p{L}]+)'
+          captures:
+            1: entity.other.pointer.antlr
+            2: entity.name.function.antlr
+          push:
+            - meta_scope: meta.action.lexer.antlr
+            - match: (?<=\;)
+              pop: true
+            - match: '[\w]+'
+              scope: entity.name.function.antlr
+            - match: '\(([\w]+)\)'
+              scope: variable.parameter.action.lexer.antlr
+        - include: comments
+        - include: character-range
+        - include: strings
+        - include: numeric
+        - include: lexer-rule-reference
+        - include: predicate
+        - include: action
+        - include: wildcard-regexp
+        - include: regexp-parts
+    - match: '^(\s*)([[:lower:]][[:alnum:]_]*)'
+      captures:
+        0: entity.name.function.parser.antlr
+      push:
+        - meta_scope: meta.rule.parser.antlr
+        - match: (?<=;)
+          pop: true
+        - match: '([:|])(\s*)([[:lower:]][[:alnum:]_]*)'
+          captures:
+            1: punctuation.separator.antlr
+            3: support.function.parser.antlr
+        - match: '([:|])(\s*)([[:upper:]][[:alnum:]_]*)'
+          captures:
+            1: punctuation.separator.antlr
+            3: support.other.token.lexer.antlr
+        - match: '[|:]'
+          scope: punctuation.separator.antlr
+        - match: '\[.*?\]'
+          scope: variable.other
+        - match: \b(returns|locals)\b
+          scope: keyword.other.antlr
+        - match: '@\w+'
+          scope: keyword.other.antlr
+        - match: " <.*?>"
+          scope: entity.other.rule.option
+        - match: \w+\s*=
+          scope: variable.other.antlr
+        - match: '#\s*[[:alnum:]_]+'
+          scope: entity.name.tag.antlr
+        - include: comments
+        - include: strings
+        - include: lexer-rule-reference
+        - include: parser-rule-reference
+        - include: predicate
+        - include: action
+        - include: wildcard-regexp
+        - include: regexp-parts
+        - include: options-list
+  action:
+    - match: '\{'
+      push:
+        - meta_scope: entity.other.block.antlr
+        - match: '\}'
+          pop: true
+        - include: action
+  character-range:
+    - match: '~?\['
+      push:
+        - meta_scope: constant.other.antlr
+        - match: '\](\*|\+|\?)?'
+          pop: true
+        - match: '\\(u[0-9A-Fa-f]{4}|.)'
+          scope: constant.character.escape.antlr
+  comments:
+    - match: /\*
+      push:
+        - meta_scope: comment.block.antlr
+        - match: \*/
+          pop: true
+    - match: //.*
+      scope: comment.line.double-slash.antlr
+  identifier:
+    - match: \b\D\w*\b
+      scope: constant.other.antlr
+  lexer-rule-reference:
+    - match: '\b[[:upper:]][[:alnum:]_]*(?!\s*:)'
+      scope: support.other.token.lexer.antlr
+  numeric:
+    - match: \d+
+      scope: constant.numeric.antlr
+  options-list:
+    - match: \boptions\b
+      captures:
+        0: keyword.other.options.antlr
+      push:
+        - meta_scope: meta.options.antlr
+        - match: '(?<=\})'
+          pop: true
+        - match: '\{'
+          captures:
+            0: punctuation.block.begin.antlr
+          push:
+            - meta_scope: meta.options.block.antlr
+            - match: '\}'
+              captures:
+                0: punctuation.block.end.antlr
+              pop: true
+            - match: \b(superClass|language|tokenVocab|TokenLabelType|contextSuperClass|exportMacro)\b
+              scope: variable.other.option.antlr
+            - include: strings
+            - include: comments
+            - include: identifier
+            - include: numeric
+  parser-rule-reference:
+    - match: '\b[[:lower:]][[:alnum:]_]*(?!\s*:)'
+      scope: support.function.parser.antlr
+  predicate:
+    - match: '\{.*?\}\?'
+      scope: entity.other.predicate.antlr
+  regexp-parts:
+    - match: (\~|\?|\+(?!=)|\*)(\?)?
+      scope: string.regexp.antlr
+  strings:
+    - match: "'"
+      push:
+        - meta_scope: string.quoted.single.antlr
+        - match: "'"
+          pop: true
+        - match: '\\(u[0-9A-Fa-f]{4}|.)'
+          scope: constant.character.escape.antlr
+  wildcard-regexp:
+    - match: \.((\*|\+)\??)?
+      scope: string.regexp.antlr

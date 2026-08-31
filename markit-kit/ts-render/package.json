@@ -1,0 +1,45 @@
+{
+  "name": "ts-render",
+  "version": "1.0.0",
+  "description": "TypeScript rendering engine for markit-cli browser UI",
+  "main": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "build": "npm run build:prod",
+    "build:dev": "tsdown --config tsdown.dev.config.ts && npm run assets:copy:dev",
+    "build:prod": "tsdown --config tsdown.config.ts && npm run assets:copy:prod && npm run assets:katex",
+    "build:watch": "tsdown --watch --config tsdown.dev.config.ts",
+    "build:clean": "rm -rf dist && npm run build:prod",
+    "assets:katex": "tsx scripts/copy-katex-assets.ts",
+    "dev": "npm run build:dev && npm run build:watch",
+    "test": "vitest --run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest --coverage",
+    "clean": "rm -rf dist",
+    "assets:copy": "tsx scripts/copy-assets.ts",
+    "assets:copy:dev": "tsx scripts/copy-assets.ts development",
+    "assets:copy:prod": "tsx scripts/copy-assets.ts production"
+  },
+  "keywords": [
+    "typescript",
+    "markdown",
+    "markdown"
+  ],
+  "author": "markit-cli",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "flexsearch": "^0.8.212",
+    "katex": "^0.16.45"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@vitest/coverage-v8": "4.0.18",
+    "tsdown": "0.20.1",
+    "tsx": "^4.19.2",
+    "typescript": "^5.6.3",
+    "vitest": "4.0.18"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "Auto Toy",
+  "scopeName": "source.autotoy",
+  "fileTypes": ["atoy", "toyfile"],
+  "patterns": [
+    {
+      "match": "\\b(day)\\b",
+      "name": "keyword.control.autotoy"
+    }
+  ]
+}

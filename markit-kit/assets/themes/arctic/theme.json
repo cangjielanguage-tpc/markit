@@ -1,0 +1,9 @@
+{
+  "name": "github",
+  "description": "GitHub-style theme that mimics GitHub's markdown rendering",
+  "supportsWebsite": true,
+  "templates": {
+    "website": "website.html"
+  },
+  "styles": "styles.css"
+}

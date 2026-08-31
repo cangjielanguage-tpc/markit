@@ -1,0 +1,64 @@
+# IDE and Editor files
+.idea/
+.vscode/
+.codex/
+.kiro/
+.claude/
+.cursor/
+
+# Build and dependency files
+cjpm.lock
+package-lock.json
+node_modules/
+
+# Executable files
+markit-cli/markit
+markit-cli/markit.exe
+markit-cli/main
+
+# Macro call files
+*.macrocall
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+target/
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# Benchmark sources and artifacts are kept out of this repository snapshot.
+benchmarks/
+
+# Temporary folders
+tmp/
+temp/
+dist/
+.cache
+build-script-cache/
+test_result/
+markit-cli/assets/codehl/
+
+# Local upstream reference checkouts/snapshots. Keep migration sources outside commits.
+codehl/assets/shiki-upstream/
+mermaid4cj/assets/mermaid-upstream/
+mathtex/assets/katex-github-v0.16.47/
+dochir/example/dochir-output/*
+dochir/example/.dochir/*

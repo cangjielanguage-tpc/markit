@@ -1,0 +1,95 @@
+{
+  "title": "Markit Typst Example",
+  "i18n": {
+    "default": "zh",
+    "target": "zh",
+    "home": "首页",
+    "documentation": "文档"
+  },
+  "theme": "arctic",
+  "format": "pdf",
+  "codeBlock": {
+    "group": false
+  },
+  "table": {
+    "threeLine": true
+  },
+  "pdf": {
+    "typst": {
+      "toc": {
+        "maxLevel": 4
+      },
+      "pageNumber": {
+        "enabled": true,
+        "position": "footer",
+        "align": "center"
+      },
+      "cover": {
+        "enabled": true,
+        "logo": "assets/logo.png",
+        "title": "Markit Typst Example",
+        "subtitle": "Reusable PDF cover template for merged Typst output",
+        "authors": [
+          "zichexuelan",
+          "Sun Daiyue",
+          "Alexandra Montgomery",
+          "Benjamin Theodore Harrington",
+          "Charlotte Nguyen",
+          "Daniel Fitzgerald",
+          "Eleanor Whitmore",
+          "Frederick Jonathan Sinclair",
+          "Grace Liu",
+          "Harper Sullivan",
+          "Isabella Kensington",
+          "Jonathan Christopher Edwards",
+          "Katherine Zhou",
+          "Leonardo Maximilian Brooks",
+          "Mia Thompson",
+          "Nathaniel Alexander Clarke",
+          "Olivia Summers",
+          "Penelope Katherine Richardson",
+          "Quentin Marshall",
+          "Sophia Elisabeth Cunningham"
+        ],
+        "version": "v1.0.0",
+        "organization": "Markit",
+        "suborganization": "Typst PDF Demo"
+      },
+      "code": {
+        "useBundledSyntaxes": true,
+        "useBundledTheme": true,
+        "syntaxes": [],
+        "theme": "",
+        "ligatures": false
+      }
+    }
+  },
+  "toc": true,
+  "heading": {
+    "closable": false,
+    "number": {
+      "enabled": true,
+      "resetFor": "directory",
+      "startFrom": [1, 1, 1, 1, 1, 1]
+    }
+  },
+  "summary": {
+    "file": "markit.md",
+    "showDrafts": true
+  },
+  "website": {
+    "chapter": {
+      "navigation": true,
+      "prevText": "上一章",
+      "nextText": "下一章"
+    },
+    "statistic": {
+      "totalTexts": true,
+      "totalTextsTemplate": "本文共 {total} 字",
+      "spentTime": true,
+      "spentTimeTemplate": "预计耗时 {total}{unit}",
+      "second": "秒",
+      "minute": "分钟"
+    }
+  }
+}

@@ -1,0 +1,21 @@
+[package]
+cjc-version = "1.1.0"
+name = "commandline"
+description = "Modern declarative CLI library for Cangjie language with unified Command interface and simplified parameter handling"
+version = "1.0.0"
+authors = ["zichexuelan"]
+repository = "https://gitcode.com/zichexuelan/markit.git"
+target-dir = "target"
+src-dir = "src"
+output-type = "static"
+tag = ["cli", "command-line", "declarative", "modern", "unified"]
+category = ["Infrastructure", "Utility", "Developer Tools"]
+license = ["Apache-2.0"]
+include = ["src"]
+exclude = ["libs", "target"]
+compile-option = "--debug-macro -Woff unused"
+override-compile-option = ""
+link-option = ""
+package-configuration = { }
+
+[dependencies]

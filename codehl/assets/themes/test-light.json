@@ -1,0 +1,15 @@
+{
+  "name": "Test Light",
+  "colors": {
+    "editor.foreground": "#111111",
+    "editor.background": "#ffffff"
+  },
+  "tokenColors": [
+    {
+      "scope": "constant.language.json",
+      "settings": {
+        "foreground": "#222222"
+      }
+    }
+  ]
+}

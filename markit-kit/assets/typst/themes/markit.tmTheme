@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>name</key>
+  <string>Markit Typst Theme</string>
+  <key>settings</key>
+  <array>
+    <dict>
+      <key>settings</key>
+      <dict>
+        <key>background</key>
+        <string>#F7F7F7</string>
+        <key>foreground</key>
+        <string>#1F2937</string>
+        <key>caret</key>
+        <string>#2563EB</string>
+        <key>selection</key>
+        <string>#DBEAFE</string>
+        <key>invisibles</key>
+        <string>#C7CDD6</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Comment</string>
+      <key>scope</key>
+      <string>comment</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#6B7280</string>
+        <key>fontStyle</key>
+        <string>italic</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>String</string>
+      <key>scope</key>
+      <string>string</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#0F766E</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Keyword</string>
+      <key>scope</key>
+      <string>keyword, keyword.control, keyword.control.import, keyword.declaration, keyword.declaration.type, keyword.declaration.function, keyword.declaration.variable, keyword.declaration.macro, keyword.other, keyword.other.fragment, keyword.operator, keyword.operator.assignment</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#1D4ED8</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Type</string>
+      <key>scope</key>
+      <string>storage.type, storage.type.primitive, storage.type.package, storage.type.import, entity.name.type, entity.name.type.grammar, support.class, support.class.Cangjie.keyword, support.other.token.lexer.antlr</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#7C3AED</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Function</string>
+      <key>scope</key>
+      <string>entity.name.function, entity.name.function.call, entity.name.function.macro, entity.name.function.lexer-rule, entity.name.function.parser-rule, support.function, support.function.parser.antlr</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#B45309</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Number</string>
+      <key>scope</key>
+      <string>constant.numeric</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#C2410C</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Boolean And Constant</string>
+      <key>scope</key>
+      <string>constant.language, constant.language.channel, constant.character.escape, constant.other</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#BE185D</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Annotation</string>
+      <key>scope</key>
+      <string>entity.name.tag, entity.name.tag.annotation</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#0F766E</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Parameter</string>
+      <key>scope</key>
+      <string>variable.parameter, variable.parameter.action.lexer, variable.other, variable.other.antlr, variable.other.assignment, variable.other.option, support.variable</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#374151</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Regex And Predicate</string>
+      <key>scope</key>
+      <string>string.regexp, entity.other.predicate, entity.other.rule.option, entity.other.pointer</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#0F766E</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Punctuation</string>
+      <key>scope</key>
+      <string>punctuation.separator.key-value, punctuation.separator, punctuation.definition.comment, punctuation.definition.string</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#64748B</string>
+      </dict>
+    </dict>
+  </array>
+</dict>
+</plist>

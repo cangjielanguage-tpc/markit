@@ -1,0 +1,17 @@
+[package]
+  cjc-version = "1.1.0"
+  name = "live_server"
+  organization = ""
+  description = "Minimal live preview server for Markit"
+  version = "1.0.0"
+  target-dir = ""
+  script-dir = ""
+  output-type = "static"
+  compile-option = "--debug-macro -Woff unused"
+  override-compile-option = ""
+  link-option = ""
+  package-configuration = {}
+
+[dependencies]
+  commandline = { path = "../commandline" }
+  fswatch = { path = "../fswatch" }

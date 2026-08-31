@@ -1,0 +1,11 @@
+{
+  "name": "JSON",
+  "scopeName": "source.json",
+  "fileTypes": ["json"],
+  "patterns": [
+    {
+      "match": "\\boverride\\b",
+      "name": "keyword.control.user-json"
+    }
+  ]
+}

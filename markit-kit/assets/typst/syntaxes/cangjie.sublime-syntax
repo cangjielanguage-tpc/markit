@@ -1,0 +1,849 @@
+%YAML 1.2
+---
+# http://www.sublimetext.com/docs/3/syntax.html
+name: cangjie
+scope: source.cj
+contexts:
+  main:
+    - include: strings
+    - include: mark
+    - include: package
+    - include: import
+    - include: quoteToken
+    - include: originStrings
+    - include: comments
+    - include: pipe-function
+    - include: let-pattern-entry
+    - include: classlike-declaration
+    - include: constructor
+    - include: code
+    - include: macro
+    - include: at
+    - include: qualified-constructor-call
+    - include: memberAccess
+    - include: function
+    - include: variable
+    - include: qualified-type
+    - include: type
+  at:
+    - match: "@"
+      scope: keyword.control.Cangjie
+  block:
+    - match: '\{'
+      push:
+        - match: '\}'
+          pop: true
+        - include: comments
+        - include: strings
+        - include: pipe-function
+        - include: let-pattern-entry
+        - include: classlike-declaration
+        - include: constructor
+        - include: member-declaration
+        - include: keywords
+        - include: qualified-constructor-call
+        - include: memberAccess
+        - include: function
+        - include: variable
+        - include: constants
+        - include: block
+  let-pattern-entry:
+    - match: '(?<=\()\s*(let)\s+'
+      captures:
+        1: keyword.declaration.variable.Cangjie
+      push: let-pattern
+  classlike-declaration:
+    - match: '\b(extend)(\s*)(<(?!:))'
+      captures:
+        1: keyword.declaration.type.Cangjie
+        3: punctuation.separator.Cangjie
+      push: extend-generic-declaration-params
+    - match: '\b(class|interface|struct|extend)\s+(`?[\p{XID_Start}][\p{XID_Continue}]*`?)(\s*)(<(?!:))'
+      captures:
+        1: keyword.declaration.type.Cangjie
+        2: entity.name.type.Cangjie
+        4: punctuation.separator.Cangjie
+      push: generic-inheritance-declaration-params
+    - match: '\b(class|interface|struct|enum|extend)\s+(`?[\p{XID_Start}][\p{XID_Continue}]*`?)(?=\s*<:)'
+      captures:
+        1: keyword.declaration.type.Cangjie
+        2: entity.name.type.Cangjie
+      push: inheritance-after-name
+    - match: '\b(enum)\s+(`?[\p{XID_Start}][\p{XID_Continue}]*`?)(\s*)(<)'
+      captures:
+        1: keyword.declaration.type.Cangjie
+        2: entity.name.type.Cangjie
+        4: punctuation.separator.Cangjie
+      push: enum-generic-declaration-params
+    - match: '\b(enum)\s+(`?[\p{XID_Start}][\p{XID_Continue}]*`?)(\s*)(\{)'
+      captures:
+        1: keyword.declaration.type.Cangjie
+        2: entity.name.type.Cangjie
+        4: punctuation.separator.Cangjie
+      push: enum-body
+    - match: '\b(class|interface|struct|enum|extend|type)\s+(`?[\p{XID_Start}][\p{XID_Continue}]*`?)(\s*)(<(?!:))'
+      captures:
+        1: keyword.declaration.type.Cangjie
+        2: entity.name.type.Cangjie
+        4: punctuation.separator.Cangjie
+      push: generic-declaration-params
+    - match: '\b(type)\s+(`?[\p{XID_Start}][\p{XID_Continue}]*`?)(\s*)(=)'
+      captures:
+        1: keyword.declaration.type.Cangjie
+        2: entity.name.type.Cangjie
+        4: keyword.operator.Cangjie
+      push: type-alias-target
+    - match: '\b(class|interface|struct|enum|extend|type)\s+(`?[\p{XID_Start}][\p{XID_Continue}]*`?)'
+      captures:
+        1: keyword.declaration.type.Cangjie
+        2: entity.name.type.Cangjie
+    - match: '\b(class|interface|struct|enum|extend|type)\b'
+      scope: keyword.declaration.type.Cangjie
+    - match: '\b(func)\s+(`?[\p{XID_Start}][\p{XID_Continue}]*`?)'
+      captures:
+        1: keyword.declaration.function.Cangjie
+        2: entity.name.function.Cangjie
+    - match: '\b(func)\b'
+      scope: keyword.declaration.function.Cangjie
+    - match: '\b(let|var)\s+(`?[\p{XID_Start}][\p{XID_Continue}]*`?)'
+      captures:
+        1: keyword.declaration.variable.Cangjie
+        2: variable.other.assignment.Cangjie
+    - match: '\b(let|var)\b'
+      scope: keyword.declaration.variable.Cangjie
+    - match: '\b[\p{XID_Start}][\p{XID_Continue}]*(?=\s*\<[\*\<\,\w\s]*\>\s*(?!\())'
+      scope: entity.name.type.Cangjie
+    - match: (?<=\b(case))\s+
+      push:
+        - match: '(?=\bwhere\b)|(?=(\=\>))|[\n\r]'
+          pop: true
+        - match: '\|'
+          scope: punctuation.separator.Cangjie
+        - match: '(?<=\|)(\s*)(`?[\p{XID_Start}][\p{XID_Continue}]*`?)(?=\s*\()'
+          captures:
+            2: constant.language.Cangjie
+        - match: '(?<=\|)(\s*)(`?[\p{Lu}][\p{XID_Continue}]*`?)(?=\s*(\||\=\>|,|\)|\]|\}|$))'
+          captures:
+            2: constant.language.Cangjie
+        - include: case-constructor
+        - include: pipe-function
+        - include: memberAccess
+        - include: constructor
+        - include: classlike-declaration
+        - include: function
+        - include: strings
+        - include: keywords
+        - include: qualified-type
+        - include: constants
+        - include: type
+        - include: variable
+    - match: (?<=\bwhere)\s+
+      push:
+        - match: '(?=(\=\>))|[\n\r]'
+          pop: true
+        - include: pipe-function
+        - include: memberAccess
+        - include: constructor
+        - include: classlike-declaration
+        - include: function
+        - include: strings
+        - include: keywords
+        - include: qualified-type
+        - include: constants
+        - include: type
+        - include: variable
+  let-pattern:
+    - match: '(?=(\<\-))|[\n\r]'
+      pop: true
+    - match: '\|'
+      scope: punctuation.separator.Cangjie
+    - match: '(?<=\|)(\s*)(`?[\p{XID_Start}][\p{XID_Continue}]*`?)(?=\s*\()'
+      captures:
+        2: constant.language.Cangjie
+    - match: '(?<=\|)(\s*)(`?[\p{Lu}][\p{XID_Continue}]*`?)(?=\s*(\||\<\-|,|\)|\]|\}|$))'
+      captures:
+        2: constant.language.Cangjie
+    - include: case-constructor
+    - include: pipe-function
+    - include: memberAccess
+    - include: constructor
+    - include: classlike-declaration
+    - include: function
+    - include: strings
+    - include: keywords
+    - include: qualified-type
+    - include: constants
+    - include: type
+    - include: variable
+  inheritance-clause:
+    - match: '(?=\{)|(\r\n|\r|\n)|$'
+      pop: true
+    - match: '(\s*)(&|,)(\s*)(`?[\p{XID_Start}][\p{XID_Continue}]*`?)(\s*)(<)'
+      captures:
+        2: punctuation.separator.Cangjie
+        4: entity.name.type.Cangjie
+        6: punctuation.separator.Cangjie
+      push: generic-qualified-member-access
+    - match: '(\s*)(&|,)(\s*)(`?[A-Z][A-Za-z0-9_]*`?)(?=\s*(&|,|\bwhere\b|\{|$))'
+      captures:
+        2: punctuation.separator.Cangjie
+        4: entity.name.type.Cangjie
+    - match: '&|,'
+      scope: punctuation.separator.Cangjie
+    - include: comments
+    - include: keywords
+    - include: strings
+    - include: type
+    - match: '`?[A-Z][A-Za-z0-9_]*`?(?=\s*(&|\bwhere\b|\{|$))'
+      scope: entity.name.type.Cangjie
+    - match: '`[\p{XID_Start}][\p{XID_Continue}]*`|[\p{XID_Start}][\p{XID_Continue}]*'
+      scope: entity.name.type.Cangjie
+  inheritance-after-name:
+    - match: '\s*<:\s*'
+      scope: punctuation.separator.Cangjie
+      set: inheritance-clause
+    - match: ''
+      pop: true
+  member-declaration:
+    - match: '\b(func)\s+(`?[\p{XID_Start}][\p{XID_Continue}]*`?)'
+      captures:
+        1: keyword.declaration.function.Cangjie
+        2: entity.name.function.Cangjie
+    - match: '\b(let|var)\s+(`?[\p{XID_Start}][\p{XID_Continue}]*`?)'
+      captures:
+        1: keyword.declaration.variable.Cangjie
+        2: variable.other.assignment.Cangjie
+  generic-declaration-params:
+    - match: '->'
+      scope: keyword.operator.Cangjie
+    - match: '>'
+      scope: punctuation.separator.Cangjie
+      pop: true
+    - match: ','
+      scope: punctuation.separator.Cangjie
+    - include: comments
+    - include: keywords
+    - match: '`[\p{XID_Start}][\p{XID_Continue}]*`|[\p{XID_Start}][\p{XID_Continue}]*'
+      scope: entity.name.type.Cangjie
+  generic-inheritance-declaration-params:
+    - match: '->'
+      scope: keyword.operator.Cangjie
+    - match: '>'
+      scope: punctuation.separator.Cangjie
+      set: generic-inheritance-after-params
+    - match: ','
+      scope: punctuation.separator.Cangjie
+    - include: comments
+    - include: keywords
+    - match: '`[\p{XID_Start}][\p{XID_Continue}]*`|[\p{XID_Start}][\p{XID_Continue}]*'
+      scope: entity.name.type.Cangjie
+  generic-inheritance-after-params:
+    - match: '\s*<:\s*'
+      scope: punctuation.separator.Cangjie
+      set: inheritance-clause
+    - match: ''
+      pop: true
+  extend-generic-declaration-params:
+    - match: '->'
+      scope: keyword.operator.Cangjie
+    - match: '>'
+      scope: punctuation.separator.Cangjie
+      set: extend-after-generic-params
+    - match: ','
+      scope: punctuation.separator.Cangjie
+    - include: comments
+    - include: keywords
+    - match: '`[\p{XID_Start}][\p{XID_Continue}]*`|[\p{XID_Start}][\p{XID_Continue}]*'
+      scope: entity.name.type.Cangjie
+  extend-after-generic-params:
+    - match: '(\s*)(`?[\p{XID_Start}][\p{XID_Continue}]*`?)(\s*)(<(?!:))'
+      captures:
+        2: entity.name.type.Cangjie
+        4: punctuation.separator.Cangjie
+      set: extend-target-generic-params
+    - match: '(\s*)(`?[\p{XID_Start}][\p{XID_Continue}]*`?)(?=\s*<:)'
+      captures:
+        2: entity.name.type.Cangjie
+      set: inheritance-after-name
+    - include: comments
+  extend-target-generic-params:
+    - match: '->'
+      scope: keyword.operator.Cangjie
+    - match: '>'
+      scope: punctuation.separator.Cangjie
+      set: generic-inheritance-after-params
+    - match: ','
+      scope: punctuation.separator.Cangjie
+    - include: comments
+    - include: keywords
+    - match: '`[\p{XID_Start}][\p{XID_Continue}]*`|[\p{XID_Start}][\p{XID_Continue}]*'
+      scope: entity.name.type.Cangjie
+  enum-generic-declaration-params:
+    - match: '->'
+      scope: keyword.operator.Cangjie
+    - match: '>'
+      scope: punctuation.separator.Cangjie
+      set: enum-body-await-open
+    - match: ','
+      scope: punctuation.separator.Cangjie
+    - include: comments
+    - include: keywords
+    - match: '`[\p{XID_Start}][\p{XID_Continue}]*`|[\p{XID_Start}][\p{XID_Continue}]*'
+      scope: entity.name.type.Cangjie
+  enum-body-await-open:
+    - match: '\{'
+      scope: punctuation.separator.Cangjie
+      set: enum-body
+    - include: comments
+  enum-body:
+    - match: '\}'
+      scope: punctuation.separator.Cangjie
+      pop: true
+    - match: '(?<=\{)(\s*)(`?[\p{XID_Start}][\p{XID_Continue}]*`?)(\s*)(<)'
+      captures:
+        2: constant.language.Cangjie
+        4: punctuation.separator.Cangjie
+      push: enum-constructor-generic-params
+    - match: '(?<=\{)(\s*)(`?[\p{XID_Start}][\p{XID_Continue}]*`?)(\s*)(\()'
+      captures:
+        2: constant.language.Cangjie
+        4: punctuation.separator.Cangjie
+      push: enum-constructor-params
+    - match: '(?<=\{)(\s*)(`?[\p{XID_Start}][\p{XID_Continue}]*`?)(?=\s*(\(|\||,|\}|$))'
+      captures:
+        2: constant.language.Cangjie
+    - match: '^(\s*)(`?[\p{XID_Start}][\p{XID_Continue}]*`?)(\s*)(<)'
+      captures:
+        2: constant.language.Cangjie
+        4: punctuation.separator.Cangjie
+      push: enum-constructor-generic-params
+    - match: '(?<=\|)(\s*)(`?[\p{XID_Start}][\p{XID_Continue}]*`?)(\s*)(<)'
+      captures:
+        2: constant.language.Cangjie
+        4: punctuation.separator.Cangjie
+      push: enum-constructor-generic-params
+    - match: '^(\s*)(`?[\p{XID_Start}][\p{XID_Continue}]*`?)(\s*)(\()'
+      captures:
+        2: constant.language.Cangjie
+        4: punctuation.separator.Cangjie
+      push: enum-constructor-params
+    - match: '(?<=\|)(\s*)(`?[\p{XID_Start}][\p{XID_Continue}]*`?)(\s*)(\()'
+      captures:
+        2: constant.language.Cangjie
+        4: punctuation.separator.Cangjie
+      push: enum-constructor-params
+    - match: '^(\s*)(`?[\p{XID_Start}][\p{XID_Continue}]*`?)(?=\s*(\(|\||,|\}|$))'
+      captures:
+        2: constant.language.Cangjie
+    - match: '(?<=\|)(\s*)(`?[\p{XID_Start}][\p{XID_Continue}]*`?)(?=\s*(\(|\||,|\}|$))'
+      captures:
+        2: constant.language.Cangjie
+    - include: comments
+    - include: strings
+    - include: keywords
+    - include: constants
+    - include: memberAccess
+    - include: qualified-type
+    - include: type
+    - include: variable
+    - include: block
+  enum-constructor-generic-params:
+    - match: '->'
+      scope: keyword.operator.Cangjie
+    - match: '>'
+      scope: punctuation.separator.Cangjie
+      pop: true
+    - match: ','
+      scope: punctuation.separator.Cangjie
+    - include: comments
+    - include: keywords
+    - match: '`[\p{XID_Start}][\p{XID_Continue}]*`|[\p{XID_Start}][\p{XID_Continue}]*'
+      scope: entity.name.type.Cangjie
+  enum-constructor-params:
+    - match: '\)'
+      scope: punctuation.separator.Cangjie
+      pop: true
+    - match: ','
+      scope: punctuation.separator.Cangjie
+    - include: comments
+    - include: keywords
+    - include: strings
+    - include: constants
+    - include: type
+    - match: '`[\p{XID_Start}][\p{XID_Continue}]*`|[\p{XID_Start}][\p{XID_Continue}]*'
+      scope: entity.name.type.Cangjie
+  case-constructor:
+    - match: '(`?[\p{XID_Start}][\p{XID_Continue}]*`?)(?=\s*\()'
+      scope: constant.language.Cangjie
+    - match: '(`?[\p{Lu}][\p{XID_Continue}]*`?)(?=\s*(\(|\=\>|,|\)|\]|\}|$))'
+      scope: constant.language.Cangjie
+  code:
+    - include: keywords
+    - include: constants
+    - include: strings
+  comments:
+    - match: '/\*'
+      scope: punctuation.definition.comment.begin.Cangjie
+      push: block-comment-body
+    - match: '//.*$'
+      scope: comment.line.double-slash.Cangjie
+  block-comment-body:
+    - meta_scope: comment.block.Cangjie
+    - match: '/\*'
+      scope: punctuation.definition.comment.begin.Cangjie
+      push: block-comment-body
+    - match: '\*/'
+      scope: punctuation.definition.comment.end.Cangjie
+      pop: true
+  constants:
+    - match: '\b(true|false)\b'
+      scope: constant.language.boolean.Cangjie
+    - match: '\b0[bB][01]([01_]*)?(u8|u16|u32|u64|i8|i16|i32|i64)?\b'
+      scope: constant.numeric.binary.integer.Cangjie
+    - match: '\b0[oO][0-7]([0-7_]*)?(u8|u16|u32|u64|i8|i16|i32|i64)?\b'
+      scope: constant.numeric.octal.integer.Cangjie
+    - match: '\b[0-9]([0-9_]*)?(u8|u16|u32|u64|i8|i16|i32|i64)?\b'
+      scope: constant.numeric.decimal.integer.Cangjie
+    - match: '\b0[xX][0-9a-fA-F]([0-9a-fA-F_]*)?(u8|u16|u32|u64|i8|i16|i32|i64)?(?!\.)\b'
+      scope: constant.numeric.hexadecimal.integer.Cangjie
+    - match: '(\b([0-9]([0-9_]*)?[eE][-]?[0-9]([0-9_]*)?)|((?<!\.)\.[0-9]([0-9_]*)?([eE][-]?[0-9]([0-9_]*)?)?)|\b([0-9]([0-9_]*)?\.[0-9]([0-9_]*)?([eE][-]?[0-9]([0-9_]*)?)?))(f16|f32|f64)?'
+      scope: constant.numeric.decimal.float.Cangjie
+    - match: '\b0[xX](\.[0-9a-fA-F]([0-9a-fA-F_]*)?|[0-9a-fA-F]([0-9a-fA-F_]*)?\.[0-9a-fA-F]([0-9a-fA-F_]*)?|[0-9a-fA-F]([0-9a-fA-F_]*)?)([pP][-]?[0-9]([0-9_]*)?)'
+      scope: constant.numeric.hexadecimal.float.Cangjie
+    - match: '\bb''([^''\\]|\\[tbrn''\\"fv0]|\\u\{[0-9a-fA-F]{1,2}\})'''
+      scope: constant.character.escape.string.byte.Cangjie
+    - match: '\bb"([^"\\]|\\[tbrn''\\"fv0]|\\u\{[0-9a-fA-F]{1,2}\})*"'
+      scope: constant.character.escape.string.byteArray.Cangjie
+  escape_string:
+    - match: '(\\\\)|(\\u\{[0-9a-fA-F]{1,8}\})|(\\[a|b|t|r|n|"|\''|f|v|\$|0])'
+      scope: constant.character.escape.string.byteArray.Cangjie
+  constructor:
+    - match: '(?<=\|)(\s*)(`?[\p{XID_Start}][\p{XID_Continue}]*`?)(?=\s*(\(|\||\}|,|;|$))'
+      captures:
+        2: variable.other.Cangjie
+    - match: '\b[\p{Lu}][\p{XID_Continue}]*(?=\s*\<(?:[^>\n]|->)*\>\s*(//|\(|\||,|\)|\]|\}|:|;|$))'
+      scope: constant.language.Cangjie
+    - match: '\b[\p{Lu}][\p{XID_Continue}]*(?=\s*\()'
+      scope: constant.language.Cangjie
+    - match: '\b[\p{Lu}][\p{XID_Continue}]*(?=\s*\<[\*\<\,\w\s]*\>)'
+      scope: constant.language.Cangjie
+    - match: '\b[\p{Lu}][\p{XID_Continue}]*(?=\s*\<[\*\<\,\w\s]*\>\s*\()'
+      scope: constant.language.Cangjie
+  function:
+    - match: '\b[\p{XID_Start}][\p{XID_Continue}]*(?=\s*\{)'
+      scope: entity.name.function.call.Cangjie
+    - match: '\b[\p{XID_Start}][\p{XID_Continue}]*(?=\s*\<[\*\<\,\w\s]*\>\s*\{)'
+      scope: entity.name.function.call.Cangjie
+    - match: '\b[\p{XID_Start}][\p{XID_Continue}]*(?=\s*\(.*)'
+      scope: entity.name.function.call.Cangjie
+    - match: '\b[\p{XID_Start}][\p{XID_Continue}]*(?=\s*\<[\*\<\,\w\s]*\>\s*\(.*)'
+      scope: entity.name.function.call.Cangjie
+    - match: '\boperator\s+func\s+((\(\))|(\[\])|(\*\*)|(\<\<)|(\>\>)|(\>\=)|(\<\=)|(\!\=)|(\=\=)|\!|\-|\*|\/|\%|\+|\<|\>|\&|\^|\|)'
+      captures:
+        1: entity.name.function.Cangjie
+    - match: '\b(grad|@vjp|adjointOf|valWithGrad)\(([\p{XID_Start}][\p{XID_Continue}]*)'
+      captures:
+        2: entity.name.function.call.Cangjie
+  pipe-function:
+    - match: '[\p{XID_Start}][\p{XID_Continue}]*(?=\s*~>)'
+      scope: entity.name.function.call.Cangjie
+    - match: '[\p{XID_Start}][\p{XID_Continue}]*(?=\s*\<[\*\<\,\w\s]*\>\s*~>)'
+      scope: entity.name.function.call.Cangjie
+    - match: '(?<=\|> )[\p{XID_Start}][\p{XID_Continue}]*(?=\s*\<[\*\<\,\w\s]*\>)'
+      scope: entity.name.function.call.Cangjie
+    - match: '(?<=\|> )[\p{XID_Start}][\p{XID_Continue}]*'
+      scope: entity.name.function.call.Cangjie
+    - match: '(?<=~> )[\p{XID_Start}][\p{XID_Continue}]*(?=\s*\<[\*\<\,\w\s]*\>)'
+      scope: entity.name.function.call.Cangjie
+    - match: '(?<=~> )[\p{XID_Start}][\p{XID_Continue}]*'
+      scope: entity.name.function.call.Cangjie
+  import:
+    - match: \b(import)\b\s*\b\s
+      captures:
+        1: keyword.control.import.Cangjie
+      push:
+        - meta_scope: keyword.control.Cangjie
+        - meta_content_scope: storage.type.import.Cangjie
+        - match: '(?=\b[0-9])|(?=[^\w\s.,`*{}])|(?=\b(public|internal|protected|private|override|abstract|open|redef|sealed)\b( )*[^.,\s])|(?=\b(VArray|const|differentiable|grad|vjp|valWithGrad|adjoint|adjointOf|when|except|include|primal|stage|main|false|IntNative|mut|Nothing|prop|true|UIntNative|unsafe|Int8|Int16|Int32|Int64|UInt8|UInt16|UInt32|UInt64|Float16|Float32|Float64|Rune|Bool|Unit|struct|enum|This|package|import|class|interface|extend|func|let|var|type|init|this|super|if|else|case|try|catch|finally|for|do|while|throw|return|continue|break|is|in|match|where|spawn|synchronized|macro|quote|static|external|operator|foreign|inout)\s)'
+          captures:
+            1: punctuation.terminator.Cangjie
+          pop: true
+        - match: ^(import)
+          push:
+            - meta_scope: keyword.control.char
+            - match: '\n|[^(\s(as)\s)]'
+              pop: true
+            - match: (\s)
+              push:
+                - meta_scope: constant.character.escape.char
+                - match: (\s)
+                  pop: true
+        - include: comments
+        - match: (?<=\.)\s*\.|\.(?=\s*;)
+          scope: invalid.illegal.character_not_allowed_here.Cangjie
+        - match: (?<!\.)\s*\*
+          scope: invalid.illegal.character_not_allowed_here.Cangjie
+        - match: (?<!_)_(?=\s*(\.|;))|\b\d+|-+
+          scope: invalid.illegal.character_not_allowed_here.Cangjie
+        - match: |-
+            (?x)\b(?<!\$)
+            (false|IntNative|mut|Nothing|prop|true|UIntNative|unsafe|Int8|Int16|Int32|Int64|UInt8|UInt16|UInt32|UInt64|Float16|Float32|Float64|Rune|Bool|Unit|struct|enum|This|package|import|class|interface|extend|func|let|var|type|init|this|super|if|else|case|try|catch|finally|for|do|while|throw|return|continue|break|is|in|match|where|spawn|synchronized|macro|quote|static|external|operator|foreign)\b
+          scope: invalid.illegal.character_not_allowed_here.Cangjie
+        - match: \.|\*
+          scope: punctuation.separator.Cangjie
+        - match: \*
+          scope: variable.language.wildcard.Cangjie
+        - include: keywords_to_identifier
+        - include: keywords
+  insertValue:
+    - match: '\$\{'
+      scope: keyword.operator.Cangjie
+      push:
+        - clear_scopes: 1
+        - match: '\}|\n|\r'
+          scope: keyword.operator.Cangjie
+          pop: true
+        - include: comments
+        - include: strings
+        - include: pipe-function
+        - include: classlike-declaration
+        - include: qualified-constructor-call
+        - include: memberAccess
+        - include: constructor
+        - include: keywords
+        - include: qualified-type
+        - include: type
+        - include: function
+        - include: variable
+        - include: constants
+        - include: block
+  keywords:
+    - match: \b(VArray|const|differentiable|grad|vjp|valWithGrad|adjoint|adjointOf|when|except|include|primal|stage|main|IntNative|mut|Nothing|prop|redef|UIntNative|unsafe|Int8|Int16|Int32|Int64|UInt8|UInt16|UInt32|UInt64|Float16|Float32|Float64|Rune|Bool|Unit|struct|enum|This|package|import|class|interface|extend|func|let|var|sealed|type|init|this|super|if|else|case|try|catch|finally|for|do|while|throw|return|continue|break|is|as|in|match|where|spawn|synchronized|macro|quote|static|public|internal|private|protected|internal|external|override|abstract|open|operator|foreign|inout)\b
+      scope: keyword.control.Cangjie
+    - match: (\;|!in)
+      scope: keyword.control.Cangjie
+    - match: (\b(String)\b)
+      scope: support.class.Cangjie.keyword
+  keywords_to_identifier:
+    - match: \b(public|internal|private|protected|override|abstract|open|redef|sealed)\b
+  macro:
+    - match: "(@!?)([A-Za-z_][A-Za-z0-9_.]*)"
+      captures:
+        1: keyword.control.Cangjie
+        2: entity.name.tag.annotation.Cangjie
+  mark:
+    - match: '([,(]\s*)(`?\w+`?)(?=(\s*):)'
+      captures:
+        2: variable.parameter.Cangjie
+  memberAccess:
+    - match: '(?<=\>)(\.)(`?[\p{Lu}][\p{XID_Continue}]*`?)(?=\s*(//|<|\(|\||,|\)|\]|\}|:|;|\.|$))'
+      captures:
+        1: punctuation.separator.Cangjie
+        2: constant.language.Cangjie
+    - match: '(`?[\p{Lu}][\p{XID_Continue}]*`?)(\s*)(<)(?=(?:[^>\n]|->)*>\s*(//|\(|\||,|\)|\]|\}|:|;|$))'
+      captures:
+        1: constant.language.Cangjie
+        3: punctuation.separator.Cangjie
+      push: qualified-constructor-generic-params
+    - match: '(`?[\p{Lu}][\p{XID_Continue}]*`?)(\s*)(<)(?=(?:[^>\n]|->)*>\s*\.)'
+      captures:
+        1: entity.name.type.Cangjie
+        3: punctuation.separator.Cangjie
+      push: generic-qualified-member-access
+    - match: '(`?[\p{Lu}][\p{XID_Continue}]*`?)(\.)(`?[\p{Lu}][\p{XID_Continue}]*`?)(?=\s*(//|<|\(|\||,|\)|\]|\}|:|;|\.|$))'
+      captures:
+        1: entity.name.type.Cangjie
+        2: punctuation.separator.Cangjie
+        3: constant.language.Cangjie
+    - match: '\b(([\p{XID_Start}][\p{XID_Continue}]*)|(`[\p{XID_Start}][\p{XID_Continue}]*`))(?=\.(?!`?[A-Z]))'
+      scope: variable.other.Cangjie
+  qualified-constructor-call:
+    - match: '(`?[A-Z][A-Za-z0-9_]*`?)(\.)(`?[A-Z][A-Za-z0-9_]*`?)(\s*)(<)'
+      captures:
+        1: entity.name.type.Cangjie
+        2: punctuation.separator.Cangjie
+        3: constant.language.Cangjie
+        5: punctuation.separator.Cangjie
+      push: qualified-constructor-generic-params
+    - match: '(`?[A-Z][A-Za-z0-9_]*`?)(\.)(`?[A-Z][A-Za-z0-9_]*`?)'
+      captures:
+        1: entity.name.type.Cangjie
+        2: punctuation.separator.Cangjie
+        3: constant.language.Cangjie
+  qualified-constructor-generic-params:
+    - match: '->'
+      scope: keyword.operator.Cangjie
+    - match: '>'
+      scope: punctuation.separator.Cangjie
+      pop: true
+    - match: ','
+      scope: punctuation.separator.Cangjie
+    - include: comments
+    - include: keywords
+    - match: '`[A-Za-z][A-Za-z0-9_]*`|[A-Za-z][A-Za-z0-9_]*'
+      scope: entity.name.type.Cangjie
+  generic-qualified-member-access:
+    - match: '->'
+      scope: keyword.operator.Cangjie
+    - match: '>'
+      scope: punctuation.separator.Cangjie
+      set: generic-qualified-member-dot
+    - match: ','
+      scope: punctuation.separator.Cangjie
+    - include: comments
+    - include: keywords
+    - match: '`[\p{XID_Start}][\p{XID_Continue}]*`|[\p{XID_Start}][\p{XID_Continue}]*'
+      scope: entity.name.type.Cangjie
+  generic-qualified-member-dot:
+    - match: '\.'
+      scope: punctuation.separator.Cangjie
+      set: generic-qualified-member-constructor
+    - include: comments
+    - match: '(?=\S)'
+      pop: true
+  generic-qualified-member-constructor:
+    - match: '(`?[\p{Lu}][\p{XID_Continue}]*`?)(?=\s*(//|<|\(|\||,|\)|\]|\}|:|;|\.|$))'
+      scope: constant.language.Cangjie
+      pop: true
+    - match: ''
+      pop: true
+  originStrings:
+    - match: '(?<!#)(#{2})+"'
+      captures:
+        1: punctuation.definition.string.begin.Cangjie
+      push:
+        - meta_scope: string.quoted.double.Cangjie
+        - meta_content_scope: punctuation.definition.string.begin.Cangjie
+        - match: '"(?<!#)(#{2})+'
+          captures:
+            1: punctuation.definition.string.end.Cangjie
+          pop: true
+    - match: '(?<!#)#(#{2})*"'
+      captures:
+        1: punctuation.definition.string.begin.Cangjie
+      push:
+        - meta_scope: string.quoted.double.Cangjie
+        - meta_content_scope: punctuation.definition.string.begin.Cangjie
+        - match: '"(?<!#)#(#{2})*'
+          captures:
+            1: punctuation.definition.string.end.Cangjie
+          pop: true
+    - match: "(?<!#)(#{2})+'"
+      captures:
+        1: punctuation.definition.string.begin.Cangjie
+      push:
+        - meta_scope: string.quoted.double.Cangjie
+        - meta_content_scope: punctuation.definition.string.begin.Cangjie
+        - match: "'(?<!#)(#{2})+"
+          captures:
+            1: punctuation.definition.string.end.Cangjie
+          pop: true
+    - match: "(?<!#)#(#{2})*'"
+      captures:
+        1: punctuation.definition.string.begin.Cangjie
+      push:
+        - meta_scope: string.quoted.double.Cangjie
+        - meta_content_scope: punctuation.definition.string.begin.Cangjie
+        - match: "'(?<!#)#(#{2})*"
+          captures:
+            1: punctuation.definition.string.end.Cangjie
+          pop: true
+  package:
+    - match: \b(package)\b\s*
+      captures:
+        1: keyword.control.package.Cangjie
+      push:
+        - meta_scope: keyword.control.Cangjie
+        - meta_content_scope: storage.type.package.Cangjie
+        - match: '(?=[^.\w\s])|(\r\n|\r|\n)|$'
+          captures:
+            1: punctuation.terminator.Cangjie
+          pop: true
+        - include: keywords_to_identifier
+        - include: comments
+        - include: keywords
+  qualified-type:
+    - match: ":"
+      push:
+        - match: '(?=\s*=)|(?=[^*\<,\w\s!]|(\r\n|\r|\n)|\n)'
+          pop: true
+        - include: mark
+        - include: keywords
+        - include: constants
+        - match: '(`?[\p{XID_Start}][\p{XID_Continue}]*`?)(\.)(`?[\p{Lu}][\p{XID_Continue}]*`?)(\s*)(<)'
+          captures:
+            1: variable.other.Cangjie
+            2: punctuation.separator.Cangjie
+            3: entity.name.type.Cangjie
+            5: punctuation.separator.Cangjie
+          push: generic-qualified-member-access
+        - match: '(`?[\p{XID_Start}][\p{XID_Continue}]*`?)(\.)(`?[\p{Lu}][\p{XID_Continue}]*`?)(?=\s*(//|/\*|=|,|\)|\]|\}|$))'
+          captures:
+            1: variable.other.Cangjie
+            2: punctuation.separator.Cangjie
+            3: entity.name.type.Cangjie
+        - include: type
+        - match: '(?<=,)(\s*)([\p{XID_Start}][\p{XID_Continue}]*)(\s*)(?=(!?)(\s*):)'
+          scope: variable.parameter.Cangjie
+        - match: '`[\p{XID_Start}][\p{XID_Continue}]*`|[\p{XID_Start}][\p{XID_Continue}]*'
+          scope: entity.name.type.Cangjie
+  type-alias-target:
+    - match: '(\r\n|\r|\n)|$'
+      pop: true
+    - match: '->'
+      scope: punctuation.separator.Cangjie
+    - match: '[(),]'
+      scope: punctuation.separator.Cangjie
+    - include: comments
+    - include: keywords
+    - include: strings
+    - include: constants
+    - include: type
+    - include: mark
+    - match: '`[\p{XID_Start}][\p{XID_Continue}]*`|[\p{XID_Start}][\p{XID_Continue}]*'
+      scope: entity.name.type.Cangjie
+  quoteToken:
+    - match: (?<=quote)\(
+      push:
+        - match: (?<!\\)\)
+          pop: true
+        - include: quoteToken_inside
+        - include: quoteToken_content
+  quoteToken_content:
+    - match: .
+      scope: string.quoted.single.Cangjie
+  quoteToken_inside:
+    - match: (?<!\\)\(
+      push:
+        - meta_scope: string.quoted.single.Cangjie
+        - match: (?<!\\)\)
+          pop: true
+        - include: quoteToken_inside
+  string_mutil:
+    - match: (?<!\\)"""
+      push:
+        - meta_scope: string.quoted.double.Cangjie
+        - match: '"""'
+          pop: true
+        - include: insertValue
+        - include: escape_string
+    - match: (?<!\\)'''
+      push:
+        - meta_scope: string.quoted.double.Cangjie
+        - match: "'''"
+          pop: true
+        - include: insertValue
+        - include: escape_string
+  string_single:
+    - match: (?<!\\)(r)?\'
+      push:
+        - meta_scope: string.quoted.single.Cangjie
+        - match: \'|\n|\r
+          pop: true
+        - include: escape_string
+        - include: insertValue
+    - match: '(r)?\''(?<!\\)[\s\S](?<!\\)\'''
+      scope: string.quoted.single.Cangjie
+    - match: (?<!\\)(r)?"
+      push:
+        - meta_scope: string.quoted.double.Cangjie
+        - match: '"|\n|\r'
+          pop: true
+        - include: insertValue
+        - include: escape_string
+    - match: (?<!\\)J"
+      push:
+        - meta_scope: string.quoted.double.Cangjie
+        - match: '"|\n|\r'
+          pop: true
+        - include: escape_string
+    - match: (?<!\\)b"
+      push:
+        - meta_scope: constant.character.escape.string.byteArray.Cangjie
+        - match: '"|\n|\r'
+          pop: true
+        - include: escape_string
+    - match: (?<!\\)b'
+      push:
+        - meta_scope: constant.character.escape.string.byteArray.Cangjie
+        - match: '''|\n|\r'
+          pop: true
+        - include: escape_string
+  strings:
+    - include: string_mutil
+    - include: string_single
+  type:
+    - match: (?<=[\p{XID_Continue}`>])<
+      scope: punctuation.separator.Cangjie
+      push:
+        - match: '->'
+          scope: keyword.operator.Cangjie
+        - match: '>'
+          scope: punctuation.separator.Cangjie
+          pop: true
+        - match: ','
+          scope: punctuation.separator.Cangjie
+        - match: '(?=[^,*\<\>\w\s]|[\n\r])'
+          pop: true
+        - include: keywords
+        - include: strings
+        - match: '[\p{XID_Start}][\p{XID_Continue}]*\s*(?=[\)|\||\&|\n|;])'
+          scope: variable.parameter.Cangjie
+        - match: '`[\p{XID_Start}][\p{XID_Continue}]*`|[\p{XID_Start}][\p{XID_Continue}]*'
+          scope: entity.name.type.Cangjie
+        - include: function
+        - include: constants
+  variable:
+    - match: '\b(true|false)\b'
+      scope: constant.language.boolean.Cangjie
+    - match: '((\=\>)(\s*))(?!VArray\b|Nothing\b|This\b|IntNative\b|UIntNative\b|Int8\b|Int16\b|Int32\b|Int64\b|UInt8\b|UInt16\b|UInt32\b|UInt64\b|Float16\b|Float32\b|Float64\b|Rune\b|Bool\b|Unit\b|String\b)(`?[\p{Lu}][\p{XID_Continue}]*`?)(\s*)(<)(?=(?:[^>\n]|->)*>\s*(//|\(|\||,|\)|\]|\}|:|;|$))'
+      captures:
+        2: keyword.operator.Cangjie
+        4: constant.language.Cangjie
+        6: punctuation.separator.Cangjie
+      push: qualified-constructor-generic-params
+    - match: '((\=\>)(\s*))(?!VArray\b|Nothing\b|This\b|IntNative\b|UIntNative\b|Int8\b|Int16\b|Int32\b|Int64\b|UInt8\b|UInt16\b|UInt32\b|UInt64\b|Float16\b|Float32\b|Float64\b|Rune\b|Bool\b|Unit\b|String\b)(`?[\p{Lu}][\p{XID_Continue}]*`?)(?=\s*(//|\(|\||,|\)|\]|\}|:|;|$))'
+      captures:
+        2: keyword.operator.Cangjie
+        4: constant.language.Cangjie
+    - match: '\b(`?[\p{XID_Start}][\p{XID_Continue}]*`?)(?=\s*(=|[+\-*/%^]=|&&=|\|\|=|&=|\|=))'
+      scope: variable.other.assignment.Cangjie
+    - match: '((=|[+\-*/%^]=|&&=|\|\|=|&=|\|=)(\s*))(true|false)\b'
+      captures:
+        4: constant.language.boolean.Cangjie
+    - match: '((=|[+\-*/%^]=|&&=|\|\|=|&=|\|=)(\s*))(`?[a-z_][\p{XID_Continue}]*`?)(\.)(`?[\p{Lu}][\p{XID_Continue}]*`?)(?=\s*(//|<|\(|\||,|\)|\]|\}|:|;|\.|$))'
+      captures:
+        4: variable.other.Cangjie
+        5: punctuation.separator.Cangjie
+        6: constant.language.Cangjie
+    - match: '((=|[+\-*/%^]=|&&=|\|\|=|&=|\|=)(\s*))(?!VArray\b|Nothing\b|This\b|IntNative\b|UIntNative\b|Int8\b|Int16\b|Int32\b|Int64\b|UInt8\b|UInt16\b|UInt32\b|UInt64\b|Float16\b|Float32\b|Float64\b|Rune\b|Bool\b|Unit\b|String\b)(`?[\p{Lu}][\p{XID_Continue}]*`?)(\s*)(<)(?=(?:[^>\n]|->)*>\s*(//|\(|\||,|\)|\]|\}|:|;|$))'
+      captures:
+        4: constant.language.Cangjie
+        6: punctuation.separator.Cangjie
+      push: qualified-constructor-generic-params
+    - match: '((=|[+\-*/%^]=|&&=|\|\|=|&=|\|=)(\s*))(`?[\p{Lu}][\p{XID_Continue}]*`?)(\s*)(<)(?=(?:[^>\n]|->)*>\s*\.)'
+      captures:
+        4: entity.name.type.Cangjie
+        6: punctuation.separator.Cangjie
+      push: generic-qualified-member-access
+    - match: '((=|[+\-*/%^]=|&&=|\|\|=|&=|\|=)(\s*))(`?[\p{Lu}][\p{XID_Continue}]*`?)(\.)(`?[\p{Lu}][\p{XID_Continue}]*`?)(?=\s*(//|<|\(|\||,|\)|\]|\}|:|;|\.|$))'
+      captures:
+        4: entity.name.type.Cangjie
+        5: punctuation.separator.Cangjie
+        6: constant.language.Cangjie
+    - match: '((=|[+\-*/%^]=|&&=|\|\|=|&=|\|=)(\s*))(?!VArray\b|Nothing\b|This\b|IntNative\b|UIntNative\b|Int8\b|Int16\b|Int32\b|Int64\b|UInt8\b|UInt16\b|UInt32\b|UInt64\b|Float16\b|Float32\b|Float64\b|Rune\b|Bool\b|Unit\b|String\b)(`?[\p{Lu}][\p{XID_Continue}]*`?)(?=\s*(//|\(|\||,|\)|\]|\}|:|;|$))'
+      captures:
+        4: constant.language.Cangjie
+    - match: '((=|[+\-*/%^]=|&&=|\|\|=|&=|\|=)(\s*))(`?[\p{XID_Start}][\p{XID_Continue}]*`?)(?=\s*\<(?:[^>\n]|->)*\>\s*~>)'
+      captures:
+        4: entity.name.function.call.Cangjie
+    - match: '((=|[+\-*/%^]=|&&=|\|\|=|&=|\|=)(\s*))(`?[\p{XID_Start}][\p{XID_Continue}]*`?)(?=\s*~>)'
+      captures:
+        4: entity.name.function.call.Cangjie
+    - match: '((=|[+\-*/%^]=|&&=|\|\|=|&=|\|=)(\s*))(`?[a-z_][A-Za-z0-9_]*`?)'
+      captures:
+        4: variable.other.Cangjie
+    - match: '\b(`?[\p{XID_Start}][\p{XID_Continue}]*`?)(?=\s*,|\s*\)|\s*:)'
+      scope: variable.parameter.Cangjie
+    - match: '\b(`?[a-z_][\p{XID_Continue}]*`?)(?!\s*\.\s*`?[A-Z])\b'
+      scope: variable.other.Cangjie
