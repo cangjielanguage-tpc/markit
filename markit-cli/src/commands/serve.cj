@@ -1,7 +1,7 @@
 package markit_cli.commands
 
 import commandline.interfaces.{Command, CLI}
-import commandline.macros.{Cmd, Err, Info, NewLine, Opt, Progress, StopProgress, Success}
+import commandline.macros.{Cmd, Err, Info, InsertBefore, NewLine, Opt, Progress, StopProgress, Success}
 import commandline.terminal.progressLogger
 import live_server.LiveServer
 import markit_kit.builders.BuildCoordinator
@@ -215,14 +215,19 @@ public class ServeCommand {
 
         @StopProgress()
         let fullBuild = requiresFullBuild || markdownFiles.size > 1
-        let renderResult = if (fullBuild) {
+        var renderResult = 1
+        if (fullBuild) {
             @Progress("${changedFiles.size} file change(s), re-rendering...")
-            BuildCoordinator.build(configPaths, inputPath, outputPath, assetRoot, devMode: true, parallelJobs: parallelJobs)
+            @InsertBefore(
+                renderResult = BuildCoordinator.build(configPaths, inputPath, outputPath, assetRoot, devMode: true, parallelJobs: parallelJobs)
+            )
         } else {
             let file = markdownFiles[0]
             @Progress("File changed: ${file}, re-rendering...")
-            BuildCoordinator.incrementalBuild(configPaths, inputPath, outputPath, assetRoot, true, file,
-                parallelJobs: parallelJobs)
+            @InsertBefore(
+                renderResult = BuildCoordinator.incrementalBuild(configPaths, inputPath, outputPath, assetRoot, true, file,
+                    parallelJobs: parallelJobs)
+            )
         }
         @StopProgress()
 
