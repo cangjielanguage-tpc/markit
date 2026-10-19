@@ -1,0 +1,6 @@
+{
+  "name": "Variant Toy",
+  "scopeName": "source.prioritytoy.variant",
+  "fileTypes": ["prioritytoy", "sharedtoy", "json"],
+  "patterns": [{ "match": "word", "name": "keyword.variant.toy" }]
+}

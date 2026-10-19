@@ -170,7 +170,7 @@ public class ThemeRegistry {
     }
 
     private static func assetSearchPrefixes(): Array<String> {
-        return ["", "codehl", "..\\codehl", "..\\..\\codehl", "..\\..\\..\\codehl"]
+        return ["", "codehl", "../codehl", "../../codehl", "../../../codehl"]
     }
 
     private static func candidateFileNames(name: String): Array<String> {

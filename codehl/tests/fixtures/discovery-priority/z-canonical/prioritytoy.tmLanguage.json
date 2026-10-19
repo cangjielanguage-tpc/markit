@@ -1,0 +1,6 @@
+{
+  "name": "Canonical Toy",
+  "scopeName": "source.canonicaltoy",
+  "fileTypes": ["sharedtoy"],
+  "patterns": [{ "match": "word", "name": "keyword.canonical.toy" }]
+}

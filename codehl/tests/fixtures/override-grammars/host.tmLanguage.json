@@ -1,0 +1,5 @@
+{
+  "name": "Host",
+  "scopeName": "text.testhost",
+  "patterns": [{ "include": "source.json" }]
+}

@@ -5,6 +5,7 @@ import std.unittest.testmacro.*
 import std.fs.{Path, canonicalize, exists}
 import codehl.languages.LanguageRegistry
 import codehl.languages.TokenizerState
+import codehl.{Highlighter, HighlightOptions, LanguageRegistration}
 
 @Test
 @Tag[LanguageRegistry, TextMateGrammar]
@@ -49,5 +50,68 @@ class LanguageRegistryTests {
 
         @Expect(tokens.size, 1)
         @Expect(tokens[0].scope, "keyword-control-user-json")
+    }
+
+    @TestCase
+    func exactFileNameWinsOverScopeAndFileTypeAliases() {
+        let registry = LanguageRegistry(
+            grammarDir: "",
+            grammarDirs: ["tests/fixtures/discovery-priority", "..\\..\\..\\tests\\fixtures\\discovery-priority"]
+        )
+        let tokens = registry.findTokenizer("prioritytoy").getOrThrow()
+            .tokenizeLine("word", TokenizerState()).tokens
+
+        @Expect(tokens.size, 1)
+        @Expect(tokens[0].scope, "keyword-canonical-toy")
+        let variantTokens = registry.findTokenizer("a-variant").getOrThrow()
+            .tokenizeLine("word", TokenizerState()).tokens
+        @Expect(variantTokens[0].scope, "keyword-variant-toy")
+    }
+
+    @TestCase
+    func metadataAliasTieUsesStablePathOrder() {
+        let registry = LanguageRegistry(
+            grammarDir: "",
+            grammarDirs: ["tests/fixtures/discovery-priority", "..\\..\\..\\tests\\fixtures\\discovery-priority"]
+        )
+        let tokens = registry.findTokenizer("sharedtoy").getOrThrow()
+            .tokenizeLine("word", TokenizerState()).tokens
+
+        @Expect(tokens.size, 1)
+        @Expect(tokens[0].scope, "keyword-variant-toy")
+    }
+
+    @TestCase
+    func userMetadataAliasStillOverridesBundledExactFileName() {
+        let registry = LanguageRegistry(
+            grammarDirs: ["tests/fixtures/discovery-priority", "..\\..\\..\\tests\\fixtures\\discovery-priority"]
+        )
+        let tokens = registry.findTokenizer("json").getOrThrow()
+            .tokenizeLine("word", TokenizerState()).tokens
+
+        @Expect(tokens.size, 1)
+        @Expect(tokens[0].scope, "keyword-variant-toy")
+    }
+
+    @TestCase
+    func embeddedGrammarKeepsUserScopeOverride() {
+        let highlighter = Highlighter(
+            grammarDirs: ["tests/fixtures/override-grammars", "..\\..\\..\\tests\\fixtures\\override-grammars"],
+            languages: [LanguageRegistration("host", "host.tmLanguage.json")]
+        )
+        let html = highlighter.highlight("override", options: HighlightOptions(lang: "host"))
+
+        @Expect(html.contains("codehl-keyword-control-user-json"), true)
+    }
+
+    @TestCase
+    func defaultHtmlUsesExactFileNameGrammar() {
+        let source = "<div class=\"foo\">bar</div>\n<script>const x = 1</script>"
+        let options = HighlightOptions(lang: "html")
+        let explicit = Highlighter(languages: [
+            LanguageRegistration("html", "vscode/html/syntaxes/html.tmLanguage.json")
+        ])
+
+        @Expect(Highlighter().highlight(source, options: options), explicit.highlight(source, options: options))
     }
 }

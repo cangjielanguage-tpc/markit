@@ -2,7 +2,7 @@ package codehl.tests
 
 import std.unittest.*
 import std.unittest.testmacro.*
-import codehl.{Highlighter, HighlightOptions}
+import codehl.{Highlighter, HighlightOptions, LanguageRegistration}
 
 @Test
 @Tag[ShikiMigration, TextMateGrammar]
@@ -43,7 +43,8 @@ class ShikiMigrationTests {
     @TestCase
     func engineJavascriptCompareHtmlBasicTagCase() {
         // Migrated from shiki/packages/engine-javascript/test/compare.test.ts: html-basic case 1.
-        let html = Highlighter().highlight("<div class=\"foo\">bar</div>", options: HighlightOptions(lang: "html"))
+        // These Shiki snapshots use the Handlebars HTML grammar; select it explicitly.
+        let html = Highlighter(languages: [LanguageRegistration("html", "vscode/handlebars/syntaxes/Handlebars.tmLanguage.json")]).highlight("<div class=\"foo\">bar</div>", options: HighlightOptions(lang: "html"))
 
         @Expect(
             html,
@@ -54,7 +55,8 @@ class ShikiMigrationTests {
     @TestCase
     func engineJavascriptCompareHtmlBasicDocumentCase() {
         // Migrated from shiki/packages/engine-javascript/test/compare.test.ts: html-basic case 2.
-        let html = Highlighter().highlight("<!DOCTYPE html><html><head><title>foo</title></head><body>bar</body></html>", options: HighlightOptions(lang: "html"))
+        // These Shiki snapshots use the Handlebars HTML grammar; select it explicitly.
+        let html = Highlighter(languages: [LanguageRegistration("html", "vscode/handlebars/syntaxes/Handlebars.tmLanguage.json")]).highlight("<!DOCTYPE html><html><head><title>foo</title></head><body>bar</body></html>", options: HighlightOptions(lang: "html"))
 
         @Expect(
             html,

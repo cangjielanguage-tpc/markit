@@ -2,6 +2,7 @@ package codehl.languages
 
 import std.collection.{ArrayList, HashMap}
 import std.fs.*
+import std.sort.sort
 import codehl.grammar.{Grammar, GrammarLoader}
 import seajson.*
 
@@ -268,7 +269,17 @@ public class LanguageRegistry {
         for (grammarDir in dirs) {
             for (base in grammarDirCandidateBases(grammarDir)) {
                 if (exists(base)) {
-                    scanGrammarDirectory(base.normalize())
+                    let paths = ArrayList<String>()
+                    collectGrammarFiles(base.normalize(), paths)
+                    sort(paths)
+                    // Reserve exact file-name IDs before indexing broader metadata aliases.
+                    // Each search root keeps its priority over later user/built-in roots.
+                    for (path in paths) {
+                        addDiscoveredGrammarId(grammarIdFromFileName(Path(path).fileName), path)
+                    }
+                    for (path in paths) {
+                        indexDiscoveredGrammar(Path(path))
+                    }
                 }
             }
         }
@@ -307,13 +318,13 @@ public class LanguageRegistry {
             (path[2] == 92 || path[2] == 47)
     }
 
-    private func scanGrammarDirectory(dir: Path): Unit {
+    private func collectGrammarFiles(dir: Path, paths: ArrayList<String>): Unit {
         try {
             for (entry in Directory.readFrom(dir)) {
                 if (entry.isDirectory()) {
-                    scanGrammarDirectory(entry.path)
+                    collectGrammarFiles(entry.path, paths)
                 } else if (isGrammarJson(entry.path)) {
-                    indexDiscoveredGrammar(entry.path.normalize())
+                    paths.add(entry.path.normalize().toString())
                 }
             }
         } catch (_: Exception) {
@@ -330,7 +341,10 @@ public class LanguageRegistry {
             addDiscoveredGrammarId(jsonFieldString(root, "name") ?? "", normalizedPath)
             if (let Some(scopeName) <- jsonFieldString(root, "scopeName")) {
                 if (!scopeName.trimAscii().isEmpty()) {
-                    discoveredScopes[scopeName.trimAscii()] = normalizedPath
+                    let scope = scopeName.trimAscii()
+                    if (!discoveredScopes.contains(scope)) {
+                        discoveredScopes[scope] = normalizedPath
+                    }
                 }
                 addScopeGrammarIds(scopeName, normalizedPath)
             }
@@ -423,7 +437,7 @@ public class LanguageRegistry {
     }
 
     private static func assetSearchPrefixes(): Array<String> {
-        return ["", "codehl", "..\\codehl", "..\\..\\codehl", "..\\..\\..\\codehl"]
+        return ["", "codehl", "../codehl", "../../codehl", "../../../codehl"]
     }
 
     private func languageIdsForConfigured(lang: String): Array<String> {
