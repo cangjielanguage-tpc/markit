@@ -390,8 +390,7 @@ public class MultiLanguageBuilder {
         )
 
         // 获取 SummaryOptions
-        let (summaryFile, summaryShowDrafts) = config.getSummaryOptions()
-        let summaryOptions = SummaryOptions(file: summaryFile, showDrafts: summaryShowDrafts)
+        let summaryOptions = config.getSummaryOptions()
         
         // 获取当前语言和所有可用语言
         let currentLanguage = MultiConfigLoader.getTargetLanguage(config)

@@ -2,9 +2,7 @@
   "title": "Markit Typst Example",
   "i18n": {
     "default": "zh",
-    "target": "zh",
-    "home": "首页",
-    "documentation": "文档"
+    "target": "zh"
   },
   "theme": "arctic",
   "format": "website",
@@ -20,13 +18,27 @@
     "number": {
       "enabled": true,
       "resetFor": "directory",
-      "startFrom": [1, 1, 1, 1, 1, 1]
+      "startFrom": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
     }
   },
-  "summary": {
-    "file": "markit.md",
-    "showDrafts": true
-  },
+  "summary": [
+    {
+      "home": true,
+      "label": "首页"
+    },
+    {
+      "file": "markit.md",
+      "showDrafts": true,
+      "label": "文档"
+    }
+  ],
   "website": {
     "chapter": {
       "navigation": true,

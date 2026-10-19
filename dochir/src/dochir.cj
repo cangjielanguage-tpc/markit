@@ -192,13 +192,14 @@ private func writeMarkitConfig(
   "i18n": {
     "default": ${jsonString(language)},
     "target": ${jsonString(language)},
-${routePrefixLine}    "home": ${jsonString(homeText(language))},
-    "documentation": ${jsonString(documentationText(language))}
+${routePrefixLine}    "summary": {
+      ${jsonString(language)}: [${jsonString(homeText(language))}, ${jsonString(documentationText(language))}]
+    }
   },
-  "summary": {
-    "file": "markit.md",
-    "showDrafts": true
-  },
+  "summary": [
+    { "home": true, "label": ${jsonString(homeText(language))} },
+    { "file": "markit.md", "showDrafts": true, "label": ${jsonString(documentationText(language))} }
+  ],
   "codeBlock": {
     "group": false,
     "enabled": true

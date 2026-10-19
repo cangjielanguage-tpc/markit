@@ -1,6 +1,7 @@
 package markit_kit.models
 
 import markit.plugins.standard.inline.link.LinkConfig
+import std.collection.HashMap
 
 /**
  * 全局上下文
@@ -28,6 +29,9 @@ public class GlobalContext {
     
     // SummaryOptions
     private static var _summaryOptions: ?SummaryOptions = None
+
+    private static var _summaryMenus: Array<SummaryMenu> = []
+    private static var _summaryPageOwners: HashMap<String, Int64> = HashMap<String, Int64>()
     
     // BaseUrl（用于SEO的多语言hreflang标签）
     private static var _baseUrl: ?String = None
@@ -121,6 +125,16 @@ public class GlobalContext {
             _summaryOptions = value
         }
     }
+
+    public static mut prop summaryMenus: Array<SummaryMenu> {
+        get() { _summaryMenus }
+        set(value) { _summaryMenus = value }
+    }
+
+    public static mut prop summaryPageOwners: HashMap<String, Int64> {
+        get() { _summaryPageOwners }
+        set(value) { _summaryPageOwners = value }
+    }
     
     /**
      * BaseUrl 属性（用于SEO）
@@ -169,6 +183,8 @@ public class GlobalContext {
         _siteStructure = None
         _summaryConfig = None
         _summaryOptions = None
+        _summaryMenus = []
+        _summaryPageOwners = HashMap<String, Int64>()
         _baseUrl = None
         _parallelJobs = 1
         _assetRoot = ""

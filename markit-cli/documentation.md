@@ -163,17 +163,13 @@ markit version
 |------|------|--------|------|
 | `i18n.default` | String | `"en"` | 默认语言（用于未标记语言的内容） |
 | `i18n.target` | String | `"en"` | 目标语言（用于编译时筛选） |
-| `i18n.home` | String | `"Home"` | "首页"/"Home"的翻译文本 |
-| `i18n.documentation` | String | `"Documentation"` | "文档"/"Documentation"的翻译文本 |
 
 **配置示例：**
 ```json
 {
   "i18n": {
     "default": "zh",
-    "target": "zh",
-    "home": "首页",
-    "documentation": "文档"
+    "target": "zh"
   }
 }
 ```
@@ -227,15 +223,21 @@ Markit 会扫描用户 `grammarDirs` 和内置 grammar 目录中的 JSON，并�
   "codeBlock": {
     "enabled": true,
     "group": false,
-    "grammarDirs": ["./grammars"],
-    "themeDirs": ["./code-themes"],
+    "grammarDirs": [
+      "./grammars"
+    ],
+    "themeDirs": [
+      "./code-themes"
+    ],
     "lightTheme": "light-plus",
     "darkTheme": "dark-plus",
     "languages": {
       "vue": "vue.tmLanguage.json",
       "astro": {
         "grammar": "astro.tmLanguage.json",
-        "aliases": ["astrojs"]
+        "aliases": [
+          "astrojs"
+        ]
       }
     },
     "aliases": {
@@ -311,7 +313,14 @@ Markit 会扫描用户 `grammarDirs` 和内置 grammar 目录中的 JSON，并�
     "number": {
       "enabled": true,
       "resetFor": "directory",
-      "startFrom": [1, 1, 1, 1, 1, 1]
+      "startFrom": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
     }
   }
 }
@@ -321,23 +330,58 @@ Markit 会扫描用户 `grammarDirs` 和内置 grammar 目录中的 JSON，并�
 
 ### Summary 配置
 
-| 字段 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `summary.file` | String | `"markit.md"` | Summary 文件名 |
-| `summary.showDrafts` | Boolean | `true` | 是否显示草稿章节 |
+`summary` 是按顶部导航顺序排列的数组。首页项使用 `home: true`，栏目项使用 `file` 指定独立的 Markdown Summary；每个栏目拥有自己的侧栏和上一篇/下一篇。`file` 相对于当前语言的输入根目录解析，`showDrafts` 默认为 `true`，仅控制侧栏空链接草稿条目是否显示。
 
-**`homepage` 行为说明：**
-- `markit.md` 中 `<!-- homepage -->` 之后的内容会被识别为 homepage
-- 网站模式下，homepage 会作为站点首页内容
-- PDF 模式下，`pdf.typst.cover` 会先渲染模板封面；若定义了 homepage，则 homepage 会继续作为封面后的前置页插入在目录页之前
-- 如果未定义 `homepage`，则 PDF 直接从目录页或正文开始
+`i18n.summary.<语言>` 是与整个 `summary` 数组按下标对应的文案数组，根据 `i18n.target` 选择。没有对应语言时使用条目的 `label`；数组中的 `null` 回退到该项 `label`。已配置的数组长度必须与 `summary` 完全一致，隐藏的首页项仍占位置；调整栏目顺序时须同步调整翻译数组。未填写 `label` 时，首页使用 `Home`，栏目使用文件名。
 
-**配置示例：**
+最多允许一个首页项，首页项不能同时指定 `file`。省略首页项或设置 `home: false` 时不显示首页链接，语言入口跳转到第一个有效栏目。启用首页时，内容取第一个栏目 Summary 的 `<!-- homepage -->` 部分；没有该内容则跳转到第一个有效章节。没有自定义首页也会显示配置的栏目导航。
+
+栏目入口是其第一个实际参与构建的非草稿章节。页面按规范化后的完整路径匹配栏目；同一页面被多个栏目引用时只构建一次，归属配置中最先引用它的栏目并给出警告。所有配置的 Summary 文件均不作为正文渲染；目录文件缺失或不可解析时报告构建错误，不回退扫描整个输入目录。草稿父项下面的子树不参与构建。
+
+任一 Summary 或配置文件发生变化时，`serve --watch` 重新构建全站导航。PDF、Markdown、Typst 按栏目顺序合并并去重页面，首页前置内容最多插入一次。未配置 `summary` 时默认使用首页项和 `markit.md` 栏目；默认 `markit.md` 不存在时仍可按文件系统收集文档。
+
+这是破坏性变更：不再接受旧 `summary` 对象、顶层 `nav`、`summary.label.home/documentation` 或 `i18n.home/documentation`。请迁移为 `summary[]` 和 `i18n.summary.<语言>`。
+
 ```json
 {
-  "summary": {
-    "file": "markit.md",
-    "showDrafts": false
+  "summary": [
+    {
+      "home": true,
+      "label": "首页"
+    },
+    {
+      "file": "markit.md",
+      "showDrafts": true,
+      "label": "文档"
+    },
+    {
+      "file": "demo.md",
+      "showDrafts": true,
+      "label": "示例"
+    },
+    {
+      "file": "api-reference.md",
+      "showDrafts": false,
+      "label": "API 参考"
+    }
+  ],
+  "i18n": {
+    "default": "zh",
+    "target": "en",
+    "summary": {
+      "en": [
+        "Home",
+        "Documentation",
+        "Examples",
+        "API Reference"
+      ],
+      "jp": [
+        "ホーム",
+        "ドキュメント",
+        "サンプル",
+        "API リファレンス"
+      ]
+    }
   }
 }
 ```
@@ -556,7 +600,10 @@ KaTeX CSS 和字体仍作为静态资源复制到网站中，用于样式和字�
         "logo": "assets/sample.svg",
         "title": "Markit Typst Example",
         "subtitle": "Reusable PDF cover template",
-        "authors": ["Author A", "Author B"],
+        "authors": [
+          "Author A",
+          "Author B"
+        ],
         "version": "v1.0.0",
         "organization": "Markit",
         "suborganization": "Docs Team"
@@ -587,7 +634,7 @@ KaTeX CSS 和字体仍作为静态资源复制到网站中，用于样式和字�
 
 Summary 文件用于声明文档站点的目录、章节顺序、侧边栏分组和首页内容。默认文件名是 `markit.md`，位于输入目录根路径下；渲染时该文件会作为控制文件解析，不会被当作普通章节输出。
 
-当存在 Summary 文件时，markit-cli 只会按照 Summary 中引用的非草稿章节收集和渲染文档，输出顺序也以 Summary 为准。如果找不到 Summary 文件、文件为空、解析失败，或没有解析到有效章节，则回退为按文件系统顺序递归收集 Markdown 文件。
+配置了 `summary[]` 时，markit-cli 按各栏目顺序收集其中引用的非草稿章节，并对重复页面去重。显式配置的目录文件缺失、为空或解析失败时构建报错；仅在未配置 `summary` 且默认 `markit.md` 不可用时，回退为按文件系统顺序收集文档。没有可渲染章节的栏目会给出警告并隐藏顶部入口。
 
 ### 组织文档结构
 
@@ -635,14 +682,21 @@ docs/
 
 ### 指定 Summary 文件
 
-默认情况下，markit-cli 会在输入根目录查找 `markit.md`。可以通过 `markit.json` 的 `summary.file` 改用其他文件名：
+默认情况下，markit-cli 会在输入根目录查找 `markit.md`。可以通过 `markit.json` 的 `summary[].file` 改用其他文件名：
 
 ```json
 {
-  "summary": {
-    "file": "SUMMARY.md",
-    "showDrafts": false
-  }
+  "summary": [
+    {
+      "home": true,
+      "label": "Home"
+    },
+    {
+      "file": "SUMMARY.md",
+      "showDrafts": false,
+      "label": "Documentation"
+    }
+  ]
 }
 ```
 
@@ -650,10 +704,10 @@ docs/
 
 | 字段 | 默认值 | 说明 |
 |------|--------|------|
-| `summary.file` | `"markit.md"` | Summary 文件名，相对于当前语言的输入根目录解析 |
-| `summary.showDrafts` | `true` | 是否在网站侧边栏中显示草稿章节 |
+| `summary[].file` | 必填（首页项除外） | Summary 文件名，相对于当前语言的输入根目录解析 |
+| `summary[].showDrafts` | `true` | 是否在网站侧边栏中显示草稿章节 |
 
-`summary.file` 始终相对于当前输入目录解析；多语言构建时，则相对于每种语言的输入目录解析。
+`summary[].file` 始终相对于当前输入目录解析；多语言构建时，则相对于每种语言的输入目录解析。
 
 ### 支持的 Summary 内容
 
@@ -666,7 +720,7 @@ Summary 文件本身使用 Markdown 编写，但导航解析只消费其中的�
 | 二级及更深标题 | `## 基础`、`### 安装` | 不参与导航结构解析，不会创建二级分组 |
 | 分组章节 | 分组标题后的无序列表链接 | 作为该分组下的章节 |
 | 子章节 | 嵌套无序列表 | 生成嵌套导航，并按深度递归收集文件 |
-| 草稿章节 | `- [未来章节]()` | 不渲染文件；`summary.showDrafts: true` 时仅在侧边栏显示草稿标题 |
+| 草稿章节 | `- [未来章节]()` | 不渲染文件；`summary[].showDrafts: true` 时仅在侧边栏显示草稿标题 |
 | 首页内容 | `<!-- homepage -->` 后的 Markdown / HTML | 作为网站首页内容；PDF/Typst 合并输出中作为前置页 |
 | 多语言内容 | i18n 行内或块级语法 | 根据 `i18n.target` 选择当前语言内容 |
 
@@ -702,7 +756,7 @@ This is the English homepage content.
 3. 列表项中没有链接，或链接文本为空时会被忽略。
 4. Summary 中引用但不存在的文件会打印警告并跳过。
 5. `<!-- homepage -->` 之后的内容都属于首页，不再参与导航解析。
-6. 如果没有 `homepage` 内容，网站模式会尝试使用第一个非草稿根级章节作为首页后备；分组内章节不会自动成为首页。
+6. 网站首页只使用第一个栏目 Summary 的 `homepage` 内容；未启用首页或没有该内容时，语言入口跳转到第一个可渲染章节，支持分组内及嵌套章节。
 
 ### 草稿章节
 
@@ -722,8 +776,8 @@ This is the English homepage content.
 
 1. `- [计划中的章节]()` 会被识别为草稿章节。
 2. 草稿章节不会被收集为输入文件，也不会生成对应页面。
-3. `summary.showDrafts: true` 时，草稿会以不可点击的灰色条目显示在网站侧边栏中。
-4. `summary.showDrafts: false` 时，草稿不会显示在侧边栏中。
+3. `summary[].showDrafts: true` 时，草稿会以不可点击的灰色条目显示在网站侧边栏中。
+4. `summary[].showDrafts: false` 时，草稿不会显示在侧边栏中。
 5. 草稿章节不会进入上一篇/下一篇章节导航。
 6. 如果把正式章节嵌套在草稿父项下面，整棵子树都不会被收集和渲染。
 
@@ -800,7 +854,7 @@ dist/
 ├── assets/                 # 主题 CSS、JS、字体、favicon 等共享资源
 ├── public/                 # 从 docs/public/ 复制的用户静态资源（如果存在）
 └── zh/
-    ├── index.html          # Summary homepage，或第一个非草稿根级章节后备
+    ├── index.html          # 第一个栏目的 homepage，或跳转到首个有效章节
     ├── README.html
     ├── getting-started/
     │   ├── index.html      # 文件夹索引页
@@ -860,8 +914,7 @@ dist/
   "i18n": {
     "default": "zh",
     "target": "zh",
-    "home": "首页",
-    "documentation": "文档"
+    "summary": { "en": ["Home", "Documentation"] }
   },
   
   "heading": {
@@ -873,10 +926,10 @@ dist/
     }
   },
   
-  "summary": {
-    "file": "markit.md",
-    "showDrafts": false
-  },
+  "summary": [
+    { "home": true, "label": "首页" },
+    { "file": "markit.md", "showDrafts": false, "label": "文档" }
+  ],
 
   "pdf": {
     "typst": {
@@ -944,7 +997,6 @@ dist/
         "scripts/custom.js"
       ]
     }
-  }
   }
 }
 ```

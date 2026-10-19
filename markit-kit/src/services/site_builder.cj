@@ -2,8 +2,9 @@ package markit_kit.services
 
 import markit_kit.utils.KitHooks
 
-import markit_kit.models.{SiteStructure, SitePage, SummaryConfig}
+import markit_kit.models.{SiteStructure, SitePage, SummaryConfig, SummaryOptions, GlobalContext}
 import markit_kit.utils.FileHandler
+import markit.core.render.HtmlEscaper
 import markit_kit.interfaces.Processor
 import std.collection.ArrayList
 import std.fs.{Path, exists}
@@ -27,7 +28,7 @@ public class SiteBuilder {
         for (file in inputFiles) {
             let relativePath = FileHandler.getRelativePath(file, basePath)
             let title = FileHandler.extractTitle(file)
-            let htmlPath = relativePath.replace(".md", ".html").replace(".markdown", ".html")
+            let htmlPath = SummaryOptions.pagePath(relativePath)
             
             structure.addPage(relativePath, title, htmlPath)
         }
@@ -53,14 +54,13 @@ public class SiteBuilder {
         summaryConfig: SummaryConfig,
         inputBasePath: String
     ): Unit {
-        // 使用新的 generateHomepage 方法
-        if (summaryConfig.found) {
+        let options = GlobalContext.summaryOptions ?? SummaryOptions()
+        if (options.hasHome() && !summaryConfig.homepageContent.isEmpty()) {
             generateHomepage(outputPath, summaryConfig, processor, siteTitle, inputBasePath)
-        } else {
-            // 没有找到 markit.md，使用默认逻辑
+        } else if (!hasExplicitPage(structure, "index.html")) {
             generateDefaultIndex(outputPath, structure, processor, siteTitle)
         }
-        
+
         // 为每个文件夹生成index.html
         generateFolderIndexes(outputPath, structure, processor)
     }
@@ -149,7 +149,12 @@ public class SiteBuilder {
         processor: Processor,
         siteTitle: String
     ): Unit {
-        // 当没有 markit.md 时，不生成首页（静默处理）
+        let pages = structure.getPages()
+        if (pages.isEmpty()) { return }
+        let target = HtmlEscaper.escape(pages[0].htmlPath)
+        let html = "<!doctype html><html><head><meta charset=\"utf-8\"><meta http-equiv=\"refresh\" content=\"0;url=${target}\"></head><body><a href=\"${target}\">${HtmlEscaper.escape(siteTitle)}</a></body></html>"
+        let indexPath = "${outputPath}/index.html"
+        FileHandler.writeFileContent(indexPath, html)
     }
     
     /**
