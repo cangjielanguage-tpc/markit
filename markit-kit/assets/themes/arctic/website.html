@@ -309,7 +309,9 @@
             }
 
             function referenceFor(target) {
-                return '[' + target.id.replace(/\]/g, '\\]') + '](#' + target.id + ')';
+                var url = new URL(window.location.href);
+                url.hash = target.id;
+                return '[' + target.id.replace(/\]/g, '\\]') + '](<' + url.href + '>)';
             }
 
             function markdownSourceBytes(source) {

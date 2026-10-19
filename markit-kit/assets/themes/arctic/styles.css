@@ -2149,13 +2149,17 @@ hr {
 
 /* Tables with modern styling */
 .content table {
+    display: block;
     border-collapse: collapse;
     width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
     margin: 16px 0;
 }
 
 .content table th,
 .content table td {
+    min-width: 6rem;
     border: 1px solid var(--border-primary);
     padding: 8px 12px;
     text-align: left;
@@ -2171,7 +2175,8 @@ hr {
 }
 
 .content table.table-three-line {
-    width: min(100%, max-content);
+    width: fit-content;
+    max-width: 100%;
 }
 
 .content table.table-three-line th,
