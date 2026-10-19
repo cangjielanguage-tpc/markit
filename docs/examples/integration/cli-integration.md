@@ -198,7 +198,7 @@ cjpm build
 cjpm run -- render -i ../docs -o ../target/markit-docs
 ```
 
-`markit.md` 负责章节导航和 homepage，`markit.json` 负责 theme、toc、heading numbering、summary 文件名、站点信息等配置。
+`summary[]` 中各个 Markdown 目录文件负责对应栏目的章节导航，第一个目录文件提供 homepage，`markit.json` 负责 theme、toc、heading numbering、summary 文件名、站点信息等配置。
 
 ## 集成边界
 

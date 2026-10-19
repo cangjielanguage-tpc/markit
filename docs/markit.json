@@ -2,9 +2,7 @@
   "title": "Markit",
   "i18n": {
     "default": "zh",
-    "target": "zh",
-    "home": "首页",
-    "documentation": "文档"
+    "target": "zh"
   },
   "theme": "arctic",
   "format": "website",
@@ -34,20 +32,38 @@
     "number": {
       "enabled": true,
       "resetFor": "directory",
-      "startFrom": [1, 1, 1, 1, 1, 1]
+      "startFrom": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
     }
   },
-  "summary": {
-    "file": "markit.md",
-    "showDrafts": true
-  },
+  "summary": [
+    {
+      "home": true,
+      "label": "首页"
+    },
+    {
+      "file": "markit.md",
+      "showDrafts": true,
+      "label": "文档"
+    }
+  ],
   "website": {
     "assets": {
-      "styles": ["assets/ai-stream-demo.css"],
-      "scripts": ["assets/ai-stream-demo.js"]
+      "styles": [
+        "assets/ai-stream-demo.css"
+      ],
+      "scripts": [
+        "assets/ai-stream-demo.js"
+      ]
     },
     "git": {
-      "prefix": "https://gitcode.com/zichexuelan/markit/blob/main/docs"
+      "prefix": "https://gitcode.com/Cangjie-TPC/markit/blob/main/docs"
     },
     "chapter": {
       "navigation": true,
@@ -63,7 +79,7 @@
       "minute": "分钟"
     },
     "repos": {
-      "gitcode": "https://gitcode.com/zichexuelan/markit"
+      "gitcode": "https://gitcode.com/Cangjie-TPC/markit"
     }
   }
 }

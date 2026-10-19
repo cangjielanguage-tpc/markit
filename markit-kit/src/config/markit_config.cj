@@ -5,7 +5,9 @@ import markit_kit.utils.KitHooks
 import codehl.{LanguageAlias, LanguageRegistration}
 import markit.plugins.i18n.config.I18nConfig
 import markit.plugins.standard.block.heading.HeadingNumberingConfig
-import std.collection.ArrayList
+import std.collection.{ArrayList, HashMap, HashSet}
+import std.fs.Path
+import markit_kit.models.{SummaryOptions, SummaryEntry}
 
 /**
  * Markit CLI 配置
@@ -69,7 +71,8 @@ public class MarkitConfig {
     /**
      * Summary 配置
      */
-    public var summary: SummarySettings = SummarySettings()
+    public var summary: Array<SummaryEntry> = SummaryOptions().entries
+    public var summaryExplicit: Bool = false
 
     /**
      * PDF 生成配置
@@ -90,8 +93,8 @@ public class MarkitConfig {
         return I18nConfig(
             defaultLanguage: i18n.default, 
             targetLanguage: i18n.target,
-            homeText: i18n.home,
-            documentationText: i18n.documentation
+            homeText: "Home",
+            documentationText: "Documentation"
         )
     }
     
@@ -123,10 +126,54 @@ public class MarkitConfig {
      * 
      * @return Summary 选项
      */
-    public func getSummaryOptions(): (String, Bool) {
-        return (summary.file, summary.showDrafts)
+    public func getSummaryOptions(): SummaryOptions {
+        let entries = ArrayList<SummaryEntry>()
+        let translations = i18n.summary.get(i18n.target)
+        var primaryFile = "markit.md"
+        var primaryDrafts = true
+        var foundPrimary = false
+        for (i in 0..summary.size) {
+            let entry = summary[i]
+            var label = if (entry.label.isEmpty()) {
+                if (entry.file.isEmpty()) { "Home" } else { entry.file }
+            } else { entry.label }
+            if (let Some(labels) <- translations) {
+                if (i < labels.size) { label = labels[i] ?? label }
+            }
+            entries.add(SummaryEntry(home: entry.home, file: entry.file, showDrafts: entry.showDrafts, label: label))
+            if (!entry.file.isEmpty() && !foundPrimary) {
+                primaryFile = entry.file
+                primaryDrafts = entry.showDrafts
+                foundPrimary = true
+            }
+        }
+        return SummaryOptions(entries: entries.toArray(), explicit: summaryExplicit,
+            file: primaryFile, showDrafts: primaryDrafts)
     }
-    
+
+    public func validateSummary(): Unit {
+        var homeCount = 0
+        let files = HashSet<String>()
+        for (entry in summary) {
+            if (entry.file.isEmpty()) {
+                homeCount++
+            } else {
+                let file = Path(entry.file).normalize().toString().replace("\\", "/")
+                if (files.contains(file)) { throw IllegalArgumentException("Duplicate Summary file: ${file}") }
+                files.add(file)
+            }
+        }
+        if (homeCount > 1) { throw IllegalArgumentException("summary allows at most one home entry") }
+        if (summaryExplicit && files.isEmpty()) {
+            throw IllegalArgumentException("summary requires at least one file entry")
+        }
+        for ((language, labels) in i18n.summary) {
+            if (labels.size != summary.size) {
+                throw IllegalArgumentException("i18n.summary.${language} must contain ${summary.size} labels (including home entries)")
+            }
+        }
+    }
+
     /**
      * 验证配置是否有效
      * 
@@ -197,16 +244,9 @@ public class I18nSettings {
      * 相对于配置文件所在目录解析
      */
     public var routePrefix: String = ""
+
+    public var summary: HashMap<String, Array<?String>> = HashMap<String, Array<?String>>()
     
-    /**
-     * "首页"/"Home"的翻译文本
-     */
-    public var home: String = "Home"
-    
-    /**
-     * "文档"/"Documentation"的翻译文本
-     */
-    public var documentation: String = "Documentation"
 }
 
 /**
@@ -247,21 +287,6 @@ public class HeadingNumberSettings {
      * 编号起始值（6个级别）
      */
     public var startFrom: Array<Int> = [1, 1, 1, 1, 1, 1]
-}
-
-/**
- * Summary 设置
- */
-public class SummarySettings {
-    /**
-     * Summary 文件名
-     */
-    public var file: String = "markit.md"
-    
-    /**
-     * 是否显示草稿章节
-     */
-    public var showDrafts: Bool = true
 }
 
 /**

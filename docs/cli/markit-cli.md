@@ -14,8 +14,10 @@ markit -v
 
 从源码构建：
 
+网站导航使用 `summary[]` 按顺序定义首页和多个栏目；每个文件项对应独立侧栏，`i18n.summary.<语言>` 数组按相同下标翻译导航名称。
+
 ```bash
-git clone https://gitcode.com/zichexuelan/markit.git
+git clone https://gitcode.com/Cangjie-TPC/markit.git
 cd markit/markit-cli
 cjpm build
 cp ./target/release/bin/main ./markit
@@ -100,10 +102,17 @@ docs/
   "theme": "arctic",
   "format": "website",
   "toc": true,
-  "summary": {
-    "file": "markit.md",
-    "showDrafts": false
-  }
+  "summary": [
+    {
+      "home": true,
+      "label": "Home"
+    },
+    {
+      "file": "markit.md",
+      "showDrafts": false,
+      "label": "Documentation"
+    }
+  ]
 }
 ```
 
@@ -124,7 +133,7 @@ Summary 使用一级标题作为侧边栏分组，列表链接作为章节：
 这里是网站首页内容。
 ```
 
-`<!-- homepage -->` 之后的内容会成为网站首页；它不会作为普通章节出现在侧边栏。
+启用首页时，第一个栏目 Summary 中 `<!-- homepage -->` 之后的内容会成为网站首页；它不会作为普通章节出现在侧边栏。
 
 ## 配置入口
 
@@ -159,3 +168,7 @@ markit-cli 在构建阶段处理常见富内容：
 - PDF 通过 Typst 管线生成，网站和 PDF 可以共享同一份 Markdown 源内容。
 
 这些能力让生成的网站更轻，也让 PDF/Typst 输出与网页输出保持同源。
+
+### 多栏目导航
+
+使用 `summary[]` 定义首页和独立栏目，使用 `i18n.summary.<语言>` 按相同下标翻译栏目名称。详见[配置参考](../reference/markit-cli-config.md)。

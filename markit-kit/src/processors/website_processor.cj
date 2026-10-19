@@ -3,14 +3,14 @@ package markit_kit.processors
 import markit.Markit
 import markit_kit.interfaces.Processor
 import markit_kit.themes.{Theme, ThemeManager}
-import markit_kit.models.{SiteStructure, SiteNavigation, FileTreeNode, HeadingInfo, SitePage, SummaryConfig, SummaryOptions, Chapter, Section, GlobalContext, RenderConfig}
+import markit_kit.models.{SiteStructure, SiteNavigation, FileTreeNode, HeadingInfo, SitePage, SummaryConfig, SummaryOptions, SummaryMenu, Chapter, Section, GlobalContext, RenderConfig}
 import markit_kit.components.LanguageSwitcher
 import markit.plugins.standard.inline.link.LinkConfig
 import markit.plugins.i18n.config.I18nConfig
 import markit.core.nodes.{Node, DocumentNode}
 import markit.core.render.HtmlEscaper
 import markit.plugins.standard.block.heading.HeadingNode
-import std.collection.ArrayList
+import std.collection.{ArrayList, HashSet}
 import markit.plugins.toc.{Toc, TocItem}
 import std.fs.Path
 import std.convert.*
@@ -505,7 +505,7 @@ public class WebsiteProcessor <: Processor {
         let isHomePage = normalizedPagePath == "index.html" || normalizedPagePath.isEmpty()
         
         // 生成顶部导航链接
-        let topNavLinks = generateTopNavLinks(relativePath, isHomePage)
+        let topNavLinks = generateTopNavLinks(normalizedPagePath)
         
         // 生成语言切换器 HTML（仅多语言模式）
         let languageSwitcherHtml = LanguageSwitcher.generate(
@@ -621,87 +621,36 @@ public class WebsiteProcessor <: Processor {
     /**
      * 生成顶部导航链接
      * 
-     * @param relativePath 相对路径前缀（到根目录）
-     * @param isHomePage 是否为首页
+     * @param currentPagePath 当前语言目录内的页面路径
      * @return 顶部导航链接HTML
      */
-    private func generateTopNavLinks(relativePath: String, isHomePage: Bool): String {
-        // 从 GlobalContext 读取配置
-        let summaryConfig = GlobalContext.summaryConfig
-        let config = GlobalContext.renderConfig.getOrThrow()
-        
-        // 检查是否有自定义首页内容
-        var hasCustomHomepage = false
-        match (summaryConfig) {
-            case Some(config) =>
-                if (config.found && !config.homepageContent.isEmpty()) {
-                    hasCustomHomepage = true
-                }
-            case None => ()
-        }
-        
-        // 只有在有自定义首页时才显示导航链接
-        if (!hasCustomHomepage) {
-            return ""
-        }
-        
-        // 获取i18n文本
-        var homeText = "Home"
-        var documentationText = "Documentation"
-        match (config.i18nConfig) {
-            case Some(i18nConfig) =>
-                homeText = i18nConfig.homeText
-                documentationText = i18nConfig.documentationText
-            case None => ()
-        }
-        
-        // 找到第一个文档页面
-        var firstDocPath = ""
-        match (summaryConfig) {
-            case Some(config) =>
-                // 优先使用 prefixChapters 的第一个非草稿章节
-                for (chapter in config.prefixChapters) {
-                    if (!chapter.isDraft && !chapter.filePath.isEmpty()) {
-                        let normalizedPath = PathUtils.normalizePath(chapter.filePath)
-                        firstDocPath = normalizedPath.replace(".md", ".html").replace(".markdown", ".html")
-                        break
-                    }
-                }
-                
-                // 如果没有找到，使用第一个 section 的第一个章节
-                if (firstDocPath.isEmpty()) {
-                    for (section in config.sections) {
-                        for (chapter in section.chapters) {
-                            if (!chapter.isDraft && !chapter.filePath.isEmpty()) {
-                                let normalizedPath = PathUtils.normalizePath(chapter.filePath)
-                                firstDocPath = normalizedPath.replace(".md", ".html").replace(".markdown", ".html")
-                                break
-                            }
-                        }
-                        if (!firstDocPath.isEmpty()) {
-                            break
-                        }
-                    }
-                }
-            case None => ()
-        }
-        
-        let homeActiveClass = if (isHomePage) { " active" } else { "" }
-        let docActiveClass = if (!isHomePage) { " active" } else { "" }
-        
-        // 计算语言目录内的相对路径（不使用 relativePath，因为链接在同一语言目录内）
-        let langRelativePath = PathUtils.calculateLanguageDirRelativePath(relativePath)
-        
+    private func generateTopNavLinks(currentPagePath: String): String {
+        let path = SummaryOptions.pagePath(normalizeCurrentPagePath(currentPagePath))
+        let owner = GlobalContext.summaryPageOwners.get(path) ?? -1
+        let menus = GlobalContext.summaryMenus
         let links = ArrayList<String>()
-        links.add("<a href=\"${langRelativePath}index.html\" class=\"top-nav-link${homeActiveClass}\">${homeText}</a>")
-        
-        if (!firstDocPath.isEmpty()) {
-            links.add("<a href=\"${langRelativePath}${firstDocPath}\" class=\"top-nav-link${docActiveClass}\">${documentationText}</a>")
+        for (i in 0..menus.size) {
+            let menu = menus[i]
+            let isHome = menu.entry.file.isEmpty()
+            if (isHome && !menu.entry.home) { continue }
+            if (!isHome && menu.pages.isEmpty()) { continue }
+            let target = if (isHome) { "index.html" } else { menu.pages[0] }
+            let href = HtmlEscaper.escape(PathUtils.calculateRelativePath(path, target))
+            let active = if ((isHome && path == "index.html" && owner == -1) || (!isHome && owner == i)) { " active" } else { "" }
+            let label = HtmlEscaper.escape(menu.entry.label)
+            links.add("<a href=\"${href}\" class=\"top-nav-link${active}\">${label}</a>")
         }
-        
         return String.join(links.toArray(), delimiter: "\n                    ")
     }
-    
+
+    private func menuForPage(currentPagePath: String): ?SummaryMenu {
+        let path = SummaryOptions.pagePath(normalizeCurrentPagePath(currentPagePath))
+        if (let Some(index) <- GlobalContext.summaryPageOwners.get(path)) {
+            return Some(GlobalContext.summaryMenus[index])
+        }
+        return None
+    }
+
     /**
      * 计算相对路径前缀
      * 
@@ -967,19 +916,12 @@ public class WebsiteProcessor <: Processor {
      * 生成导航HTML
      */
     private func generateNavigationHtml(currentPageTitle!: String = "", currentPagePath!: String = ""): String {
-        // 从 GlobalContext 读取配置
-        let summaryConfig = GlobalContext.summaryConfig
-        let summaryOptions = GlobalContext.summaryOptions ?? SummaryOptions()
-        
-        // 如果有 summaryConfig 且找到了 markit.md，使用 Summary 导航
-        match (summaryConfig) {
-            case Some(config) =>
-                if (config.found) {
-                    return generateNavigationFromSummary(config, currentPagePath, summaryOptions.showDrafts)
-                }
-            case None => ()
+        if (let Some(menu) <- menuForPage(currentPagePath)) {
+            if (menu.config.found) {
+                return generateNavigationFromSummary(menu.config, currentPagePath, menu.entry.showDrafts)
+            }
         }
-        
+
         // 否则使用默认的文件树导航
         let siteStructure = GlobalContext.siteStructure
         match (siteStructure) {
@@ -1061,7 +1003,7 @@ public class WebsiteProcessor <: Processor {
         for (chapter in chapters) {
             // 规范化章节路径进行比较
             let normalizedChapterPath = PathUtils.normalizePath(chapter.filePath)
-            let normalizedChapterHtmlPath = normalizedChapterPath.replace(".md", ".html").replace(".markdown", ".html")
+            let normalizedChapterHtmlPath = SummaryOptions.pagePath(normalizedChapterPath)
             
             // 检查当前章节
             if (normalizedChapterPath == normalizedCurrentPath || 
@@ -1095,6 +1037,10 @@ public class WebsiteProcessor <: Processor {
         currentPagePath: String,
         showDrafts: Bool
     ): Unit {
+        if (!chapter.isDraft && !GlobalContext.summaryMenus.isEmpty() &&
+            !GlobalContext.summaryPageOwners.contains(SummaryOptions.pagePath(chapter.filePath))) {
+            return
+        }
         let indent = "    "
         var indentStr = ""
         for (_ in 0..(level + 1)) {
@@ -1103,7 +1049,7 @@ public class WebsiteProcessor <: Processor {
         
         // 检查是否为当前页面
         let normalizedChapterPath = PathUtils.normalizePath(chapter.filePath)
-        let normalizedChapterHtmlPath = normalizedChapterPath.replace(".md", ".html").replace(".markdown", ".html")
+        let normalizedChapterHtmlPath = SummaryOptions.pagePath(normalizedChapterPath)
         let normalizedCurrentPath = PathUtils.normalizePath(currentPagePath)
         
         let isActive = normalizedChapterPath == normalizedCurrentPath || 
@@ -1122,7 +1068,7 @@ public class WebsiteProcessor <: Processor {
             // 正常章节
             // 规范化路径：去掉 ../ 和对应数量的目录层
             let normalizedPath = PathUtils.normalizePath(chapter.filePath)
-            let htmlPath = normalizedPath.replace(".md", ".html").replace(".markdown", ".html")
+            let htmlPath = SummaryOptions.pagePath(normalizedPath)
             
             // 规范化当前页面路径
             let normalizedCurrentPagePath = PathUtils.normalizePath(currentPagePath)
@@ -1512,27 +1458,36 @@ public class WebsiteProcessor <: Processor {
      * @return 章节导航HTML
      */
     private func generateChapterNavigation(currentPagePath: String): String {
-        // 如果没有 summaryConfig，返回空
-        match (summaryConfig) {
+        match (menuForPage(currentPagePath)) {
             case None => return ""
-            case Some(config) =>
+            case Some(menu) =>
+                let config = menu.config
                 if (!config.found) {
                     return ""
                 }
                 
                 // 获取所有章节的扁平化列表
-                let allChapters = config.getAllChaptersFlat()
+                let validChapters = ArrayList<Chapter>()
+                let seen = HashSet<String>()
+                for (chapter in config.getAllChaptersFlat()) {
+                    let page = SummaryOptions.pagePath(chapter.filePath)
+                    if (menu.pages.contains(page) && !seen.contains(page)) {
+                        seen.add(page)
+                        validChapters.add(chapter)
+                    }
+                }
+                let allChapters = validChapters.toArray()
                 if (allChapters.size == 0) {
                     return ""
                 }
                 
                 // Summary may retain ../ prefixes while rendered pages do not.
-                let currentMdPath = PathUtils.normalizePath(currentPagePath.replace(".html", ".md"))
+                let currentMdPath = SummaryOptions.pagePath(normalizeCurrentPagePath(currentPagePath))
                 
                 // 查找当前章节的索引
                 var currentIndex = -1
                 for (i in 0..allChapters.size) {
-                    let chapterMdPath = PathUtils.normalizePath(allChapters[i].filePath)
+                    let chapterMdPath = SummaryOptions.pagePath(allChapters[i].filePath)
                     if (chapterMdPath == currentMdPath) {
                         currentIndex = i
                         break
@@ -1561,7 +1516,7 @@ public class WebsiteProcessor <: Processor {
                 match (prevChapter) {
                     case Some(chapter) =>
                         let normalizedPath = PathUtils.normalizePath(chapter.filePath)
-                        let prevHtmlPath = normalizedPath.replace(".md", ".html").replace(".markdown", ".html")
+                        let prevHtmlPath = SummaryOptions.pagePath(normalizedPath)
                         let prevRelativePath = PathUtils.calculateRelativePath(currentPagePath, prevHtmlPath)
                         let chapterTitle = HtmlEscaper.escape(chapter.displayName)
                         nav.add("    <a href=\"${prevRelativePath}\" class=\"chapter-nav-prev\" title=\"${chapterTitle}\">")
@@ -1576,7 +1531,7 @@ public class WebsiteProcessor <: Processor {
                 match (nextChapter) {
                     case Some(chapter) =>
                         let normalizedPath = PathUtils.normalizePath(chapter.filePath)
-                        let nextHtmlPath = normalizedPath.replace(".md", ".html").replace(".markdown", ".html")
+                        let nextHtmlPath = SummaryOptions.pagePath(normalizedPath)
                         let nextRelativePath = PathUtils.calculateRelativePath(currentPagePath, nextHtmlPath)
                         let chapterTitle = HtmlEscaper.escape(chapter.displayName)
                         nav.add("    <a href=\"${nextRelativePath}\" class=\"chapter-nav-next\" title=\"${chapterTitle}\">")

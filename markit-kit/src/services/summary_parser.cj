@@ -36,6 +36,7 @@ public class SummaryParser {
         let summaryConfig = parseSummary(rootPath, options)
         
         if (!summaryConfig.found) {
+            if (options.explicit) { throw IllegalArgumentException("Summary '${options.file}' is missing, empty or invalid") }
             // 没有 markit.md，使用默认逻辑
             KitHooks.warn("No ${options.file} found in root directory, using default file system order")
             let files = FileHandler.collectInputFiles(rootPath, summaryFileName: options.file)
@@ -160,18 +161,6 @@ public class SummaryParser {
             let (sections, prefixChapters) = extractNavigationStructure(navNode)
             
 
-            
-            // 检查是否提取到任何有效内容
-            if (sections.size == 0 && prefixChapters.size == 0) {
-                KitHooks.warn("No valid chapters found in ${options.file}, using default file system order")
-                return SummaryConfig(
-                    [],
-                    [],
-                    "",
-                    "",
-                    false
-                )
-            }
             
             // 6. 提取首页内容
             let homepageContent = extractHomepageHtmlContent(homepageNode)

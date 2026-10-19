@@ -73,13 +73,6 @@ public class ServeCommand {
         // 启动服务器
         try {
             let loadedConfig = BuildCoordinator.loadConfig(configPaths, inputPath)
-            // 获取 summary 文件名（用于文件监控）
-            let summaryFile = match (loadedConfig) {
-                case Some((cfg, _configPath)) =>
-                    let (file, _) = cfg.getSummaryOptions()
-                    file
-                case None => "markit.md"
-            }
             let loadedConfigPath = match (loadedConfig) {
                 case Some((_cfg, configPath)) => configPath
                 case None => ""
@@ -94,7 +87,6 @@ public class ServeCommand {
                     watchConfigPaths,
                     inputPath,
                     outputPath,
-                    summaryFile,
                     assetRoot,
                     parallelJobs
                 )
@@ -121,7 +113,6 @@ public class ServeCommand {
         watchConfigPaths: Array<String>,
         inputPath: String,
         outputPath: String,
-        summaryFile: String,
         assetRoot: String,
         parallelJobs: Int64
     ): Unit {
@@ -131,7 +122,6 @@ public class ServeCommand {
                 watchConfigPaths,
                 inputPath,
                 outputPath,
-                summaryFile,
                 assetRoot,
                 changedFiles,
                 parallelJobs
@@ -164,7 +154,6 @@ public class ServeCommand {
                         watchConfigPaths,
                         inputPath,
                         outputPath,
-                        summaryFile,
                         assetRoot,
                         changedFiles,
                         parallelJobs
@@ -180,7 +169,6 @@ public class ServeCommand {
         watchConfigPaths: Array<String>,
         inputPath: String,
         outputPath: String,
-        summaryFile: String,
         assetRoot: String,
         changedFiles: Array<String>,
         parallelJobs: Int64
@@ -188,9 +176,10 @@ public class ServeCommand {
         let markdownFiles = ArrayList<String>()
         let seenMarkdown = HashSet<String>()
         var requiresFullBuild = false
+        let summaryFiles = this.collectSummaryWatchPaths(configPaths, inputPath)
 
         for (file in changedFiles) {
-            if (this.isConfigOrSummaryFile(file, watchConfigPaths, summaryFile)) {
+            if (this.isConfigOrSummaryFile(file, watchConfigPaths, summaryFiles)) {
                 requiresFullBuild = true
                 continue
             }
@@ -258,7 +247,24 @@ public class ServeCommand {
         }
     }
 
-    private func isConfigOrSummaryFile(file: String, configPaths: Array<String>, summaryFile: String): Bool {
+    private func collectSummaryWatchPaths(configPaths: Array<String>, inputPath: String): Array<String> {
+        let files = ArrayList<String>()
+        let paths = if (configPaths.isEmpty()) { [""] } else { configPaths }
+        for (path in paths) {
+            let loaded = BuildCoordinator.loadConfig(if (path.isEmpty()) { [] } else { [path] }, inputPath)
+            if (let Some((cfg, _)) <- loaded) {
+                let root = if (cfg.i18n.routePrefix.isEmpty()) { inputPath } else {
+                    Path(inputPath).join(cfg.i18n.routePrefix).normalize().toString()
+                }
+                for (entry in cfg.summary) {
+                    if (!entry.file.isEmpty()) { files.add(Path(root).join(entry.file).normalize().toString()) }
+                }
+            }
+        }
+        return files.toArray()
+    }
+
+    private func isConfigOrSummaryFile(file: String, configPaths: Array<String>, summaryFiles: Array<String>): Bool {
         if (this.pathLooksSame(file, "markit.json")) {
             return true
         }
@@ -269,7 +275,10 @@ public class ServeCommand {
             }
         }
 
-        return this.pathLooksSame(file, summaryFile)
+        for (summaryFile in summaryFiles) {
+            if (this.pathLooksSame(file, summaryFile)) { return true }
+        }
+        return false
     }
 
     private func isMarkdownFile(file: String): Bool {

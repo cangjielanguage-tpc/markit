@@ -3,14 +3,14 @@ package markit_kit.renderers
 import markit_kit.utils.KitHooks
 
 import markit_kit.interfaces.Processor
-import markit_kit.models.{RenderConfig, RenderResult, SummaryOptions, SummaryConfig, GlobalContext}
+import markit_kit.models.{RenderConfig, RenderResult, SummaryOptions, SummaryConfig, SummaryMenu, GlobalContext}
 import markit_kit.utils.{FileHandler, PathUtils, TypstCliRunner}
 import markit_kit.processors.{ProcessorFactory, WebsiteProcessor, ParallelProcessor, MarkdownProcessor}
 import markit_kit.scanners.{HeadingStateScanner, ScanResult}
 import markit_kit.services.{SiteBuilder, SummaryParser, SearchIndexBuilder, SearchIndexSection}
 import markit.core.nodes.DocumentNode
 import markit.plugins.standard.inline.link.{FileTree, LinkConfig, RenderMode}
-import std.collection.{ArrayList, HashMap}
+import std.collection.{ArrayList, HashMap, HashSet}
 import std.fs.Path
 import std.time.MonoTime
 import std.core.StringBuilder
@@ -112,11 +112,51 @@ public class MarkdownRenderer {
         // 先创建处理器（从 GlobalContext 读取配置）
         let processor = ProcessorFactory.createProcessor(format: processorFormat)
 
-        // 收集输入文件（使用 processor 的 markit 实例解析 summary）
-        let (inputFiles, summaryConfig) = SummaryParser.parseAndCollectFiles(
-            config.inputPath,
-            summaryOptions
-        )
+        // Resolve all menus before parallel rendering. No worker mutates this context.
+        let allInputFiles = ArrayList<String>()
+        let menus = ArrayList<SummaryMenu>()
+        let owners = HashMap<String, Int64>()
+        let summaryPaths = HashSet<String>()
+        for (entry in summaryOptions.entries) {
+            if (!entry.file.isEmpty()) {
+                summaryPaths.add(Path(config.inputPath).join(entry.file).normalize().toString())
+            }
+        }
+        var summaryConfig = SummaryConfig([], [], "", "", false)
+        var firstSummary = true
+        for (entry in summaryOptions.entries) {
+            if (entry.file.isEmpty()) {
+                menus.add(SummaryMenu(entry, SummaryConfig([], [], "", "", false), []))
+                continue
+            }
+            let (files, parsed) = SummaryParser.parseAndCollectFiles(config.inputPath,
+                SummaryOptions(file: entry.file, showDrafts: entry.showDrafts, explicit: summaryOptions.explicit))
+            if (firstSummary) {
+                summaryConfig = parsed
+                firstSummary = false
+            }
+            let pages = ArrayList<String>()
+            let seenPages = HashSet<String>()
+            for (file in files) {
+                let normalized = Path(file).normalize().toString()
+                if (summaryPaths.contains(normalized)) { continue }
+                let page = SummaryOptions.pagePath(FileHandler.getRelativePath(normalized, config.inputPath))
+                if (seenPages.contains(page)) { continue }
+                seenPages.add(page)
+                pages.add(page)
+                if (owners.contains(page)) {
+                    KitHooks.warn("Page '${page}' is shared by multiple summaries; the first menu owns its navigation")
+                } else {
+                    owners.add(page, menus.size)
+                    allInputFiles.add(normalized)
+                }
+            }
+            if (pages.isEmpty()) { KitHooks.warn("Summary '${entry.file}' has no renderable chapters") }
+            menus.add(SummaryMenu(entry, parsed, pages.toArray()))
+        }
+        let inputFiles = allInputFiles.toArray()
+        GlobalContext.summaryMenus = menus.toArray()
+        GlobalContext.summaryPageOwners = owners
 
         // 构建 FileTree（从 inputFiles 提取相对路径）
         let relativeFiles = ArrayList<String>()
@@ -718,8 +758,6 @@ public class MarkdownRenderer {
             }
         }
 
-        let isSingleFile = inputFiles.size == 1
-
         // 构建网站结构
         let siteStructure = SiteBuilder.buildStructure(inputFiles, config.inputPath)
 
@@ -771,18 +809,14 @@ public class MarkdownRenderer {
         // ========== 阶段 3：后处理 ==========
 
         // 生成网站首页
-        let shouldGenerateIndex = !isSingleFile || !summaryConfig.homepageContent.isEmpty()
-
-        if (shouldGenerateIndex) {
-            SiteBuilder.generateIndex(
-                config.outputPath,
-                siteStructure,
-                processor,
-                config.siteTitle,
-                summaryConfig,
-                config.inputPath
-            )
-        }
+        SiteBuilder.generateIndex(
+            config.outputPath,
+            siteStructure,
+            processor,
+            config.siteTitle,
+            summaryConfig,
+            config.inputPath
+        )
 
         // 生成搜索索引文件
         if (allSearchSections.size > 0) {

@@ -21,40 +21,47 @@
 }
 ```
 
-## Summary
+## Summary 与导航翻译
 
 | 字段 | 默认值 | 说明 |
 | --- | --- | --- |
-| `summary.file` | `markit.md` | Summary 文件名 |
-| `summary.showDrafts` | `true` | 是否在侧边栏显示空链接草稿章节 |
+| `summary` | 首页和 `markit.md` 栏目 | 按导航顺序排列的首页/栏目数组 |
+| `summary[].home` | — | 首页项的开关，与 `file` 互斥 |
+| `summary[].file` | — | 当前语言输入根目录下的 Summary 路径 |
+| `summary[].showDrafts` | `true` | 是否显示该栏目的草稿条目 |
+| `summary[].label` | `Home` 或文件名 | 没有翻译时使用的栏目文案 |
+| `i18n.default` | `en` | 未标记内容的默认语言 |
+| `i18n.target` | `en` | 当前构建目标语言，也用于选择导航翻译 |
+| `i18n.route_prefix` | 空 | 当前语言的输入子目录 |
+| `i18n.summary.<语言>` | 未设置 | 与 `summary` 等长的文案数组，允许 `null` 回退 |
 
-Summary 文件声明侧边栏结构。一级标题是分组，无序列表链接是章节；`<!-- homepage -->` 后的内容是首页。
+`summary` 是按顶部导航顺序排列的数组。首页项使用 `home: true`，栏目项使用 `file` 指定独立的 Markdown Summary；每个栏目拥有自己的侧栏和上一篇/下一篇。`file` 相对于当前语言的输入根目录解析，`showDrafts` 默认为 `true`，仅控制侧栏空链接草稿条目是否显示。
+
+`i18n.summary.<语言>` 是与整个 `summary` 数组按下标对应的文案数组，根据 `i18n.target` 选择。没有对应语言时使用条目的 `label`；数组中的 `null` 回退到该项 `label`。已配置的数组长度必须与 `summary` 完全一致，隐藏的首页项仍占位置；调整栏目顺序时须同步调整翻译数组。未填写 `label` 时，首页使用 `Home`，栏目使用文件名。
+
+最多允许一个首页项，首页项不能同时指定 `file`。省略首页项或设置 `home: false` 时不显示首页链接，语言入口跳转到第一个有效栏目。启用首页时，内容取第一个栏目 Summary 的 `<!-- homepage -->` 部分；没有该内容则跳转到第一个有效章节。没有自定义首页也会显示配置的栏目导航。
+
+栏目入口是其第一个实际参与构建的非草稿章节。页面按规范化后的完整路径匹配栏目；同一页面被多个栏目引用时只构建一次，归属配置中最先引用它的栏目并给出警告。所有配置的 Summary 文件均不作为正文渲染；目录文件缺失或不可解析时报告构建错误，不回退扫描整个输入目录。草稿父项下面的子树不参与构建。
+
+任一 Summary 或配置文件发生变化时，`serve --watch` 重新构建全站导航。PDF、Markdown、Typst 按栏目顺序合并并去重页面，首页前置内容最多插入一次。未配置 `summary` 时默认使用首页项和 `markit.md` 栏目；默认 `markit.md` 不存在时仍可按文件系统收集文档。
+
+这是破坏性变更：不再接受旧 `summary` 对象、顶层 `nav`、`summary.label.home/documentation` 或 `i18n.home/documentation`。请迁移为 `summary[]` 和 `i18n.summary.<语言>`。
 
 ```json
 {
-  "summary": {
-    "file": "markit.md",
-    "showDrafts": false
-  }
-}
-```
-
-## i18n
-
-| 字段 | 默认值 | 说明 |
-| --- | --- | --- |
-| `i18n.default` | `en` | 默认语言 |
-| `i18n.target` | `en` | 当前构建目标语言 |
-| `i18n.home` | `Home` | 首页文案 |
-| `i18n.documentation` | `Documentation` | 文档页文案 |
-
-```json
-{
+  "summary": [
+    { "home": true, "label": "首页" },
+    { "file": "markit.md", "showDrafts": true, "label": "文档" },
+    { "file": "demo.md", "showDrafts": true, "label": "示例" },
+    { "file": "api-reference.md", "showDrafts": false, "label": "API 参考" }
+  ],
   "i18n": {
     "default": "zh",
-    "target": "zh",
-    "home": "首页",
-    "documentation": "文档"
+    "target": "en",
+    "summary": {
+      "en": ["Home", "Documentation", "Examples", "API Reference"],
+      "jp": ["ホーム", "ドキュメント", "サンプル", "API リファレンス"]
+    }
   }
 }
 ```
@@ -68,7 +75,14 @@ Summary 文件声明侧边栏结构。一级标题是分组，无序列表链接
     "number": {
       "enabled": true,
       "resetFor": "directory",
-      "startFrom": [1, 1, 1, 1, 1, 1]
+      "startFrom": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
     }
   }
 }
@@ -174,7 +188,7 @@ Summary 文件声明侧边栏结构。一级标题是分组，无序列表链接
       "minute": "分钟"
     },
     "repos": {
-      "gitcode": "https://gitcode.com/zichexuelan/markit"
+      "gitcode": "https://gitcode.com/Cangjie-TPC/markit"
     }
   }
 }
@@ -211,7 +225,9 @@ Summary 文件声明侧边栏结构。一级标题是分组，无序列表链接
         "logo": "assets/sample.svg",
         "title": "My Docs",
         "subtitle": "Reference Manual",
-        "authors": ["Docs Team"]
+        "authors": [
+          "Docs Team"
+        ]
       }
     }
   }
@@ -230,14 +246,19 @@ PDF 输出会先生成 Typst 文件，再调用 Typst 生成 `merged.pdf`。如�
   "toc": true,
   "i18n": {
     "default": "zh",
-    "target": "zh",
-    "home": "首页",
-    "documentation": "文档"
+    "target": "zh"
   },
-  "summary": {
-    "file": "markit.md",
-    "showDrafts": false
-  },
+  "summary": [
+    {
+      "home": true,
+      "label": "首页"
+    },
+    {
+      "file": "markit.md",
+      "showDrafts": false,
+      "label": "文档"
+    }
+  ],
   "codeBlock": {
     "enabled": true,
     "group": true,
@@ -252,7 +273,14 @@ PDF 输出会先生成 Typst 文件，再调用 Typst 生成 `merged.pdf`。如�
     "number": {
       "enabled": true,
       "resetFor": "directory",
-      "startFrom": [1, 1, 1, 1, 1, 1]
+      "startFrom": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
     }
   },
   "website": {

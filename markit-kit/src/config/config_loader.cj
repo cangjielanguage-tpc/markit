@@ -5,6 +5,7 @@ import markit_kit.utils.KitHooks
 import codehl.{LanguageAlias, LanguageRegistration}
 import seajson.*
 import markit_kit.utils.JsonUtils
+import markit_kit.models.SummaryEntry
 import std.fs.{Path, exists, FileInfo, File}
 import std.collection.{ArrayList, HashSet}
 
@@ -104,6 +105,9 @@ public class ConfigLoader {
     private static func parseConfig(jsonObject: JsonValue): MarkitConfig {
         let config = MarkitConfig()
 
+        if (jsonField(jsonObject, "nav").isSome()) {
+            throw IllegalArgumentException("The top-level nav option was removed; use summary[]")
+        }
         // 检查顶层未知 key
         let topLevelKeys = HashSet<String>(
             ["title", "theme", "format", "type", "toc", "codeBlock", "list", "math", "table", "i18n", "heading", "summary",
@@ -173,13 +177,35 @@ public class ConfigLoader {
 
         // 解析 i18n 配置
         if (let Some(i18nObj) <- jsonFieldObj(jsonObject, "i18n")) {
-            warnUnknownKeys(i18nObj, HashSet<String>(["default", "target", "route_prefix", "home", "documentation"]),
+            warnUnknownKeys(i18nObj, HashSet<String>(["default", "target", "route_prefix", "summary"]),
                 "i18n")
+            if (jsonField(i18nObj, "home").isSome() || jsonField(i18nObj, "documentation").isSome()) {
+                throw IllegalArgumentException("i18n.home/documentation were removed; use i18n.summary.<language>")
+            }
+            if (let Some(labelsValue) <- jsonField(i18nObj, "summary")) {
+                match (labelsValue) {
+                    case JsonObjVal(_) =>
+                        for (language in jsonKeys(labelsValue)) {
+                            let labels = ArrayList<?String>()
+                            match (jsonField(labelsValue, language)) {
+                                case Some(JsonArrVal(items)) =>
+                                    for (item in items) {
+                                        match (item) {
+                                            case JsonStrVal(label) => labels.add(Some(label))
+                                            case JsonNull => labels.add(Option<String>.None)
+                                            case _ => throw IllegalArgumentException("i18n.summary.${language} expects strings or null")
+                                        }
+                                    }
+                                case _ => throw IllegalArgumentException("i18n.summary.${language} must be an array")
+                            }
+                            config.i18n.summary.add(language, labels.toArray())
+                        }
+                    case _ => throw IllegalArgumentException("i18n.summary must be an object of language label arrays")
+                }
+            }
             config.i18n.default = jsonFieldString(i18nObj, "default") ?? config.i18n.default
             config.i18n.target = jsonFieldString(i18nObj, "target") ?? config.i18n.target
             config.i18n.routePrefix = jsonFieldString(i18nObj, "route_prefix") ?? config.i18n.routePrefix
-            config.i18n.home = jsonFieldString(i18nObj, "home") ?? config.i18n.home
-            config.i18n.documentation = jsonFieldString(i18nObj, "documentation") ?? config.i18n.documentation
         }
 
         // 解析 heading 配置
@@ -207,12 +233,52 @@ public class ConfigLoader {
             }
         }
 
-        // 解析 summary 配置
-        if (let Some(summaryObj) <- jsonFieldObj(jsonObject, "summary")) {
-            warnUnknownKeys(summaryObj, HashSet<String>(["file", "showDrafts"]), "summary")
-            config.summary.file = jsonFieldString(summaryObj, "file") ?? config.summary.file
-            config.summary.showDrafts = jsonFieldBool(summaryObj, "showDrafts") ?? config.summary.showDrafts
+        // Summary entries and translations share the exact same positional indices.
+        if (let Some(value) <- jsonField(jsonObject, "summary")) {
+            config.summaryExplicit = true
+            let entries = ArrayList<SummaryEntry>()
+            match (value) {
+                case JsonArrVal(items) =>
+                    for (i in 0..items.size) {
+                        let item = items[i]
+                        match (item) {
+                            case JsonObjVal(_) => ()
+                            case _ => throw IllegalArgumentException("summary[${i}] must be an object")
+                        }
+                        warnUnknownKeys(item, HashSet<String>(["home", "file", "showDrafts", "label"]), "summary[${i}]")
+                        let isHome = jsonField(item, "home").isSome()
+                        if (isHome == jsonField(item, "file").isSome()) {
+                            throw IllegalArgumentException("summary[${i}] requires exactly one of home or file")
+                        }
+                        let home = match (jsonField(item, "home")) {
+                            case Some(JsonBoolVal(enabled)) => enabled
+                            case None => false
+                            case _ => throw IllegalArgumentException("summary[${i}].home must be boolean")
+                        }
+                        let file = match (jsonField(item, "file")) {
+                            case Some(JsonStrVal(path)) =>
+                                if (path.trimAscii().isEmpty()) { throw IllegalArgumentException("summary[${i}].file must not be empty") }
+                                path
+                            case None => ""
+                            case _ => throw IllegalArgumentException("summary[${i}].file must be a string")
+                        }
+                        let drafts = match (jsonField(item, "showDrafts")) {
+                            case Some(JsonBoolVal(enabled)) => enabled
+                            case None => true
+                            case _ => throw IllegalArgumentException("summary[${i}].showDrafts must be boolean")
+                        }
+                        let label = match (jsonField(item, "label")) {
+                            case Some(JsonStrVal(text)) => text
+                            case None => if (isHome) { "Home" } else { file }
+                            case _ => throw IllegalArgumentException("summary[${i}].label must be a string")
+                        }
+                        entries.add(SummaryEntry(home: home, file: file, showDrafts: drafts, label: label))
+                    }
+                case _ => throw IllegalArgumentException("summary must be an array; the old Summary object is no longer supported")
+            }
+            config.summary = entries.toArray()
         }
+        config.validateSummary()
 
         // 解析 pdf 配置
         if (let Some(pdfObj) <- jsonFieldObj(jsonObject, "pdf")) {
