@@ -14,7 +14,7 @@ import std.collection.{ArrayList, HashSet}
 import markit.plugins.toc.{Toc, TocItem}
 import std.fs.Path
 import std.convert.*
-import markit_kit.utils.{CliMarkitFactory, PathUtils}
+import markit_kit.utils.{CliMarkitFactory, PathUtils, ReadingStatistics}
 
 /**
  * 网站处理器
@@ -288,7 +288,7 @@ public class WebsiteProcessor <: Processor {
         
         // 如果启用统计信息，添加到 article-extra
         if (statisticTotalTexts || statisticSpentTime) {
-            let statisticHtml = generateStatisticHtml(content)
+            let statisticHtml = generateStatisticHtml(document)
             if (!statisticHtml.isEmpty()) {
                 articleExtra = articleExtra + statisticHtml
             }
@@ -1408,19 +1408,24 @@ public class WebsiteProcessor <: Processor {
     /**
      * 生成文章统计信息HTML
      * 
-     * @param content Markdown原始内容
+     * @param document 当前目标语言的文档节点
      * @return 统计信息HTML
      */
-    private func generateStatisticHtml(content: String): String {
+    private func generateStatisticHtml(document: DocumentNode): String {
         if (!statisticTotalTexts && !statisticSpentTime) {
             return ""
         }
         
-        // 计算字数（使用RuneArray来正确处理多字节字符）
-        let wordCount = content.toRuneArray().size
+        let reading = ReadingStatistics.fromDocument(document)
+        let wordCount = reading.totalTexts
+        let description = if (currentLanguage.startsWith("zh")) {
+            "正文阅读估算：中文每分钟 400 字、英文每分钟 200 词；不含代码、图表和公式的研读时间。"
+        } else {
+            "Prose estimate: 400 CJK characters or 200 English words per minute; excludes studying code, diagrams and formulas."
+        }
         
         let stats = ArrayList<String>()
-        stats.add("<div class=\"article-statistic\">")
+        stats.add("<div class=\"article-statistic\" title=\"${HtmlEscaper.escape(description)}\">")
         
         // 总字数
         if (statisticTotalTexts) {
@@ -1430,19 +1435,21 @@ public class WebsiteProcessor <: Processor {
         
         // 预计阅读时间
         if (statisticSpentTime) {
-            let minutes = wordCount / 400
+            let seconds = reading.estimatedSeconds
+            let minutes = (seconds + 59) / 60
             var unit = statisticMinute
             var timeValue = minutes
             
             // 如果小于1分钟，显示为秒
-            if (minutes < 1) {
-                timeValue = (wordCount * 60) / 400
+            if (seconds < 60) {
+                timeValue = seconds
                 unit = statisticSecond
             }
             
+            let scope = if (currentLanguage.startsWith("zh")) { "（正文）" } else { " (prose)" }
             let spentTimeHtml = statisticSpentTimeTemplate
                 .replace("{total}", timeValue.toString())
-                .replace("{unit}", unit)
+                .replace("{unit}", unit) + scope
             stats.add("    <span class=\"statistic-item statistic-time\"><svg class=\"statistic-icon\" viewBox=\"0 0 1024 1024\" xmlns=\"http://www.w3.org/2000/svg\" width=\"14\" height=\"14\"><path d=\"M512 192c212.352 0 384 171.648 384 384-1.28 212.352-172.928 384-384 384s-384-171.648-384-384c0-211.072 171.648-384 384-384z m0 64C336.128 256 192 400.128 192 576s142.784 320 320 320 320-144.128 320-320-144.128-320-320-320z m-32 128a32 32 0 0 1 32 32v178.688l118.656 118.656a32 32 0 0 1-45.248 45.248l-128-128.064a32.448 32.448 0 0 1-9.344-22.272L448 416a32 32 0 0 1 32-32z m190.592-320c18.944 0 33.408 13.888 33.408 32 0 18.112-15.552 32-33.344 32H353.408C334.464 128 320 114.112 320 96c0-18.112 14.464-32 33.408-32z\" fill=\"currentColor\"></path></svg>${spentTimeHtml}</span>")
         }
         

@@ -5053,7 +5053,8 @@ body.homepage .content table td:first-child {
 }
 
 .markit-anchor-copy,
-.markit-block-copy {
+.markit-block-copy,
+.markit-reference-choice {
     position: relative;
     min-width: 0;
     height: 24px;
@@ -5100,9 +5101,59 @@ body.homepage .content table td:first-child {
     flex: 0 0 24px;
 }
 
+.markit-reference-group {
+    position: relative;
+    display: inline-flex;
+}
+
+.markit-reference-menu {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    min-width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    padding: 6px;
+    border: 1px solid var(--border-primary);
+    border-radius: 6px;
+    background: var(--bg-primary);
+    box-shadow: 0 6px 18px var(--shadow-primary);
+}
+
+.markit-reference-menu[hidden] {
+    display: none;
+}
+
+.markit-reference-menu::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: 0;
+    right: 0;
+    height: 5px;
+}
+
+.markit-reference-choice {
+    width: 32px;
+    height: 30px;
+    flex: 0 0 32px;
+    padding: 4px;
+    box-shadow: none;
+}
+
+.markit-reference-choice:focus-visible,
+.markit-anchor-copy:focus-visible,
+.markit-block-copy:focus-visible {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 2px;
+}
+
 .markit-anchor-copy:hover,
 .markit-block-copy:hover,
+.markit-reference-choice:hover,
 .markit-anchor-copy.copied,
+.markit-reference-choice.copied,
 .markit-block-copy.copied {
     background: var(--bg-secondary);
     color: var(--accent-primary);
