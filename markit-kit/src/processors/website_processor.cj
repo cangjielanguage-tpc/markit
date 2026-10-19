@@ -1446,10 +1446,9 @@ public class WebsiteProcessor <: Processor {
                 unit = statisticSecond
             }
             
-            let scope = if (currentLanguage.startsWith("zh")) { "（正文）" } else { " (prose)" }
             let spentTimeHtml = statisticSpentTimeTemplate
                 .replace("{total}", timeValue.toString())
-                .replace("{unit}", unit) + scope
+                .replace("{unit}", unit)
             stats.add("    <span class=\"statistic-item statistic-time\"><svg class=\"statistic-icon\" viewBox=\"0 0 1024 1024\" xmlns=\"http://www.w3.org/2000/svg\" width=\"14\" height=\"14\"><path d=\"M512 192c212.352 0 384 171.648 384 384-1.28 212.352-172.928 384-384 384s-384-171.648-384-384c0-211.072 171.648-384 384-384z m0 64C336.128 256 192 400.128 192 576s142.784 320 320 320 320-144.128 320-320-144.128-320-320-320z m-32 128a32 32 0 0 1 32 32v178.688l118.656 118.656a32 32 0 0 1-45.248 45.248l-128-128.064a32.448 32.448 0 0 1-9.344-22.272L448 416a32 32 0 0 1 32-32z m190.592-320c18.944 0 33.408 13.888 33.408 32 0 18.112-15.552 32-33.344 32H353.408C334.464 128 320 114.112 320 96c0-18.112 14.464-32 33.408-32z\" fill=\"currentColor\"></path></svg>${spentTimeHtml}</span>")
         }
         

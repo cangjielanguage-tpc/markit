@@ -60,11 +60,33 @@
       <key>name</key>
       <string>Type</string>
       <key>scope</key>
-      <string>storage.type, storage.type.primitive, storage.type.package, storage.type.import, entity.name.type, entity.name.type.grammar, support.class, support.class.Cangjie.keyword, support.other.token.lexer.antlr</string>
+      <string>storage.type, storage.type.primitive, storage.type.package, storage.type.import, entity.name.type, entity.name.type.grammar, entity.name.namespace, support.class, support.class.Cangjie.keyword, support.other.token.lexer.antlr</string>
       <key>settings</key>
       <dict>
         <key>foreground</key>
         <string>#7C3AED</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Namespace Member</string>
+      <key>scope</key>
+      <string>variable.other.namespace-member.Cangjie</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#1F2937</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Organization</string>
+      <key>scope</key>
+      <string>entity.name.organization</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#A16207</string>
       </dict>
     </dict>
     <dict>

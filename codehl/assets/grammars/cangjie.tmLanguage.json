@@ -7,6 +7,8 @@
 		}, {
 			"include": "#mark"
 		}, {
+			"include" : "#organization-prefix"
+		}, {
 			"include" : "#package"
 		}, {
 			"include" : "#import"
@@ -39,6 +41,30 @@
 		}
 	],
 	"repository" : {
+		"organization-prefix" : {
+			"patterns" : [{
+				"begin" : "(`?[\\p{XID_Start}][\\p{XID_Continue}]*`?)(::)(`?[\\p{XID_Start}][\\p{XID_Continue}]*`?)",
+				"beginCaptures" : {
+					"1" : {"name" : "entity.name.organization.Cangjie"},
+					"2" : {"name" : "punctuation.separator.Cangjie"},
+					"3" : {"name" : "entity.name.namespace.Cangjie"}
+				},
+				"end" : "(?=[^\\w.`])|$",
+				"patterns" : [{
+					"match" : "`?[\\p{XID_Start}][\\p{XID_Continue}]*`?(?=\\s*\\()",
+					"name" : "entity.name.function.call.Cangjie"
+				}, {
+					"match" : "`?[A-Z][\\p{XID_Continue}]*`?",
+					"name" : "entity.name.type.Cangjie"
+				}, {
+					"match" : "`?[\\p{XID_Start}][\\p{XID_Continue}]*`?",
+					"name" : "variable.other.namespace-member.Cangjie"
+				}, {
+					"match" : "\\.",
+					"name" : "punctuation.separator.Cangjie"
+				}]
+			}]
+		},
 		"at" : {
 			"patterns" : [{
 					"name" : "keyword.control.Cangjie",
@@ -194,6 +220,8 @@
 					"name" : "keyword.control.Cangjie",
 					"contentName" : "storage.type.package.Cangjie",
 					"patterns" : [{
+							"include" : "#organization-prefix"
+						}, {
 							"include" : "#keywords_to_identifier"
 						}, {
 							"include" : "#comments"
@@ -285,6 +313,8 @@
 					"name" : "keyword.control.Cangjie",
 					"contentName" : "storage.type.import.Cangjie",
 					"patterns" : [{
+							"include" : "#organization-prefix"
+						}, {
 							"name" : "keyword.control.char",
 							"begin" : "^(import)",
 							"end" : "\\n|[^(\\s(as)\\s)]",

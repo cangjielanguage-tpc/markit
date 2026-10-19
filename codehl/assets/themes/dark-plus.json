@@ -40,6 +40,18 @@
   },
   "tokenColors": [
     {
+      "scope": "variable.other.namespace-member.Cangjie",
+      "settings": {
+        "foreground": "#D4D4D4"
+      }
+    },
+    {
+      "scope": "entity.name.organization",
+      "settings": {
+        "foreground": "#D7BA7D"
+      }
+    },
+    {
       "scope": [
         "meta.embedded",
         "source.groovy.embedded",

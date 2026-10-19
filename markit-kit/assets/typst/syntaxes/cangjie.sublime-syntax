@@ -7,6 +7,7 @@ contexts:
   main:
     - include: strings
     - include: mark
+    - include: organization-prefix
     - include: package
     - include: import
     - include: quoteToken
@@ -25,6 +26,23 @@ contexts:
     - include: variable
     - include: qualified-type
     - include: type
+  organization-prefix:
+    - match: '(`?[\p{XID_Start}][\p{XID_Continue}]*`?)(::)(`?[\p{XID_Start}][\p{XID_Continue}]*`?)'
+      captures:
+        1: entity.name.organization.Cangjie
+        2: punctuation.separator.Cangjie
+        3: entity.name.namespace.Cangjie
+      push:
+        - match: '(?=[^\w.`])|$'
+          pop: true
+        - match: '`?[\p{XID_Start}][\p{XID_Continue}]*`?(?=\s*\()'
+          scope: entity.name.function.call.Cangjie
+        - match: '`?[A-Z][\p{XID_Continue}]*`?'
+          scope: entity.name.type.Cangjie
+        - match: '`?[\p{XID_Start}][\p{XID_Continue}]*`?'
+          scope: variable.other.namespace-member.Cangjie
+        - match: '\.'
+          scope: punctuation.separator.Cangjie
   at:
     - match: "@"
       scope: keyword.control.Cangjie
@@ -35,6 +53,7 @@ contexts:
           pop: true
         - include: comments
         - include: strings
+        - include: organization-prefix
         - include: pipe-function
         - include: let-pattern-entry
         - include: classlike-declaration
@@ -464,6 +483,7 @@ contexts:
       push:
         - meta_scope: keyword.control.Cangjie
         - meta_content_scope: storage.type.import.Cangjie
+        - include: organization-prefix
         - match: '(?=\b[0-9])|(?=[^\w\s.,`*{}])|(?=\b(public|internal|protected|private|override|abstract|open|redef|sealed)\b( )*[^.,\s])|(?=\b(VArray|const|differentiable|grad|vjp|valWithGrad|adjoint|adjointOf|when|except|include|primal|stage|main|false|IntNative|mut|Nothing|prop|true|UIntNative|unsafe|Int8|Int16|Int32|Int64|UInt8|UInt16|UInt32|UInt64|Float16|Float32|Float64|Rune|Bool|Unit|struct|enum|This|package|import|class|interface|extend|func|let|var|type|init|this|super|if|else|case|try|catch|finally|for|do|while|throw|return|continue|break|is|in|match|where|spawn|synchronized|macro|quote|static|external|operator|foreign|inout)\s)'
           captures:
             1: punctuation.terminator.Cangjie
@@ -655,6 +675,7 @@ contexts:
       push:
         - meta_scope: keyword.control.Cangjie
         - meta_content_scope: storage.type.package.Cangjie
+        - include: organization-prefix
         - match: '(?=[^.\w\s])|(\r\n|\r|\n)|$'
           captures:
             1: punctuation.terminator.Cangjie
