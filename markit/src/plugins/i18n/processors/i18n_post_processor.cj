@@ -65,7 +65,10 @@ public class I18nPostProcessor {
 
         let nodeLanguage = node.string("i18n_language") ?? defaultLanguage
         let ownShouldRender = shouldRenderLanguage(nodeLanguage)
-        let shouldRender = ownShouldRender || childShouldRender
+        // A quote is a container, not language content of its own. Hiding every
+        // translated child must also hide its border and anchor in other targets.
+        let hiddenQuote = node.kind == "Blockquote" && !node.children.isEmpty() && !childShouldRender
+        let shouldRender = !hiddenQuote && (ownShouldRender || childShouldRender)
         if (!shouldRender) {
             node.setString("render", "false")
         }

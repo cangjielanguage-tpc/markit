@@ -265,6 +265,9 @@
             referenceButton.type = 'button';
             referenceButton.className = 'markit-anchor-copy';
             referenceButton.setAttribute('aria-label', '{{copyReferenceLinkText}}');
+            referenceButton.setAttribute('aria-haspopup', 'menu');
+            referenceButton.setAttribute('aria-expanded', 'false');
+            referenceButton.setAttribute('aria-controls', 'markit-reference-menu');
             var anchorIcon = '<svg aria-hidden="true" focusable="false" class="markit-anchor-copy-icon" viewBox="0 0 1024 1024" width="14" height="14"><path d="M680.192 497.408l-257.536-198.4-125.184 125.184 198.144 257.28 184.576-184.064zM418.048 253.952l18.432-18.688 12.288-12.032-25.856-25.856L196.352 424.96l25.6 25.6 29.696-30.72 1.28-1.28 165.12-164.608z m81.664 473.856l-0.512 0.512-15.104 15.104 25.6 25.6 257.28-257.536-25.6-25.344-6.656 6.912-0.512 0.256-0.512 0.256-7.424 7.68-0.768 0.512-225.792 226.048z m-16.384-456.192l219.648 169.216 16.128-16.128 1.792-1.792c11.264-11.264 30.208-11.264 41.472 0l67.072 67.072 0.512 0.512c11.264 11.52 11.264 30.464 0 41.728L701.44 660.992l182.784 182.784c11.776 11.264 11.776 30.208 0 41.728-11.52 11.776-30.208 11.776-41.728 0l-182.784-182.784-128.512 128.768h-0.256c-11.52 11.264-30.208 11.264-41.728 0L422.912 765.44l-1.536-1.28c-11.52-11.52-11.52-30.464 0-41.728l17.92-17.92-169.472-219.648L242.688 512l-0.512 0.256c-11.776 11.264-30.208 11.264-41.472 0l-66.304-65.536-1.536-1.536c-11.52-11.776-11.52-30.208 0-41.984L401.92 135.168c11.264-11.52 30.208-11.52 41.472 0l67.328 66.816v0.256c11.52 11.776 11.52 29.696 0 41.984l-27.392 27.392z" fill="currentColor"></path></svg>';
 
             var blockButton = document.createElement('button');
@@ -276,7 +279,32 @@
             var checkIcon = '<svg aria-hidden="true" focusable="false" viewBox="0 0 16 16" width="14" height="14" fill="currentColor"><path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.75.75 0 0 1 1.06-1.06L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"></path></svg>';
             blockButton.innerHTML = copyIcon;
 
-            toolbar.appendChild(referenceButton);
+            var referenceGroup = document.createElement('div');
+            referenceGroup.className = 'markit-reference-group';
+            var referenceMenu = document.createElement('div');
+            referenceMenu.id = 'markit-reference-menu';
+            referenceMenu.className = 'markit-reference-menu';
+            referenceMenu.setAttribute('role', 'menu');
+            referenceMenu.setAttribute('aria-label', '{{copyReferenceLinkText}}');
+            referenceMenu.hidden = true;
+            var htmlIcon = '<svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m8 5-6 7 6 7m8-14 6 7-6 7M14 3l-4 18"/></svg>';
+            var markdownIcon = '<svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 18V6l5 6 5-6v12m6-12v12m-4-4 4 4 4-4"/></svg>';
+            function makeReferenceChoice(format, icon) {
+                var button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'markit-reference-choice';
+                button.setAttribute('role', 'menuitem');
+                button.setAttribute('aria-label', '{{copyReferenceLinkText}} (' + format + ')');
+                button.title = '{{copyReferenceLinkText}} (' + format + ')';
+                button.innerHTML = icon;
+                referenceMenu.appendChild(button);
+                return button;
+            }
+            var htmlReferenceButton = makeReferenceChoice('HTML', htmlIcon);
+            var markdownReferenceButton = makeReferenceChoice('Markdown', markdownIcon);
+            referenceGroup.appendChild(referenceButton);
+            referenceGroup.appendChild(referenceMenu);
+            toolbar.appendChild(referenceGroup);
             toolbar.appendChild(blockButton);
             document.body.appendChild(toolbar);
 
@@ -294,13 +322,26 @@
 
             function clearCopiedState() {
                 copyFeedbackToken += 1;
-                referenceButton.classList.remove('copied');
-                referenceButton.style.width = '';
                 if (activeTarget) {
                     setReferenceButtonContent(activeTarget.id);
                 }
+                htmlReferenceButton.classList.remove('copied');
+                markdownReferenceButton.classList.remove('copied');
+                htmlReferenceButton.innerHTML = htmlIcon;
+                markdownReferenceButton.innerHTML = markdownIcon;
                 blockButton.classList.remove('copied');
                 blockButton.innerHTML = copyIcon;
+            }
+
+            function openReferenceMenu() {
+                clearHideTimer();
+                referenceMenu.hidden = false;
+                referenceButton.setAttribute('aria-expanded', 'true');
+            }
+
+            function closeReferenceMenu() {
+                referenceMenu.hidden = true;
+                referenceButton.setAttribute('aria-expanded', 'false');
             }
 
             function setReferenceButtonContent(label) {
@@ -309,6 +350,12 @@
             }
 
             function referenceFor(target) {
+                var url = new URL(window.location.href);
+                url.hash = target.id;
+                return '[' + target.id.replace(/\]/g, '\\]') + '](<' + url.href + '>)';
+            }
+
+            function markdownReferenceFor(target) {
                 return '[' + target.id.replace(/\]/g, '\\]') + '](#' + target.id + ')';
             }
 
@@ -343,11 +390,10 @@
             function setToolbarPosition(target, positionTarget) {
                 var anchorValue = target.id;
                 var referenceValue = referenceFor(target);
-                referenceButton.style.width = '';
                 setReferenceButtonContent(anchorValue);
-                referenceButton.setAttribute('title', referenceValue);
-                referenceButton.setAttribute('data-tooltip', referenceValue);
-                referenceButton.dataset.copyValue = referenceValue;
+                referenceButton.title = '{{copyReferenceLinkText}}';
+                htmlReferenceButton.dataset.copyValue = referenceValue;
+                markdownReferenceButton.dataset.copyValue = markdownReferenceFor(target);
 
                 var blockValue = blockMarkdownFor(target);
                 blockButton.dataset.copyValue = blockValue;
@@ -371,6 +417,9 @@
                     return;
                 }
                 clearHideTimer();
+                if (activeTarget !== target) {
+                    closeReferenceMenu();
+                }
                 activeTarget = target;
                 activePositionTarget = positionTarget || target;
                 clearCopiedState();
@@ -379,7 +428,11 @@
 
             function hideToolbarSoon() {
                 clearHideTimer();
+                if (toolbar.contains(document.activeElement)) {
+                    return;
+                }
                 hideTimer = window.setTimeout(function () {
+                    closeReferenceMenu();
                     activeTarget = null;
                     activePositionTarget = null;
                     clearCopiedState();
@@ -394,31 +447,18 @@
                     return;
                 }
                 navigator.clipboard.writeText(value).then(function () {
+                    clearCopiedState();
                     var token = copyFeedbackToken + 1;
                     copyFeedbackToken = token;
                     button.classList.add('copied');
-                    if (button === referenceButton) {
-                        button.style.width = button.getBoundingClientRect().width + 'px';
-                        setReferenceButtonContent('{{copiedText}} ✓');
-                        button.setAttribute('data-tooltip', '{{copiedText}}');
-                        button.setAttribute('title', '{{copiedText}}');
-                    } else {
-                        button.innerHTML = checkIcon;
-                    }
+                    button.innerHTML = checkIcon;
                     setTimeout(function () {
                         if (copyFeedbackToken !== token) {
                             return;
                         }
                         button.classList.remove('copied');
-                        if (button === referenceButton && activeTarget) {
-                            referenceButton.style.width = '';
-                            setReferenceButtonContent(activeTarget.id);
-                            var referenceValue = referenceFor(activeTarget);
-                            referenceButton.setAttribute('data-tooltip', referenceValue);
-                            referenceButton.setAttribute('title', referenceValue);
-                        } else if (button === blockButton) {
-                            blockButton.innerHTML = copyIcon;
-                        }
+                        button.innerHTML = button === htmlReferenceButton ? htmlIcon :
+                            button === markdownReferenceButton ? markdownIcon : copyIcon;
                     }, 1200);
                 });
             }
@@ -447,10 +487,44 @@
 
             toolbar.addEventListener('mouseenter', clearHideTimer);
             toolbar.addEventListener('mouseleave', hideToolbarSoon);
+            toolbar.addEventListener('focusin', clearHideTimer);
+            toolbar.addEventListener('focusout', function (event) {
+                if (!toolbar.contains(event.relatedTarget)) {
+                    closeReferenceMenu();
+                    hideToolbarSoon();
+                }
+            });
+            referenceGroup.addEventListener('mouseenter', openReferenceMenu);
+            referenceGroup.addEventListener('mouseleave', closeReferenceMenu);
+            referenceGroup.addEventListener('focusin', openReferenceMenu);
             referenceButton.addEventListener('click', function (event) {
                 event.preventDefault();
                 event.stopPropagation();
-                copyFromButton(referenceButton);
+                openReferenceMenu();
+            });
+            referenceButton.addEventListener('keydown', function (event) {
+                if (event.key === 'ArrowDown') {
+                    event.preventDefault();
+                    openReferenceMenu();
+                    htmlReferenceButton.focus();
+                }
+            });
+            referenceMenu.addEventListener('keydown', function (event) {
+                if (event.key === 'Escape') {
+                    event.preventDefault();
+                    referenceButton.focus();
+                    closeReferenceMenu();
+                } else if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+                    event.preventDefault();
+                    (document.activeElement === htmlReferenceButton ? markdownReferenceButton : htmlReferenceButton).focus();
+                }
+            });
+            [htmlReferenceButton, markdownReferenceButton].forEach(function (button) {
+                button.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    copyFromButton(button);
+                });
             });
             blockButton.addEventListener('click', function (event) {
                 event.preventDefault();

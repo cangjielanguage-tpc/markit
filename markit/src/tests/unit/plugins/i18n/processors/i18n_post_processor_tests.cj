@@ -26,6 +26,29 @@ private func i18nZh(): Markit {
 @Test
 class I18nPostProcessorTests {
     @TestCase
+    func translatedQuotesDoNotLeaveEmptyContainersAcrossModes() {
+        let markdown = "> 中文注释\n\n> :::en\n> English note\n> :::\n"
+        ParseModeTestKit.assertHtmlAcrossModes(i18nZh, markdown, "<blockquote><p>中文注释</p></blockquote>")
+        ParseModeTestKit.assertHtmlAcrossModes(i18nEn, markdown, "<blockquote><p>English note</p></blockquote>")
+    }
+
+    @TestCase
+    func nestedHiddenQuotesDoNotLeaveEmptyContainersAcrossModes() {
+        let markdown = "> > :::en\n> > English note\n> > :::\n"
+        ParseModeTestKit.assertHtmlAcrossModes(i18nZh, markdown, "")
+        ParseModeTestKit.assertHtmlAcrossModes(i18nEn, markdown,
+            "<blockquote><blockquote><p>English note</p></blockquote></blockquote>")
+    }
+
+    @TestCase
+    func sharedCodeInsideQuoteRemainsVisibleAcrossModes() {
+        let markdown = "> ```text\n> shared\n> ```\n"
+        let expected = "<blockquote><pre><code class=\"language-text\">shared</code></pre></blockquote>"
+        ParseModeTestKit.assertHtmlAcrossModes(i18nZh, markdown, expected)
+        ParseModeTestKit.assertHtmlAcrossModes(i18nEn, markdown, expected)
+    }
+
+    @TestCase
     func metadataMarksHiddenLanguageAcrossModes() {
         ParseModeTestKit.assertAcrossModes(
             i18nEn,

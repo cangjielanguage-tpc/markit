@@ -2149,13 +2149,17 @@ hr {
 
 /* Tables with modern styling */
 .content table {
+    display: block;
     border-collapse: collapse;
     width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
     margin: 16px 0;
 }
 
 .content table th,
 .content table td {
+    min-width: 6rem;
     border: 1px solid var(--border-primary);
     padding: 8px 12px;
     text-align: left;
@@ -2171,7 +2175,8 @@ hr {
 }
 
 .content table.table-three-line {
-    width: min(100%, max-content);
+    width: fit-content;
+    max-width: 100%;
 }
 
 .content table.table-three-line th,
@@ -2401,7 +2406,7 @@ body:not(.homepage) .content blockquote {
 }
 
 /* 链接悬停效果增强 */
-body:not(.homepage) .content a:not(.nav-link):not(.floating-toc-link):not(.top-nav-link):not(.git-link):not(.repo-btn) {
+body:not(.homepage) .content a:not(.nav-link):not(.floating-toc-link):not(.top-nav-link):not(.git-link):not(.repo-btn):not(.chapter-nav-prev):not(.chapter-nav-next) {
     position: relative;
     background: linear-gradient(90deg, #259C8B, #4694F5);
     background-size: 0% 2px;
@@ -2410,7 +2415,7 @@ body:not(.homepage) .content a:not(.nav-link):not(.floating-toc-link):not(.top-n
     transition: background-size 0.3s ease;
 }
 
-body:not(.homepage) .content a:not(.nav-link):not(.floating-toc-link):not(.top-nav-link):not(.git-link):not(.repo-btn):hover {
+body:not(.homepage) .content a:not(.nav-link):not(.floating-toc-link):not(.top-nav-link):not(.git-link):not(.repo-btn):not(.chapter-nav-prev):not(.chapter-nav-next):hover {
     background-size: 100% 2px;
 }
 
@@ -4222,12 +4227,12 @@ body:not(.homepage) .content table:not(.table-three-line) thead,
     background: var(--bg-secondary);
 }
 
-body:not(.homepage) .content a:not(.nav-link):not(.floating-toc-link):not(.top-nav-link):not(.git-link):not(.repo-btn) {
+body:not(.homepage) .content a:not(.nav-link):not(.floating-toc-link):not(.top-nav-link):not(.git-link):not(.repo-btn):not(.chapter-nav-prev):not(.chapter-nav-next) {
     background: none;
     text-decoration: none;
 }
 
-body:not(.homepage) .content a:not(.nav-link):not(.floating-toc-link):not(.top-nav-link):not(.git-link):not(.repo-btn):hover {
+body:not(.homepage) .content a:not(.nav-link):not(.floating-toc-link):not(.top-nav-link):not(.git-link):not(.repo-btn):not(.chapter-nav-prev):not(.chapter-nav-next):hover {
     background: none;
     text-decoration: underline;
     text-underline-offset: 2px;
@@ -4320,12 +4325,55 @@ body:not(.homepage) .content::-webkit-scrollbar-thumb,
     border-radius: 6px;
 }
 
-.chapter-nav-prev:hover,
-.chapter-nav-next:hover {
-    transform: none;
-    box-shadow: none;
-    border-color: var(--border-secondary);
-    background: var(--bg-tertiary);
+.chapter-navigation a.chapter-nav-prev,
+.chapter-navigation a.chapter-nav-next {
+    text-decoration: none;
+    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.chapter-navigation a.chapter-nav-prev:hover,
+.chapter-navigation a.chapter-nav-next:hover,
+.chapter-navigation a.chapter-nav-prev:focus-visible,
+.chapter-navigation a.chapter-nav-next:focus-visible {
+    text-decoration: none;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px var(--shadow-hover);
+    border-color: var(--accent-primary);
+    background: var(--accent-bg);
+}
+
+.chapter-nav-label {
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.chapter-nav-prev:is(:hover, :focus-visible) .chapter-nav-label {
+    transform: translateX(-3px);
+    color: var(--accent-primary);
+}
+
+.chapter-nav-next:is(:hover, :focus-visible) .chapter-nav-label {
+    transform: translateX(3px);
+    color: var(--accent-primary);
+}
+
+.chapter-navigation a:focus-visible {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .chapter-navigation a.chapter-nav-prev,
+    .chapter-navigation a.chapter-nav-next,
+    .chapter-navigation .chapter-nav-label {
+        transition: none;
+        transform: none;
+    }
+
+    .chapter-navigation a.chapter-nav-prev:is(:hover, :focus-visible),
+    .chapter-navigation a.chapter-nav-next:is(:hover, :focus-visible),
+    .chapter-navigation a:is(:hover, :focus-visible) .chapter-nav-label {
+        transform: none;
+    }
 }
 
 .shortcut-key {
@@ -5005,7 +5053,8 @@ body.homepage .content table td:first-child {
 }
 
 .markit-anchor-copy,
-.markit-block-copy {
+.markit-block-copy,
+.markit-reference-choice {
     position: relative;
     min-width: 0;
     height: 24px;
@@ -5052,9 +5101,59 @@ body.homepage .content table td:first-child {
     flex: 0 0 24px;
 }
 
+.markit-reference-group {
+    position: relative;
+    display: inline-flex;
+}
+
+.markit-reference-menu {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    min-width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    padding: 6px;
+    border: 1px solid var(--border-primary);
+    border-radius: 6px;
+    background: var(--bg-primary);
+    box-shadow: 0 6px 18px var(--shadow-primary);
+}
+
+.markit-reference-menu[hidden] {
+    display: none;
+}
+
+.markit-reference-menu::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: 0;
+    right: 0;
+    height: 5px;
+}
+
+.markit-reference-choice {
+    width: 32px;
+    height: 30px;
+    flex: 0 0 32px;
+    padding: 4px;
+    box-shadow: none;
+}
+
+.markit-reference-choice:focus-visible,
+.markit-anchor-copy:focus-visible,
+.markit-block-copy:focus-visible {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 2px;
+}
+
 .markit-anchor-copy:hover,
 .markit-block-copy:hover,
+.markit-reference-choice:hover,
 .markit-anchor-copy.copied,
+.markit-reference-choice.copied,
 .markit-block-copy.copied {
     background: var(--bg-secondary);
     color: var(--accent-primary);
