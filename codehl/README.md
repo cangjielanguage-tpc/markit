@@ -15,6 +15,8 @@
 - 支持 Markit 需要的行高亮、i18n 行过滤、目标语言过滤、双主题 HTML 片段。
 - 已接入 Markit fenced code block：原始代码保留在节点里，高亮结果写入节点属性/meta，HTML writer 再按配置输出。
 
+自动发现语法时，用户配置的目录优先于内置目录；在同一搜索目录内，先匹配完整文件名 ID，再使用语法名称、scope 和文件扩展名推导出的别名。例如 `json` 优先匹配 `JSON.tmLanguage.json`，不会被 JSON Lines 的 `source.json.lines` 别名抢占。多个别名冲突时按文件路径排序决定，结果不依赖文件系统的遍历顺序。嵌入语言也保留用户语法的优先级。
+
 ## API 概览
 
 核心入口是 `codehl.core.Highlighter`：

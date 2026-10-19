@@ -3,7 +3,7 @@ package codehl.tests
 import std.collection.HashMap
 import std.unittest.*
 import std.unittest.testmacro.*
-import codehl.{Grammar, GrammarLoader, GrammarTokenizer, Highlighter, HighlightOptions}
+import codehl.{Grammar, GrammarLoader, GrammarTokenizer, Highlighter, HighlightOptions, LanguageRegistration}
 import codehl.languages.TokenizerState
 
 @Test
@@ -161,7 +161,8 @@ class GrammarEngineTests {
 
     @TestCase
     func realHtmlScriptCarriesEmbeddedJavaScriptAcrossLines() {
-        let html = Highlighter().highlight("<script>\nconst foo = \"bar\"\n</script>", options: HighlightOptions(lang: "html"))
+        // These Shiki snapshots use the Handlebars HTML grammar; select it explicitly.
+        let html = Highlighter(languages: [LanguageRegistration("html", "vscode/handlebars/syntaxes/Handlebars.tmLanguage.json")]).highlight("<script>\nconst foo = \"bar\"\n</script>", options: HighlightOptions(lang: "html"))
 
         @Expect(
             html,
