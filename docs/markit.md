@@ -184,13 +184,13 @@ Markit 系列库已发布到仓颉中心仓。仓颉项目在 `cjpm.toml` 中按
 
 ```toml
 [dependencies]
-markit = { version = "0.2.0" }
-codehl = { version = "0.2.0" }
-mathtex = { version = "0.2.0" }
-mermaid4cj = { version = "0.2.0" }
-commandline = { version = "0.2.0" }
-fswatch = { version = "0.2.0" }
-live_server = { version = "0.2.0" }
+markit = { version = "0.1.0" }
+codehl = { version = "0.1.0" }
+mathtex = { version = "0.1.0" }
+mermaid4cj = { version = "0.1.0" }
+commandline = { version = "0.1.0" }
+fswatch = { version = "0.1.0" }
+live_server = { version = "0.1.0" }
 ```
 
 ```cangjie

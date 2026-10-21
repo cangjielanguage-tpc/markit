@@ -9,16 +9,16 @@ Markit 系列库已发布到仓颉中心仓。只使用 Markdown 解析内核时
 
 ```toml
 [dependencies]
-markit = { version = "0.2.0" }
+markit = { version = "0.1.0" }
 ```
 
 需要在自己的工具中单独使用代码高亮、数学公式或 Mermaid 渲染时，可以按需添加：
 
 ```toml
 [dependencies]
-codehl = { version = "0.2.0" }
-mathtex = { version = "0.2.0" }
-mermaid4cj = { version = "0.2.0" }
+codehl = { version = "0.1.0" }
+mathtex = { version = "0.1.0" }
+mermaid4cj = { version = "0.1.0" }
 ```
 
 ## 最小 parse 示例

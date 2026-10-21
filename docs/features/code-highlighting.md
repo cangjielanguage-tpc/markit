@@ -9,7 +9,7 @@ Markit 的 fenced code block 支持语言标记、行高亮、按语言过滤的
 
 ```toml
 [dependencies]
-codehl = { version = "0.2.0" }
+codehl = { version = "0.1.0" }
 ```
 
 ## 基础代码块

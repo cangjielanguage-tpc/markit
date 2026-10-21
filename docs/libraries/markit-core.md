@@ -9,7 +9,7 @@
 
 ```toml
 [dependencies]
-markit = { version = "0.2.0" }
+markit = { version = "0.1.0" }
 ```
 
 ## 适用场景

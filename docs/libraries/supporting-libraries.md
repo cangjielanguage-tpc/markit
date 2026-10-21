@@ -9,9 +9,9 @@ JSON 解析和输出相关能力依赖第三方库 [`seajson`](https://pkg.cangj
 
 ```toml
 [dependencies]
-commandline = { version = "0.2.0" }
-fswatch = { version = "0.2.0" }
-live_server = { version = "0.2.0" }
+commandline = { version = "0.1.0" }
+fswatch = { version = "0.1.0" }
+live_server = { version = "0.1.0" }
 ```
 
 ## commandline

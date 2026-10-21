@@ -9,7 +9,7 @@ Markit 的数学公式由纯仓颉实现的 `mathtex` 提供。它在构建阶�
 
 ```toml
 [dependencies]
-mathtex = { version = "0.2.0" }
+mathtex = { version = "0.1.0" }
 ```
 
 ## Markdown 写法

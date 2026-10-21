@@ -9,7 +9,7 @@ Markit 的 Mermaid 图表由 `mermaid4cj` 提供。它在构建阶段把 Markdow
 
 ```toml
 [dependencies]
-mermaid4cj = { version = "0.2.0" }
+mermaid4cj = { version = "0.1.0" }
 ```
 
 ## Markdown 写法

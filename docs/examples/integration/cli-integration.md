@@ -7,10 +7,10 @@ Markit 系列库已发布到仓颉中心仓。应用侧在 `cjpm.toml` 中按版
 
 ```toml
 [dependencies]
-markit = { version = "0.2.0" }
-codehl = { version = "0.2.0" }
-mathtex = { version = "0.2.0" }
-mermaid4cj = { version = "0.2.0" }
+markit = { version = "0.1.0" }
+codehl = { version = "0.1.0" }
+mathtex = { version = "0.1.0" }
+mermaid4cj = { version = "0.1.0" }
 ```
 
 ## 集中构造 parser

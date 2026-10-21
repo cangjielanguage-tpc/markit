@@ -23,13 +23,13 @@ Markit 系列库已上传到仓颉中心仓。仓颉项目可以在 `cjpm.toml` 
 
 ```toml
 [dependencies]
-markit = { version = "0.2.0" }
-codehl = { version = "0.2.0" }
-mathtex = { version = "0.2.0" }
-mermaid4cj = { version = "0.2.0" }
-commandline = { version = "0.2.0" }
-fswatch = { version = "0.2.0" }
-live_server = { version = "0.2.0" }
+markit = { version = "0.1.0" }
+codehl = { version = "0.1.0" }
+mathtex = { version = "0.1.0" }
+mermaid4cj = { version = "0.1.0" }
+commandline = { version = "0.1.0" }
+fswatch = { version = "0.1.0" }
+live_server = { version = "0.1.0" }
 ```
 
 只解析 Markdown 时引入 `markit` 即可；需要独立做代码高亮、数学公式或 Mermaid 渲染时，再分别引入 `codehl`、`mathtex` 或 `mermaid4cj`。
