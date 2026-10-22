@@ -1,0 +1,118 @@
+{
+  "name": "markit-preview",
+  "displayName": "Markit Preview",
+  "description": "Single-document Markit preview with source-aware scroll sync and per-project languages.",
+  "version": "0.1.0",
+  "publisher": "markit",
+  "icon": "media/logo.png",
+  "license": "Apache-2.0",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://gitcode.com/Cangjie-TPC/markit.git",
+    "directory": "vscode-extension"
+  },
+  "main": "./src/extension.js",
+  "activationEvents": [
+    "onLanguage:markdown"
+  ],
+  "extensionKind": [
+    "workspace"
+  ],
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": false
+    },
+    "virtualWorkspaces": {
+      "supported": false
+    }
+  },
+  "contributes": {
+    "commands": [
+      {
+        "command": "markit.preview",
+        "title": "Markit: Open Preview to the Side",
+        "icon": "$(open-preview)"
+      },
+      {
+        "command": "markit.selectLanguage",
+        "title": "Markit: Switch Preview Language"
+      },
+      {
+        "command": "markit.selectExecutable",
+        "title": "Markit: Select Executable"
+      },
+      {
+        "command": "markit.refresh",
+        "title": "Markit: Refresh Preview"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "markit.preview",
+          "when": "resourceLangId == markdown",
+          "group": "navigation"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "markit.preview",
+          "when": "resourceLangId == markdown",
+          "group": "navigation"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Markit Preview",
+      "properties": {
+        "markit.executablePath": {
+          "type": "string",
+          "default": "markit",
+          "scope": "machine-overridable",
+          "description": "Markit executable or command on PATH. Relative paths are resolved from the workspace folder. Keep its assets directory next to the executable."
+        },
+        "markit.environment": {
+          "type": "object",
+          "default": {},
+          "additionalProperties": {
+            "type": "string"
+          },
+          "scope": "machine-overridable",
+          "description": "Environment variables for Markit, for example PATH when the Cangjie SDK environment is not inherited by VS Code."
+        },
+        "markit.editEffects": {
+          "type": "boolean",
+          "default": true,
+          "description": "Animate changed preview prose with lightweight typing and particle effects. Respects reduced-motion preferences; does not change Markdown parsing."
+        },
+        "markit.debounceMs": {
+          "type": "number",
+          "default": 120,
+          "minimum": 100,
+          "maximum": 5000,
+          "description": "Delay before sending unsaved editor changes to the preview snapshot."
+        },
+        "markit.startupTimeoutMs": {
+          "type": "number",
+          "default": 120000,
+          "minimum": 5000,
+          "maximum": 600000,
+          "description": "Maximum time allowed for rendering the current Markdown document."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "package": "vsce package --no-dependencies --out ../target/markit-preview-0.1.0.vsix"
+  },
+  "devDependencies": {
+    "@vscode/vsce": "^3.6.0"
+  }
+}

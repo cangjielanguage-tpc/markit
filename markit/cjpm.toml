@@ -7,7 +7,7 @@ authors = ["zichexuelan"]
 target-dir = ""
 src-dir = ""
 output-type = "static"
-compile-option = "-Woff unused"
+compile-option = "-O2 -Woff unused"
 override-compile-option = ""
 link-option = ""
 include = ["src"]
@@ -15,7 +15,7 @@ exclude = []
 package-configuration = { }
 
 [dependencies]
-seajson = { version = "1.4.8", output-type = "static" }
+seajson = { version = "1.5.0", output-type = "static" }
 mathtex = { path = "../mathtex", output-type = "static" }
 codehl = { path = "../codehl", output-type = "static" }
 mermaid4cj = { path = "../mermaid4cj", output-type = "static" }

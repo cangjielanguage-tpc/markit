@@ -41,6 +41,12 @@ public class GlobalContext {
 
     // AssetRoot（由上游传入的资源根目录）
     private static var _assetRoot: String = ""
+
+    // Optional page-only preview; all project headings remain available for links.
+    public static var renderOnlyFile: ?String = None
+
+    // Opt-in, single-page JSON/ack transport used only by editor preview.
+    public static var previewStream: Bool = false
     
     /**
      * 当前语言属性
@@ -188,5 +194,6 @@ public class GlobalContext {
         _baseUrl = None
         _parallelJobs = 1
         _assetRoot = ""
+        previewStream = false
     }
 }

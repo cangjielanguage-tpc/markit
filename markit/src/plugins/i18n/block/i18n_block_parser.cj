@@ -4,7 +4,7 @@ import std.collection.ArrayList
 import markit.core.block.{BlockFrame, ContinuationBlockParser, ContinueResult}
 import markit.core.nodes.Node
 import markit.core.session.{ParagraphTermination, ParseSession}
-import markit.core.source.{SourceLine, SyntheticSourceBuilder}
+import markit.core.source.{SourceLine, SyntheticSourceBuilder, SyntheticSourceParseInput}
 import markit.plugins.gfm.block.BlockLineUtils
 import markit.plugins.i18n.nodes.{I18nBlockNode, UniversalBlockNode}
 
@@ -92,6 +92,7 @@ public class I18nBlockParser <: ContinuationBlockParser {
             for (child in session.parseDetachedLines(synthetic.lines)) {
                 child.attachSource(synthetic.source)
                 freezeSyntheticRawContent(child)
+                restoreSourceSpans(child, synthetic)
                 node.addChild(child)
             }
         }
@@ -154,6 +155,13 @@ public class I18nBlockParser <: ContinuationBlockParser {
             }
         }
         return sb.toString()
+    }
+
+    private func restoreSourceSpans(node: Node, source: SyntheticSourceParseInput): Unit {
+        node.sourceSpan = source.mapSpan(node.sourceSpan)
+        for (child in node.children) {
+            restoreSourceSpans(child, source)
+        }
     }
 
     private func freezeSyntheticRawContent(node: Node): Unit {

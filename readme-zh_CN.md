@@ -34,7 +34,9 @@ Markit 是一套使用仓颉编写的 Markdown 解析、渲染与发布工具。
 
 ## 快速开始
 
-安装仓颉 SDK（1.3.0-alpha 或更新版本），在仓库根目录执行：
+VS Code 实时预览插件的安装和配置见 [`vscode-extension/README.md`](vscode-extension/README.md)。插件根据 Summary 自动识别当前文档所属项目，支持未保存内容预览和各项目独立的语言切换。
+
+安装仓颉 SDK（1.1.0 或更新版本），在仓库根目录执行：
 
 ```bash
 cd markit-cli
@@ -53,7 +55,7 @@ cjpm build
 
 ## 预构建二进制
 
-带标签的发布版本提供 Linux x64、macOS x64、macOS arm64 和 Windows x64 压缩包。每个压缩包都包含 `markit` 可执行文件及所需的 `assets` 目录，请从 [Releases 页面](https://github.com/zichexuelan/markit/releases) 下载。
+带标签的发布版本提供 Linux x64、macOS x64、macOS arm64 和 Windows x64 压缩包。每个压缩包都包含 `markit` 可执行文件及所需的 `assets` 目录，请从 [Releases 页面](https://github.com/cangjielanguage-tpc/markit/releases) 下载。
 
 ## 文档与许可证
 

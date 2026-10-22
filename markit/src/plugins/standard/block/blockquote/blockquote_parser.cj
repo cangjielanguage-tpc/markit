@@ -3,7 +3,7 @@ package markit.plugins.standard.block.blockquote
 import markit.core.block.{BlockFrame, ContinuationBlockParser, ContinueResult}
 import markit.core.nodes.Node
 import markit.core.session.ParseSession
-import markit.core.source.SyntheticSourceBuilder
+import markit.core.source.{SyntheticSourceBuilder, SyntheticSourceParseInput}
 
 public class BlockquoteParser <: ContinuationBlockParser {
     public prop name: String {
@@ -64,9 +64,17 @@ public class BlockquoteParser <: ContinuationBlockParser {
         for (child in session.parseDetachedLines(synthetic.lines)) {
             child.attachSource(synthetic.source)
             freezeSyntheticRawContent(child)
+            restoreSourceSpans(child, synthetic)
             node.addChild(child)
         }
         return node
+    }
+
+    private func restoreSourceSpans(node: Node, source: SyntheticSourceParseInput): Unit {
+        node.sourceSpan = source.mapSpan(node.sourceSpan)
+        for (child in node.children) {
+            restoreSourceSpans(child, source)
+        }
     }
 
     private func freezeSyntheticRawContent(node: Node): Unit {

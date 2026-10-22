@@ -109,6 +109,10 @@ cp ./target/release/bin/main ./markit
 - `-w, --watch`: 启用文件监控 (默认: true)
 - `serve` 仅用于 `website` 模式
 
+### 编辑器单页预览
+
+`render --page <Markdown 绝对路径>` 保留项目全部 Summary 的文件、标题和编号上下文，仅生成指定页面的正文 HTML，适用于编辑器预览。它只支持 website 配置。首次生成共享资源后，可追加 `--incremental true` 复用输出资源；配置、主题或语言变化时应重新执行不带该参数的构建。完整网站输出仍使用普通 `render` 命令。
+
 ## 📄 许可证
 
 ## 顶部导航与侧边栏

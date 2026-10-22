@@ -7,7 +7,7 @@
   target-dir = ""
   script-dir = ""
   output-type = "static"
-  compile-option = "--debug-macro -Woff unused"
+  compile-option = "-O2 --debug-macro -Woff unused"
   override-compile-option = ""
   link-option = ""
   package-configuration = {}

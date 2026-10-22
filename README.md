@@ -31,10 +31,11 @@ Markit is a Cangjie toolkit for parsing, rendering, and publishing Markdown. It 
 | [`fswatch`](fswatch/) | Cross-platform file-system watching |
 | [`live-server`](live-server/) | Local static HTTP server used by `markit-cli serve` |
 | [`dochir`](dochir/) | Cangjie API documentation generator |
+| [`vscode-extension`](vscode-extension/) | VS Code live website preview with per-project language switching |
 
 ## Quick Start
 
-Install a Cangjie SDK (1.3.0-alpha or newer), then build the CLI from the repository root:
+Install a Cangjie SDK (1.1.0 or newer), then build the CLI from the repository root:
 
 ```bash
 cd markit-cli
@@ -53,7 +54,7 @@ See [`markit-cli/README.md`](markit-cli/README.md) and [`markit-cli/documentatio
 
 ## Prebuilt Binaries
 
-Tagged releases publish archives for Linux x64, macOS x64, macOS arm64, and Windows x64. Each archive contains the `markit` executable and the required `assets` directory. Download them from the [Releases page](https://github.com/zichexuelan/markit/releases).
+Tagged releases publish archives for Linux x64, macOS x64, macOS arm64, and Windows x64. Each archive contains the `markit` executable and the required `assets` directory. Download them from the [Releases page](https://github.com/cangjielanguage-tpc/markit/releases).
 
 ## Documentation
 

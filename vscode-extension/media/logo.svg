@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-labelledby="title">
+  <title id="title">Markit: blue lowercase m and green downward arrow</title>
+  <path d="M28 184V87M28 119C28 76 91 76 91 119V184M91 119C91 76 154 76 154 119V184"
+        fill="none" stroke="#2684E8" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M211 72V176M185 151L211 177L237 151"
+        fill="none" stroke="#29B36B" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

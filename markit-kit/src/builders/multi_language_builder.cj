@@ -101,6 +101,13 @@ public class MultiLanguageBuilder {
             "website"
         }
         
+        // Preview publishes HTML before build completion; its shell must already
+        // have usable styles/scripts. Normal builds retain their existing order.
+        if (GlobalContext.previewStream && outputFormat == "website" && !isIncremental) {
+            copySharedThemeAssets()
+            copyPublicAssets()
+        }
+
         // 2. 为每个语言构建文档（Req 9.2）
         for (i in 0..configs.size) {
             let config = configs[i]
@@ -148,11 +155,11 @@ public class MultiLanguageBuilder {
                 
                 // 4. 将共享主题资源复制到根 assets 目录（Req 10.1）
                 KitHooks.info("Copying shared theme assets...")
-                copySharedThemeAssets()
+                if (!GlobalContext.previewStream) { copySharedThemeAssets() }
                 
                 // 5. 将 public/ 文件夹复制到根目录（如果存在）（Req 10.2）
                 KitHooks.info("Copying public assets...")
-                copyPublicAssets()
+                if (!GlobalContext.previewStream) { copyPublicAssets() }
                 
                 // 记录完成统计信息（Req 9.3）
                 KitHooks.newLine()

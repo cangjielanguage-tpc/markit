@@ -243,18 +243,18 @@ public class WebsiteProcessor <: Processor {
      * @return 元组：(完整的网站HTML文档, 解析后的文档节点)
      */
     public func processWithPath(content: String, title: String, currentPagePath: String): (String, DocumentNode) {
-        // 使用Markit解析Markdown并转换为HTML
-        let parseResult = try {
-            createParser(currentPagePath).parse(content)
+        let document = try {
+            if (GlobalContext.previewStream) {
+                let shell = generateWebsiteHtmlWithPath(generateMarkdownSourceStore(content), title, "", currentPagePath)
+                PreviewStream.parse(createParser(currentPagePath), content, shell,
+                    { html: String => rewriteLocalImageSources(html, currentPagePath) })
+            } else {
+                CliMarkitFactory.documentOf(createParser(currentPagePath).parse(content))
+            }
         } catch (e: Exception) {
             throw IllegalArgumentException("WebsiteProcessor parse failed for ${currentPagePath}: ${e.toString()}")
         }
-        let document = try {
-            CliMarkitFactory.documentOf(parseResult)
-        } catch (e: Exception) {
-            throw IllegalArgumentException("WebsiteProcessor document extraction failed for ${currentPagePath}: ${e.toString()}")
-        }
-        
+
         // 提取当前文档的标题信息用于导航
         let headings = extractHeadings(document)
         match (siteNavigation) {

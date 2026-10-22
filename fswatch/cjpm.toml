@@ -14,7 +14,7 @@
   license = ["Apache-2.0"]
   include = ["src", "native", "build.cj"]
   exclude = ["target", "tests"]
-  compile-option = "--debug-macro -Woff unused"
+  compile-option = "-O2 --debug-macro -Woff unused"
   override-compile-option = ""
   link-option = ""
   package-configuration = {}

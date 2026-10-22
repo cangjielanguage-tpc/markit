@@ -7,7 +7,7 @@
   target-dir = ""
   script-dir = ""
   output-type = "executable"
-  compile-option = ""
+  compile-option = "-O2"
   override-compile-option = ""
   link-option = ""
   package-configuration = {}
@@ -16,7 +16,7 @@
   dochir = { path = ".." }
 
 [target.x86_64-apple-darwin]
-compile-option = "-Woff unused --plugin=build-script-cache/release/dochir_example/libs/release/dochir/libdochir.plugin.dylib"
+compile-option = "-O2 -Woff unused --plugin=build-script-cache/release/dochir_example/libs/release/dochir/libdochir.plugin.dylib"
 
 [target.x86_64-apple-darwin.bin-dependencies]
 path-option = [
@@ -24,7 +24,7 @@ path-option = [
 ]
 
 [target.x86_64-unknown-linux-gnu]
-compile-option = "-Woff unused --plugin=build-script-cache/release/dochir_example/libs/release/dochir/libdochir.plugin.so"
+compile-option = "-O2 -Woff unused --plugin=build-script-cache/release/dochir_example/libs/release/dochir/libdochir.plugin.so"
 
 [target.x86_64-unknown-linux-gnu.bin-dependencies]
 path-option = [
@@ -32,7 +32,7 @@ path-option = [
 ]
 
 [target.x86_64-unknown-windows-gnu]
-compile-option = "-Woff unused --plugin=build-script-cache/release/dochir_example/libs/release/dochir/libdochir.plugin.dll"
+compile-option = "-O2 -Woff unused --plugin=build-script-cache/release/dochir_example/libs/release/dochir/libdochir.plugin.dll"
 
 [target.x86_64-unknown-windows-gnu.bin-dependencies]
 path-option = [
@@ -40,7 +40,7 @@ path-option = [
 ]
 
 [target.x86_64-w64-mingw32]
-compile-option = "-Woff unused --plugin=build-script-cache/release/dochir_example/libs/release/dochir/libdochir.plugin.dll"
+compile-option = "-O2 -Woff unused --plugin=build-script-cache/release/dochir_example/libs/release/dochir/libdochir.plugin.dll"
 
 [target.x86_64-w64-mingw32.bin-dependencies]
 path-option = [
@@ -48,7 +48,7 @@ path-option = [
 ]
 
 [target.aarch64-unknown-linux-gnu]
-compile-option = "-Woff unused --plugin=build-script-cache/release/dochir_example/libs/release/dochir/libdochir.plugin.so"
+compile-option = "-O2 -Woff unused --plugin=build-script-cache/release/dochir_example/libs/release/dochir/libdochir.plugin.so"
 
 [target.aarch64-unknown-linux-gnu.bin-dependencies]
 path-option = [
@@ -56,7 +56,7 @@ path-option = [
 ]
 
 [target.aarch64-apple-darwin]
-compile-option = "-Woff unused --plugin=build-script-cache/release/dochir_example/libs/release/dochir/libdochir.plugin.dylib"
+compile-option = "-O2 -Woff unused --plugin=build-script-cache/release/dochir_example/libs/release/dochir/libdochir.plugin.dylib"
 
 [target.aarch64-apple-darwin.bin-dependencies]
 path-option = [

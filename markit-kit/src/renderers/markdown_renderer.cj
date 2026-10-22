@@ -784,9 +784,20 @@ public class MarkdownRenderer {
             processor
         )
 
+        // A preview still scans the complete project for heading links and numbering.
+        // Only its requested page runs the full rendering/highlighting pipeline.
+        let renderFiles = if (let Some(selected) <- GlobalContext.renderOnlyFile) {
+            let files = ArrayList<String>()
+            for (file in inputFiles) {
+                if (Path(file).normalize().toString() == selected) { files.add(file) }
+            }
+            if (files.isEmpty()) { throw IllegalArgumentException("Preview page is not referenced by the project's summaries: ${selected}") }
+            files.toArray()
+        } else { inputFiles }
+
         // ========== 阶段 2：并行处理 ==========
         let results = ParallelProcessor.processFiles(
-            inputFiles,
+            renderFiles,
             scanResult.initialStates,
             scanResult.headingsMap,
             processor,
@@ -804,6 +815,20 @@ public class MarkdownRenderer {
                     allSearchSections.add(section)
                 }
             }
+        }
+
+        if (GlobalContext.renderOnlyFile.isSome()) {
+            // A selected-page transport must not report successful completion
+            // after cancellation or a swallowed per-file renderer exception.
+            if (processedFiles.size != renderFiles.size) {
+                for (result in results) {
+                    if (!result.success) {
+                        throw IllegalArgumentException(result.errorMessage ?? "Preview page rendering failed")
+                    }
+                }
+                throw IllegalArgumentException("Preview page did not produce output")
+            }
+            return RenderResult(success: true, processedFiles: processedFiles.toArray())
         }
 
         // ========== 阶段 3：后处理 ==========

@@ -9,7 +9,12 @@ public class AnchorRenderUtils {
             let escaped = HtmlEscaper.escape(id)
             return " id=\"${escaped}\" data-anchor-id=\"${escaped}\"${htmlSourceAttributes(node)} class=\"markit-anchor-target${registry.htmlClassSuffix(node)}\""
         }
-        return registry.htmlClassAttribute(node)
+        let sourceAttrs = if (node.int("anchor.sourceStartByte").isSome()) {
+            htmlSourceAttributes(node)
+        } else {
+            ""
+        }
+        return sourceAttrs + registry.htmlClassAttribute(node)
     }
 
     public static func htmlClassAttribute(baseClass: String, node: Node, registry: RenderRegistry): String {

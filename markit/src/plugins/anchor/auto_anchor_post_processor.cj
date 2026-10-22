@@ -49,6 +49,11 @@ public class AutoAnchorPostProcessor {
             } else if (config.block && isGenericBlockNode(child, parent)) {
                 blockIndex += 1
                 setAnchor(child, "${sectionPrefix()}-block-${blockIndex}")
+            } else if (config.block && child.kind == "Paragraph" &&
+                (parent.kind == "I18nBlock" || parent.kind == "UniversalBlock")) {
+                // Transparent language wrappers need source mapping, but must
+                // not allocate anchors or renumber existing document anchors.
+                setSourceRange(child, child)
             }
 
             if (!child.children.isEmpty()) {
