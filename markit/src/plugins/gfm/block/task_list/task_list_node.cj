@@ -8,7 +8,7 @@ public class TaskListNode <: Node {
     public let tight: Bool
     public let baseIndent: Int64
 
-    public init(
+    public TaskListNode(
         id: Int64,
         sourceSpan: SourceSpan,
         tight: Bool,

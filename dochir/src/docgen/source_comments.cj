@@ -6,15 +6,7 @@ import std.fs.{Directory, File, FileInfo, Path, exists}
 import stdx.chir.DebugLocation
 
 class SourceLocation {
-    let fileName: String
-    let line: Int64
-    let packageName: String
-
-    init(fileName: String, line: Int64, packageName!: String = "") {
-        this.fileName = fileName
-        this.line = line
-        this.packageName = packageName
-    }
+    SourceLocation(let fileName: String, let line: Int64, let packageName!: String = "") {}
 
     func label(): String {
         return fileName + ":" + line.toString()
@@ -22,28 +14,14 @@ class SourceLocation {
 }
 
 class SourceDoc {
-    let summary: String
-    let params: Array<(String, String)>
-    let returns: String
-    let typeText: String
-    let errors: Array<(String, String)>
-    let examples: Array<String>
-
-    init(
-        summary: String,
-        params: Array<(String, String)>,
-        returns: String,
-        typeText: String,
-        errors!: Array<(String, String)> = Array<(String, String)>(),
-        examples!: Array<String> = Array<String>()
-    ) {
-        this.summary = summary
-        this.params = params
-        this.returns = returns
-        this.typeText = typeText
-        this.errors = errors
-        this.examples = examples
-    }
+    SourceDoc(
+        let summary: String,
+        let params: Array<(String, String)>,
+        let returns: String,
+        let typeText: String,
+        let errors!: Array<(String, String)> = Array<(String, String)>(),
+        let examples!: Array<String> = Array<String>()
+    ) {}
 }
 
 class DocParseState {
@@ -58,7 +36,7 @@ class DocParseState {
     var returnsPriority: Int64
     var typeText: String
 
-    init() {
+    DocParseState() {
         this.params = ArrayList<(String, String)>()
         this.errors = ArrayList<(String, String)>()
         this.examples = ArrayList<String>()

@@ -8,11 +8,7 @@ import markit.core.source.SourceLine
 import markit.plugins.commonmark.{HtmlAttributeUtils, asciiLower}
 
 public class HTMLBlockParser <: ContinuationBlockParser {
-    private let config: HtmlBlockConfig
-
-    public init(config!: HtmlBlockConfig = HtmlBlockConfig()) {
-        this.config = config
-    }
+    public HTMLBlockParser(private let config!: HtmlBlockConfig = HtmlBlockConfig()) {}
 
     public prop name: String {
         get() {
@@ -401,40 +397,16 @@ public class HTMLBlockParser <: ContinuationBlockParser {
 }
 
 private class HTMLBlockStartInfo {
-    public let blockType: HTMLBlockType
-    public let tagName: String
-    public let isSelfClosing: Bool
-    public let isContentProtected: Bool
-    public let attributes: HashMap<String, String>
-    public let endMarker: String
-
-    public init(
-        blockType: HTMLBlockType,
-        tagName: String,
-        isSelfClosing: Bool,
-        isContentProtected: Bool,
-        attributes: HashMap<String, String>,
-        endMarker: String
-    ) {
-        this.blockType = blockType
-        this.tagName = tagName
-        this.isSelfClosing = isSelfClosing
-        this.isContentProtected = isContentProtected
-        this.attributes = attributes
-        this.endMarker = endMarker
-    }
+    public HTMLBlockStartInfo(
+        public let blockType: HTMLBlockType,
+        public let tagName: String,
+        public let isSelfClosing: Bool,
+        public let isContentProtected: Bool,
+        public let attributes: HashMap<String, String>,
+        public let endMarker: String
+    ) {}
 }
 
 private class ParsedBlockTag {
-    public let tagName: String
-    public let isSelfClosing: Bool
-    public let attributes: HashMap<String, String>
-    public let endPos: Int64
-
-    public init(tagName: String, isSelfClosing: Bool, attributes: HashMap<String, String>, endPos: Int64) {
-        this.tagName = tagName
-        this.isSelfClosing = isSelfClosing
-        this.attributes = attributes
-        this.endPos = endPos
-    }
+    public ParsedBlockTag(public let tagName: String, public let isSelfClosing: Bool, public let attributes: HashMap<String, String>, public let endPos: Int64) {}
 }

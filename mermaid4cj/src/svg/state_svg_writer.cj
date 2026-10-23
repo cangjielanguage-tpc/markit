@@ -5,7 +5,7 @@ import std.math.sqrt
 import mermaid4cj.core.{MermaidRenderOptions, StateDiagram, StateDirection, StateNode, StateNodeKind, StateTransition}
 
 public class StateSvgWriter {
-    public init() {}
+    public StateSvgWriter() {}
 
     public func write(diagram: StateDiagram, options: MermaidRenderOptions): String {
         let theme = SvgTheme.resolve(options.theme)
@@ -190,25 +190,11 @@ public class StateSvgWriter {
 }
 
 class StateBox {
-    let x: Float64
-    let y: Float64
-    let width: Float64
-    let height: Float64
 
-    init(x: Float64, y: Float64, width: Float64, height: Float64) {
-        this.x = x
-        this.y = y
-        this.width = width
-        this.height = height
-    }
+    StateBox(let x: Float64, let y: Float64, let width: Float64, let height: Float64) {}
 }
 
 class StatePoint {
-    let x: Float64
-    let y: Float64
 
-    init(x: Float64, y: Float64) {
-        this.x = x
-        this.y = y
-    }
+    StatePoint(let x: Float64, let y: Float64) {}
 }

@@ -3,20 +3,11 @@ package markit.core.source
 import std.collection.ArrayList
 
 public class SyntheticSourceParseInput {
-    public let source: SourceBuffer
-    public let lines: ArrayList<SourceLine>
-
-    private let originalSpans: ArrayList<SourceSpan>
-
-    public init(
-        source: SourceBuffer,
-        lines: ArrayList<SourceLine>,
-        originalSpans!: ArrayList<SourceSpan> = ArrayList<SourceSpan>()
-    ) {
-        this.source = source
-        this.lines = lines
-        this.originalSpans = originalSpans
-    }
+    public SyntheticSourceParseInput(
+        public let source: SourceBuffer,
+        public let lines: ArrayList<SourceLine>,
+        private let originalSpans!: ArrayList<SourceSpan> = ArrayList<SourceSpan>()
+    ) {}
 
     // Both synthetic consumers transform line prefixes, never suffixes. Keep an
     // individual origin per retained line: a constant offset fails for CRLF,

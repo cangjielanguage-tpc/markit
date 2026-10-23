@@ -10,7 +10,7 @@ public class TaskListItemNode <: Node {
     public let checked: Bool
     public let marker: Byte
 
-    public init(
+    public TaskListItemNode(
         id: Int64,
         sourceSpan: SourceSpan,
         content: String,

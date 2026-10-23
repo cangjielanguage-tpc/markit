@@ -12,7 +12,7 @@ public class ParseCallbacks {
     public let onTailChanged: (PendingTailState) -> Unit
     public let onFinalize: (DocumentSnapshot) -> Unit
 
-    public init(
+    public ParseCallbacks(
         onUpdate!: (IncrementalUpdate) -> Unit = { _: IncrementalUpdate => },
         onBlockSealed!: (Node) -> Unit = { _: Node => },
         onHtmlFragment!: (HtmlFragment) -> Unit = { _: HtmlFragment => },

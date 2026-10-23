@@ -1,0 +1,1 @@
+The original 90–120 second quiet window was extended by Task01 owner after observed process durations implied approximately three minutes. The owner confirmed the window continued and did not start builds/tests until the explicit completion message. All twelve runs and the 26.38–40.60% measured system CPU load are retained. No external desktop workload was identified or changed.

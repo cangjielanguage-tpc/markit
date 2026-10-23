@@ -4,7 +4,7 @@ import commandline.terminal.{progressLogger, ProgressLogger, ColorUtil, AnsiColo
 import markit_kit.utils.{KitHookSink, KitLogLevel, KitProgressEvent}
 
 public class CommandlineKitHookSink <: KitHookSink {
-    public init() {}
+    public CommandlineKitHookSink() {}
 
     public func log(level: KitLogLevel, message: String): Unit {
         match (level) {

@@ -14,7 +14,7 @@ public class AlphabeticListBlockState <: BlockState {
     public var sourceSpan: SourceSpan
     public let items = ArrayList<AlphabeticListItemData>()
 
-    public init(marker: AlphabeticListMarker, sourceSpan: SourceSpan) {
+    public AlphabeticListBlockState(marker: AlphabeticListMarker, sourceSpan: SourceSpan) {
         this.baseIndent = marker.indent
         this.startLetter = marker.letter
         this.isUpperCase = marker.isUpperCase
@@ -53,7 +53,7 @@ public class AlphabeticListItemData {
     public var sourceSpan: SourceSpan
     public let continuationLines = ArrayList<SourceLine>()
 
-    public init(marker: AlphabeticListMarker, line: SourceLine) {
+    public AlphabeticListItemData(marker: AlphabeticListMarker, line: SourceLine) {
         this.letter = marker.letter
         this.delimiter = marker.delimiter
         this.indent = marker.indent
@@ -77,23 +77,11 @@ public class AlphabeticListItemData {
 }
 
 public class AlphabeticListMarker {
-    public let letter: Byte
-    public let isUpperCase: Bool
-    public let delimiter: Byte
-    public let indent: Int64
-    public let content: String
-
-    public init(
-        letter: Byte,
-        isUpperCase: Bool,
-        delimiter: Byte,
-        indent: Int64,
-        content: String
-    ) {
-        this.letter = letter
-        this.isUpperCase = isUpperCase
-        this.delimiter = delimiter
-        this.indent = indent
-        this.content = content
-    }
+    public AlphabeticListMarker(
+        public let letter: Byte,
+        public let isUpperCase: Bool,
+        public let delimiter: Byte,
+        public let indent: Int64,
+        public let content: String
+    ) {}
 }

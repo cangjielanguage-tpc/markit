@@ -3,12 +3,9 @@ package markit.plugins.standard.inline.link
 import std.collection.{ArrayList, HashMap}
 
 public class FileTree {
-    private let files: Array<String>
     private let headingIndex = HashMap<String, ArrayList<HeadingInfo>>()
 
-    public init(files: Array<String>) {
-        this.files = files
-    }
+    public FileTree(private let files: Array<String>) {}
 
     public func addHeading(heading: HeadingInfo): Unit {
         if (!headingIndex.contains(heading.slug)) {

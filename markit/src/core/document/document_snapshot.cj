@@ -10,7 +10,7 @@ public class DocumentSnapshot {
     private let nodesById = HashMap<Int64, Node>()
     private let orderedNodes = ArrayList<Node>()
 
-    public init(root: Node, lineIndex!: LineIndex = LineIndex()) {
+    public DocumentSnapshot(root: Node, lineIndex!: LineIndex = LineIndex()) {
         this.root = root
         this.lineIndex = lineIndex
         index(root)

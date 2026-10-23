@@ -257,25 +257,13 @@ public func dagrePositionX(graph: DagreLayoutGraph): HashMap<String, Float64> {
 }
 
 class DagreVerticalAlignmentResult {
-    let root: HashMap<String, String>
-    let align: HashMap<String, String>
 
-    init(root: HashMap<String, String>, align: HashMap<String, String>) {
-        this.root = root
-        this.align = align
-    }
+    DagreVerticalAlignmentResult(let root: HashMap<String, String>, let align: HashMap<String, String>) {}
 }
 
 class DagreBlockEdge {
-    let start: String
-    let end: String
-    var weight: Float64
 
-    init(start: String, end: String, weight: Float64) {
-        this.start = start
-        this.end = end
-        this.weight = weight
-    }
+    DagreBlockEdge(let start: String, let end: String, var weight: Float64) {}
 }
 
 class DagreBlockGraph {

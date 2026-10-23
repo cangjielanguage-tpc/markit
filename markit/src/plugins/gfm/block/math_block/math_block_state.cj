@@ -12,7 +12,7 @@ public class MathBlockState <: BlockState {
     public var sourceSpan: SourceSpan
     public var closed: Bool = false
 
-    public init(indentLevel: Int64, openingLine: SourceLine) {
+    public MathBlockState(indentLevel: Int64, openingLine: SourceLine) {
         this.indentLevel = indentLevel
         this.openingLine = openingLine
         this.sourceSpan = openingLine.span

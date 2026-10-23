@@ -3,13 +3,8 @@ package mermaid4cj.layout.dagre
 import std.collection.{ArrayList, HashMap}
 
 public class DagreOrderEntry {
-    public let position: Int64
-    public let weight: Float64
 
-    public init(position: Int64, weight: Float64) {
-        this.position = position
-        this.weight = weight
-    }
+    public DagreOrderEntry(public let position: Int64, public let weight: Float64) {}
 }
 
 public func dagreInitOrder(graph: DagreLayoutGraph): Array<Array<String>> {
@@ -161,15 +156,8 @@ func dagreAssignOrder(graph: DagreLayoutGraph, layering: Array<Array<String>>): 
 }
 
 class DagreBarycenterEntry {
-    let v: String
-    var barycenter: ?Float64
-    var weight: ?Float64
 
-    init(v: String, barycenter!: ?Float64 = None, weight!: ?Float64 = None) {
-        this.v = v
-        this.barycenter = barycenter
-        this.weight = weight
-    }
+    DagreBarycenterEntry(let v: String, var barycenter!: ?Float64 = None, var weight!: ?Float64 = None) {}
 }
 
 class DagreSortEntry {
@@ -182,7 +170,7 @@ class DagreSortEntry {
     let outEntries: ArrayList<DagreSortEntry>
     var merged: Bool
 
-    init(vs: ArrayList<String>, i: Int64, barycenter!: ?Float64 = None, weight!: ?Float64 = None) {
+    DagreSortEntry(vs: ArrayList<String>, i: Int64, barycenter!: ?Float64 = None, weight!: ?Float64 = None) {
         this.vs = vs
         this.i = i
         this.barycenter = barycenter
@@ -195,15 +183,8 @@ class DagreSortEntry {
 }
 
 class DagreSortResult {
-    var vs: ArrayList<String>
-    var barycenter: ?Float64
-    var weight: ?Float64
 
-    init(vs: ArrayList<String>, barycenter!: ?Float64 = None, weight!: ?Float64 = None) {
-        this.vs = vs
-        this.barycenter = barycenter
-        this.weight = weight
-    }
+    DagreSortResult(var vs: ArrayList<String>, var barycenter!: ?Float64 = None, var weight!: ?Float64 = None) {}
 }
 
 func dagreBarycenter(graph: DagreLayoutGraph, movable: Array<String>): ArrayList<DagreBarycenterEntry> {

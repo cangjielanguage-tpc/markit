@@ -15,7 +15,7 @@ public class EntityReferenceNode <: Node {
     public let entityValue: String
     public let entityReference: String
 
-    public init(
+    public EntityReferenceNode(
         id: Int64,
         sourceSpan: SourceSpan,
         entityType: EntityType,

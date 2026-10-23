@@ -12,7 +12,7 @@ public class I18nSessionState <: SessionState {
     private let pendingTopLevelLists = ArrayList<I18nPendingList>()
     private let pendingDefaultAttachments = ArrayList<I18nPendingAttachment>()
 
-    public init(config: I18nConfig) {
+    public I18nSessionState(config: I18nConfig) {
         this.defaultLanguage = config.defaultLanguage
         this.targetLanguage = config.targetLanguage
     }
@@ -440,19 +440,9 @@ public class I18nSessionState <: SessionState {
 }
 
 private class I18nPendingList {
-    public let list: Node
-    public let patchTarget: Node
-
-    public init(list: Node, patchTarget: Node) {
-        this.list = list
-        this.patchTarget = patchTarget
-    }
+    public I18nPendingList(public let list: Node, public let patchTarget: Node) {}
 }
 
 private class I18nPendingAttachment {
-    public let node: Node
-
-    public init(node: Node) {
-        this.node = node
-    }
+    public I18nPendingAttachment(public let node: Node) {}
 }

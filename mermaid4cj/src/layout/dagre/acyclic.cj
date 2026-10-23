@@ -83,7 +83,7 @@ class DagreGreedyEntry {
     var bucketIndex: ?Int64
     var active: Bool
 
-    init(v: String) {
+    DagreGreedyEntry(v: String) {
         this.v = v
         this.inWeight = 0.0
         this.outWeight = 0.0
@@ -98,7 +98,7 @@ class DagreGreedyEdge {
     var weight: Float64
     var active: Bool
 
-    init(start: String, end: String, weight: Float64) {
+    DagreGreedyEdge(start: String, end: String, weight: Float64) {
         this.start = start
         this.end = end
         this.weight = weight

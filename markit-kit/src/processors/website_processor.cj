@@ -65,7 +65,7 @@ public class WebsiteProcessor <: Processor {
      * @param themeName 主题名称（可选，从 GlobalContext 读取）
      * @param markit Markit解析器实例（可选）
      */
-    public init(
+    public WebsiteProcessor(
         themeName!: String = ""
     ) {
         // 从 GlobalContext 读取配置

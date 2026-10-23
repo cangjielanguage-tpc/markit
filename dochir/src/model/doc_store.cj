@@ -4,15 +4,7 @@ import std.collection.ArrayList
 import std.fs.{Directory, File, Path, exists, remove}
 
 public class DocPluginConfig {
-    public let modelDir: String
-    public let defaultLang: String
-    public let languages: Array<String>
-
-    public init(modelDir: String, defaultLang: String, languages: Array<String>) {
-        this.modelDir = modelDir
-        this.defaultLang = defaultLang
-        this.languages = languages
-    }
+    public DocPluginConfig(public let modelDir: String, public let defaultLang: String, public let languages: Array<String>) {}
 }
 
 public class DocModelStore {

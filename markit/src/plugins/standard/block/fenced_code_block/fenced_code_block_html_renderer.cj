@@ -5,11 +5,7 @@ import markit.core.render.{HtmlEscaper, HtmlRenderer, HtmlWriter, RenderRegistry
 import markit.plugins.anchor.AnchorRenderUtils
 
 public class FencedCodeBlockHtmlRenderer <: HtmlRenderer {
-    private let config: FencedCodeBlockConfig
-
-    public init(config!: FencedCodeBlockConfig = FencedCodeBlockConfig()) {
-        this.config = config
-    }
+    public FencedCodeBlockHtmlRenderer(private let config!: FencedCodeBlockConfig = FencedCodeBlockConfig()) {}
 
     public prop ownerPlugin: String {
         get() {

@@ -27,7 +27,7 @@ import mermaid4cj.layout.{FlowchartLayout, FlowchartLayoutResult, MindmapLayout}
 import mermaid4cj.svg.{ClassSvgWriter, ErSvgWriter, ErrorSvgWriter, FlowchartSvgWriter, GanttSvgWriter, GenericSvgWriter, MindmapSvgWriter, PieSvgWriter, SequenceSvgWriter, StateSvgWriter, SvgEscaper}
 
 public class MermaidRenderer {
-    public init() {}
+    public MermaidRenderer() {}
 
     public func detectDiagramKind(source: String): DiagramKind {
         return DiagramDetector.detect(source)

@@ -16,7 +16,7 @@ public class HTMLBlockState <: BlockState {
     public var nestingDepth: Int64
     public var sourceSpan: SourceSpan
 
-    public init(
+    public HTMLBlockState(
         firstLine: SourceLine,
         blockType: HTMLBlockType,
         tagName: String,

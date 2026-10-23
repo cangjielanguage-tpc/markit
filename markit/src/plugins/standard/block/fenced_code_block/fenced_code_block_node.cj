@@ -13,7 +13,7 @@ public class FencedCodeBlockNode <: Node {
     public let i18nLines: String
     public let fileGroups: ArrayList<FencedCodeBlockFileGroup>
 
-    public init(
+    public FencedCodeBlockNode(
         id: Int64,
         sourceSpan: SourceSpan,
         literal: String,

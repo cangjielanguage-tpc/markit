@@ -3,11 +3,7 @@ package markit.tests.generators
 import std.random.Random
 
 public class MarkdownGenerator {
-    private let config: GeneratorConfig
-
-    public init(config!: GeneratorConfig = GeneratorConfig()) {
-        this.config = config
-    }
+    public MarkdownGenerator(private let config!: GeneratorConfig = GeneratorConfig()) {}
 
     public func random(): Random {
         if (config.seed == 0) {

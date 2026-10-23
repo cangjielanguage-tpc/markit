@@ -8,7 +8,7 @@ public class HtmlFragment {
     public let html: String
     public let stable: Bool
 
-    public init(
+    public HtmlFragment(
         nodeId: Int64,
         sourceSpan: SourceSpan,
         html: String,

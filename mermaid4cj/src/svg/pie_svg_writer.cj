@@ -4,7 +4,7 @@ import std.math.{cos, sin}
 import mermaid4cj.core.{MermaidRenderOptions, PieDiagram, PieSlice}
 
 public class PieSvgWriter {
-    public init() {}
+    public PieSvgWriter() {}
 
     public func write(diagram: PieDiagram, options: MermaidRenderOptions): String {
         let theme = SvgTheme.resolve(options.theme)

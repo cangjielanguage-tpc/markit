@@ -99,12 +99,5 @@ class PreviewStream {
 }
 
 private class PreviewOperation {
-    public let id: Int64
-    public let kind: String
-    public let html: String
-    public init(id: Int64, kind: String, html: String) {
-        this.id = id
-        this.kind = kind
-        this.html = html
-    }
+    public PreviewOperation(public let id: Int64, public let kind: String, public let html: String) {}
 }

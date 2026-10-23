@@ -5,7 +5,7 @@ import std.collection.ArrayList
 public class MermaidRenderContext {
     public let diagnostics: ArrayList<String>
 
-    public init() {
+    public MermaidRenderContext() {
         diagnostics = ArrayList<String>()
     }
 

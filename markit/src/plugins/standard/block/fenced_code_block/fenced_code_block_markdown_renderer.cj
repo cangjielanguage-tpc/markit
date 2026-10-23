@@ -6,11 +6,7 @@ import markit.plugins.anchor.AnchorRenderUtils
 import markit.utils.TextRenderUtils
 
 public class FencedCodeBlockMarkdownRenderer <: MarkdownRenderer {
-    private let targetLanguage: String
-
-    public init(targetLanguage!: String = "") {
-        this.targetLanguage = targetLanguage
-    }
+    public FencedCodeBlockMarkdownRenderer(private let targetLanguage!: String = "") {}
 
     public prop ownerPlugin: String {
         get() {

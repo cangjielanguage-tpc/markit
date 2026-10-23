@@ -13,6 +13,7 @@ public class HeadingNodeBatchProcessor <: NodeBatchProcessor {
     }
 
     public func process(session: ParseSession, nodes: ArrayList<Node>): ArrayList<Node> {
+        if (session.editingContext.isSome()) { return nodes }
         let state = session.symbolTables.get(HeadingPlugin.stateKey)
         return rewriteNodes(nodes, state.closableEnabled())
     }

@@ -7,11 +7,7 @@ import markit.core.session.SessionSymbolTableStore
 import markit.core.source.SourceSpan
 
 public class HTMLInlinePlugin <: Plugin {
-    private let config: HtmlInlineTagPairingConfig
-
-    public init(config!: HtmlInlineTagPairingConfig = HtmlInlineTagPairingConfig()) {
-        this.config = config
-    }
+    public HTMLInlinePlugin(private let config!: HtmlInlineTagPairingConfig = HtmlInlineTagPairingConfig()) {}
 
     public prop name: String {
         get() {

@@ -7,7 +7,7 @@ import markit.core.source.SourceSpan
 public class UniversalBlockNode <: Node {
     public let content: String
 
-    public init(
+    public UniversalBlockNode(
         id: Int64,
         sourceSpan: SourceSpan,
         content: String

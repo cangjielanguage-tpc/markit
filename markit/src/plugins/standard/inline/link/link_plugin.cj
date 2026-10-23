@@ -5,7 +5,7 @@ import markit.core.plugin.{Plugin, PluginRegistrar}
 public class LinkPlugin <: Plugin {
     public let resolver: SmartHeadingLinkResolver
 
-    public init(config!: LinkConfig = LinkConfig()) {
+    public LinkPlugin(config!: LinkConfig = LinkConfig()) {
         this.resolver = SmartHeadingLinkResolver(config)
     }
 

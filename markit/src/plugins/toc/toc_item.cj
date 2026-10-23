@@ -9,7 +9,7 @@ public class TocItem <: Node {
     public let anchorId: String
     public let number: String
 
-    public init(
+    public TocItem(
         text: String,
         level: Int64,
         anchorId: String,

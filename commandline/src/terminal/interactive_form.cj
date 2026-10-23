@@ -1,11 +1,7 @@
 package commandline.terminal
 
 public class InteractiveForm {
-    private let logger: ProgressLogger
-
-    public init(logger!: ProgressLogger = progressLogger) {
-        this.logger = logger
-    }
+    public InteractiveForm(private let logger!: ProgressLogger = progressLogger) {}
 
     public func prompt(
         message: String,

@@ -117,13 +117,5 @@ public class LineScanner {
 }
 
 private class DecodedLine {
-    public let text: String
-    public let terminatorByteSize: Int64
-    public let runeCount: Int64
-
-    public init(text: String, terminatorByteSize: Int64, runeCount: Int64) {
-        this.text = text
-        this.terminatorByteSize = terminatorByteSize
-        this.runeCount = runeCount
-    }
+    public DecodedLine(public let text: String, public let terminatorByteSize: Int64, public let runeCount: Int64) {}
 }

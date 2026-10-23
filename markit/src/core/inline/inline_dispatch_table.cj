@@ -6,6 +6,23 @@ public class InlineDispatchTable {
     private let byStartByte = HashMap<Byte, ArrayList<InlineParser>>()
     private let emptyCandidates = ArrayList<InlineParser>()
 
+    // Editing opts into a frozen inventory. Ordinary parsing keeps its
+    // existing buckets and does not allocate an editing index or recorder.
+    public func registeredParsers(): Array<InlineParser> {
+        let result = ArrayList<InlineParser>()
+        for ((_, bucket) in byStartByte) {
+            for (parser in bucket) {
+                let identity = (parser as Object).getOrThrow()
+                var found = false
+                for (existing in result) {
+                    if (refEq(identity, (existing as Object).getOrThrow())) { found = true; break }
+                }
+                if (!found) { result.add(parser) }
+            }
+        }
+        return result.toArray()
+    }
+
     public func register(parser: InlineParser): Unit {
         for (b in parser.startBytes) {
             if (!byStartByte.contains(b)) {

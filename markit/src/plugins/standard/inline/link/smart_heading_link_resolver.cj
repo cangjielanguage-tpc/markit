@@ -7,7 +7,7 @@ public class SmartHeadingLinkResolver {
     public var config: LinkConfig
     private var currentFilePath: String = ""
 
-    public init(config: LinkConfig) {
+    public SmartHeadingLinkResolver(config: LinkConfig) {
         this.config = config
         this.currentFilePath = normalizePath(config.currentFilePath)
     }

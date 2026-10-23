@@ -3,11 +3,7 @@ package markit.plugins.gfm.inline.inline_math
 import markit.core.plugin.{Plugin, PluginRegistrar}
 
 public class InlineMathPlugin <: Plugin {
-    private let config: InlineMathConfig
-
-    public init(config!: InlineMathConfig = InlineMathConfig()) {
-        this.config = config
-    }
+    public InlineMathPlugin(private let config!: InlineMathConfig = InlineMathConfig()) {}
 
     public prop name: String {
         get() {

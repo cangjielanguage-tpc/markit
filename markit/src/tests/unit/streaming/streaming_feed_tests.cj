@@ -202,13 +202,10 @@ private func byteChunks(markdown: String, sizes: Array<Int64>): Array<Array<Byte
 }
 
 private class ChunkedInputStream <: InputStream {
-    private let chunks: Array<Array<Byte>>
     private var chunkIndex: Int64 = 0
     private var chunkOffset: Int64 = 0
 
-    public init(chunks: Array<Array<Byte>>) {
-        this.chunks = chunks
-    }
+    public ChunkedInputStream(private let chunks: Array<Array<Byte>>) {}
 
     public func read(buffer: Array<Byte>): Int64 {
         while (chunkIndex < chunks.size) {

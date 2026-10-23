@@ -11,7 +11,7 @@ public class TokenHtmlRenderer {
     private static let resolverCache = HashMap<String, ThemeResolver>()
     private static let resolverCacheMutex = Mutex()
 
-    public init() {}
+    public TokenHtmlRenderer() {}
 
     public func renderBlock(block: CodeBlock): String {
         let out = StringBuilder(estimateBlockHtmlCapacity(block))

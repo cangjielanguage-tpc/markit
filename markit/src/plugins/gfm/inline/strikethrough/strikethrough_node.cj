@@ -7,7 +7,7 @@ import markit.core.source.SourceSpan
 public class StrikethroughNode <: Node {
     public let content: String
 
-    public init(
+    public StrikethroughNode(
         id: Int64,
         sourceSpan: SourceSpan,
         content: String

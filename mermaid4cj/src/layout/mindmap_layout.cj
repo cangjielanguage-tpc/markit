@@ -7,90 +7,37 @@ import mermaid4cj.core.{MermaidRenderOptions, MindmapDiagram, MindmapNode, Mindm
 public let MindmapMaxSections: Int64 = 12
 
 public class MindmapLayoutNode {
-    public let id: String
-    public let label: String
-    public let level: Int64
-    public let parentIndex: Int64
-    public let section: ?Int64
-    public let shape: MindmapNodeShape
-    public let icon: String
-    public let className: String
-    public let cssClasses: String
-    public let padding: Float64
-    public let width: Float64
-    public let height: Float64
-    public let x: Float64
-    public let y: Float64
 
-    public init(
-        id: String,
-        label: String,
-        level: Int64,
-        parentIndex: Int64,
-        section: ?Int64,
-        shape: MindmapNodeShape,
-        icon: String,
-        className: String,
-        cssClasses: String,
-        padding: Float64,
-        width: Float64,
-        height: Float64,
-        x: Float64,
-        y: Float64
-    ) {
-        this.id = id
-        this.label = label
-        this.level = level
-        this.parentIndex = parentIndex
-        this.section = section
-        this.shape = shape
-        this.icon = icon
-        this.className = className
-        this.cssClasses = cssClasses
-        this.padding = padding
-        this.width = width
-        this.height = height
-        this.x = x
-        this.y = y
-    }
+    public MindmapLayoutNode(
+        public let id: String,
+        public let label: String,
+        public let level: Int64,
+        public let parentIndex: Int64,
+        public let section: ?Int64,
+        public let shape: MindmapNodeShape,
+        public let icon: String,
+        public let className: String,
+        public let cssClasses: String,
+        public let padding: Float64,
+        public let width: Float64,
+        public let height: Float64,
+        public let x: Float64,
+        public let y: Float64
+    ) {}
 }
 
 public class MindmapLayoutEdge {
-    public let id: String
-    public let source: String
-    public let target: String
-    public let depth: Int64
-    public let section: ?Int64
-    public let cssClasses: String
-    public let points: Array<AnchorPoint>
 
-    public init(id: String, source: String, target: String, depth: Int64, section: ?Int64, cssClasses: String, points!: Array<AnchorPoint> = []) {
-        this.id = id
-        this.source = source
-        this.target = target
-        this.depth = depth
-        this.section = section
-        this.cssClasses = cssClasses
-        this.points = points
-    }
+    public MindmapLayoutEdge(public let id: String, public let source: String, public let target: String, public let depth: Int64, public let section: ?Int64, public let cssClasses: String, public let points!: Array<AnchorPoint> = []) {}
 }
 
 public class MindmapLayoutResult {
-    public let width: Float64
-    public let height: Float64
-    public let nodes: Array<MindmapLayoutNode>
-    public let edges: Array<MindmapLayoutEdge>
 
-    public init(width: Float64, height: Float64, nodes: Array<MindmapLayoutNode>, edges: Array<MindmapLayoutEdge>) {
-        this.width = width
-        this.height = height
-        this.nodes = nodes
-        this.edges = edges
-    }
+    public MindmapLayoutResult(public let width: Float64, public let height: Float64, public let nodes: Array<MindmapLayoutNode>, public let edges: Array<MindmapLayoutEdge>) {}
 }
 
 public class MindmapLayout {
-    public init() {}
+    public MindmapLayout() {}
 
     public func layout(diagram: MindmapDiagram, options: MermaidRenderOptions): MindmapLayoutResult {
         if (diagram.nodes.isEmpty()) {
@@ -330,25 +277,11 @@ public class MindmapLayout {
 }
 
 class MindmapRawNode {
-    let x: Float64
-    let y: Float64
 
-    init(x: Float64, y: Float64) {
-        this.x = x
-        this.y = y
-    }
+    MindmapRawNode(let x: Float64, let y: Float64) {}
 }
 
 class MindmapBounds {
-    let x: Float64
-    let y: Float64
-    let width: Float64
-    let height: Float64
 
-    init(x: Float64, y: Float64, width: Float64, height: Float64) {
-        this.x = x
-        this.y = y
-        this.width = width
-        this.height = height
-    }
+    MindmapBounds(let x: Float64, let y: Float64, let width: Float64, let height: Float64) {}
 }

@@ -26,11 +26,6 @@ import std.fs.{Path, exists, Directory, File}
  *            16.1, 16.2, 16.3, 16.4
  */
 public class MultiLanguageBuilder {
-    private let configs: Array<MarkitConfig>
-    private let inputPath: String
-    private let outputPath: String
-    private let devMode: Bool
-    private let parallelJobs: Int64
     
     /**
      * 构造函数
@@ -43,13 +38,8 @@ public class MultiLanguageBuilder {
      * 
      * Validates: Requirements 4.1, 4.2, 13.1
      */
-    public init(configs: Array<MarkitConfig>, inputPath: String, outputPath: String, devMode!: Bool = false, parallelJobs!: Int64 = 1) {
-        this.configs = configs
-        this.inputPath = inputPath
-        this.outputPath = outputPath
-        this.devMode = devMode
-        this.parallelJobs = parallelJobs
-    }
+    public MultiLanguageBuilder(private let configs: Array<MarkitConfig>, private let inputPath: String,
+        private let outputPath: String, private let devMode!: Bool = false, private let parallelJobs!: Int64 = 1) {}
     
     /**
      * 执行多语言构建

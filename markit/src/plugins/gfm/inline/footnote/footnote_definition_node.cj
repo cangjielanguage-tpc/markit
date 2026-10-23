@@ -9,7 +9,7 @@ public class FootnoteDefinitionNode <: Node {
     public let content: String
     public let footnoteNumber: Int64
 
-    public init(
+    public FootnoteDefinitionNode(
         id: Int64,
         sourceSpan: SourceSpan,
         footnoteId: String,

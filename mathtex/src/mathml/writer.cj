@@ -24,7 +24,7 @@ public class MathMlWriter {
     private var displayMode: Bool = false
     private var currentStyle: String = "text"
 
-    public init() {}
+    public MathMlWriter() {}
 
     public func write(expression: MathExpression): String {
         this.displayMode = expression.displayMode

@@ -1,22 +1,12 @@
 package markit.core.source
 
 public struct SourceSpan {
-    public let startByte: Int64
-    public let endByte: Int64
-    public let startRune: Int64
-    public let endRune: Int64
-
-    public init(
-        startByte: Int64,
-        endByte: Int64,
-        startRune: Int64,
-        endRune: Int64
-    ) {
-        this.startByte = startByte
-        this.endByte = endByte
-        this.startRune = startRune
-        this.endRune = endRune
-    }
+    public SourceSpan(
+        public let startByte: Int64,
+        public let endByte: Int64,
+        public let startRune: Int64,
+        public let endRune: Int64
+    ) {}
 
     public static func empty(): SourceSpan {
         return SourceSpan(0, 0, 0, 0)

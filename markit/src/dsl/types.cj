@@ -75,7 +75,7 @@ public class HeadingSpecOptions {
     public let number: String
     public let closable: Bool
 
-    public init(
+    public HeadingSpecOptions(
         slug!: String = "",
         number!: String = "",
         closable!: Bool = false
@@ -92,7 +92,7 @@ public class CodeBlockSpecOptions {
     public let highlightLines: String
     public let i18nLines: String
 
-    public init(
+    public CodeBlockSpecOptions(
         fenceMarker!: Byte = b'`',
         fenceLength!: Int64 = 3,
         highlightLines!: String = "",
@@ -110,7 +110,7 @@ public class ListSpecOptions {
     public let baseIndent: Int64
     public let marker: Byte
 
-    public init(
+    public ListSpecOptions(
         tight!: Bool = true,
         baseIndent!: Int64 = 0,
         marker!: Byte = b'-'

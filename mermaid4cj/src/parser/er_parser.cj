@@ -12,7 +12,7 @@ import mermaid4cj.core.{
 }
 
 public class ErDiagramParser {
-    public init() {}
+    public ErDiagramParser() {}
 
     public func parse(source: String): ErParseResult {
         let entities = ArrayList<ErEntity>()
@@ -363,21 +363,11 @@ public class ErDiagramParser {
 }
 
 class ErSplit {
-    let left: String
-    let right: String
 
-    init(left: String, right: String) {
-        this.left = left
-        this.right = right
-    }
+    ErSplit(let left: String, let right: String) {}
 }
 
 class ErEntitySpec {
-    let id: String
-    let label: String
 
-    init(id: String, label: String) {
-        this.id = id
-        this.label = label
-    }
+    ErEntitySpec(let id: String, let label: String) {}
 }

@@ -6,11 +6,7 @@ import markit.core.plugin.{Plugin, PluginRegistrar}
 import markit.plugins.standard.block.divider.DividerNode
 
 public class TablePlugin <: Plugin {
-    private let config: TableConfig
-
-    public init(config!: TableConfig = TableConfig()) {
-        this.config = config
-    }
+    public TablePlugin(private let config!: TableConfig = TableConfig()) {}
 
     public prop name: String {
         get() {

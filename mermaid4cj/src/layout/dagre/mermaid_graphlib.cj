@@ -10,7 +10,7 @@ class ClusterInfo {
     let explicitDir: Bool
     let dir: ?String
 
-    init(id: String, anchorId: String, descendants: Array<String>, explicitDir: Bool, dir: ?String) {
+    ClusterInfo(id: String, anchorId: String, descendants: Array<String>, explicitDir: Bool, dir: ?String) {
         this.id = id
         this.anchorId = anchorId
         this.descendants = descendants

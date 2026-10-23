@@ -22,7 +22,7 @@ public class DslBuildContext {
     public let renderer: RenderRegistry
     public let source: SourceBuffer
 
-    public init(options!: DslOptions = DslOptions()) {
+    public DslBuildContext(options!: DslOptions = DslOptions()) {
         this.options = options
         this.headingState = HeadingSessionState(
             numberingConfig: options.headingNumberingConfig,
@@ -124,7 +124,7 @@ public class HeadingSlugData {
     public let occurrence: Int64
     public let typstLabel: String
 
-    public init(baseSlug: String, uniqueSlug: String, occurrence: Int64, typstLabel: String) {
+    public HeadingSlugData(baseSlug: String, uniqueSlug: String, occurrence: Int64, typstLabel: String) {
         this.baseSlug = baseSlug
         this.uniqueSlug = uniqueSlug
         this.occurrence = occurrence

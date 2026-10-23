@@ -3,7 +3,7 @@ package markit.core.incremental
 import std.collection.ArrayList
 import std.io.OutputStream
 import seajson.JsonWriter
-import markit.core.block.{BlockDispatchTable, BlockFrame, ContinuationBlockDispatchTable, ContinuationBlockParser, ContinueResult, ParagraphBlockParser}
+import markit.core.block.{BlockDispatchTable, BlockParsingKernel, ContinuationBlockDispatchTable, ParagraphBlockParser}
 import markit.core.document.DocumentSnapshot
 import markit.core.nodes.Node
 import markit.core.plugin.NodeEmissionFilter
@@ -20,12 +20,11 @@ public class IncrementalSession {
     private let renderRegistry: RenderRegistry
     private let lineScanner = LineScanner()
     private let utf8Decoder = Utf8StreamDecoder()
-    private var openBlockParser: ?ContinuationBlockParser = None
-    private var openBlockFrame: ?BlockFrame = None
+    private let kernel: BlockParsingKernel
     private let sessionFinalizeHooks = ArrayList<(ParseSession) -> Unit>()
     private let postFinalizeHooks = ArrayList<(Node, SessionSymbolTableStore) -> Unit>()
 
-    public init(
+    public IncrementalSession(
         session: ParseSession,
         continuationDispatchTable: ContinuationBlockDispatchTable,
         blockDispatchTable: BlockDispatchTable,
@@ -39,6 +38,7 @@ public class IncrementalSession {
         this.paragraphBlockParsers = paragraphBlockParsers
         this.nodeEmissionFilters = nodeEmissionFilters
         this.renderRegistry = renderRegistry
+        this.kernel = BlockParsingKernel(session, continuationDispatchTable, blockDispatchTable, paragraphBlockParsers, trimNormalizedSpan: false)
         this.session.root.attachRenderHooks(renderRegistry)
     }
 
@@ -62,25 +62,12 @@ public class IncrementalSession {
     public func finalize(): IncrementalUpdate {
         let sealed = ArrayList<Node>()
         let fragments = ArrayList<HtmlFragment>()
-        utf8Decoder.finalize()
-        if (let Some(line) <- lineScanner.finalize()) {
-            processSourceLine(line, sealed, fragments)
-        }
-        if (let Some(parser) <- openBlockParser) {
-            if (let Some(frame) <- openBlockFrame) {
-                emit(parser.finalize(session, frame), sealed, fragments)
-            }
-            openBlockParser = None
-            openBlockFrame = None
-        }
-        if (!session.pendingParagraphLines.isEmpty()) {
-            let last = session.pendingParagraphLines[session.pendingParagraphLines.size - 1]
-            flushParagraph(
-                sealed,
-                fragments,
-                if (last.terminated) { EndOfInputWithNewline } else { EndOfInput }
-            )
-        }
+        kernel.setEmissionSink({ node: Node => emit(node, sealed, fragments) })
+        try {
+            utf8Decoder.finalize()
+            if (let Some(line) <- lineScanner.finalize()) { processSourceLine(line, sealed, fragments) }
+            kernel.finish()
+        } finally { kernel.clearEmissionSink() }
         for (hook in sessionFinalizeHooks) {
             hook(session)
         }
@@ -186,9 +173,10 @@ public class IncrementalSession {
     private func processLines(lines: ArrayList<SourceLine>, bytesAccepted: Int64): IncrementalUpdate {
         let sealed = ArrayList<Node>()
         let fragments = ArrayList<HtmlFragment>()
-        for (line in lines) {
-            processSourceLine(line, sealed, fragments)
-        }
+        kernel.setEmissionSink({ node: Node => emit(node, sealed, fragments) })
+        try {
+            for (line in lines) { processSourceLine(line, sealed, fragments) }
+        } finally { kernel.clearEmissionSink() }
 
         return IncrementalUpdate(
             sealedBlocks: sealed,
@@ -205,86 +193,7 @@ public class IncrementalSession {
         fragments: ArrayList<HtmlFragment>
     ): Unit {
         session.recordSourceLine(line)
-        session.beginLine(line)
-        processLine(line.text, sealed, fragments)
-    }
-
-    private func processLine(
-        line: String,
-        sealed: ArrayList<Node>,
-        fragments: ArrayList<HtmlFragment>
-    ): Unit {
-        if (let Some(parser) <- openBlockParser) {
-            if (let Some(frame) <- openBlockFrame) {
-                match (parser.continueBlock(session, frame, line)) {
-                    case Open =>
-                        return
-                    case Closed =>
-                        emit(parser.finalize(session, frame), sealed, fragments)
-                        openBlockParser = None
-                        openBlockFrame = None
-                        return
-                    case ClosedAndReprocess =>
-                        emit(parser.finalize(session, frame), sealed, fragments)
-                        openBlockParser = None
-                        openBlockFrame = None
-                        processLine(line, sealed, fragments)
-                        return
-                }
-            }
-        }
-
-        let maybeHead = firstNonSpaceByte(line)
-        if (maybeHead.isNone()) {
-            flushParagraph(sealed, fragments, BlankLine)
-            return
-        }
-
-        if (let Some(started) <- tryStartContinuationBlock(maybeHead, line)) {
-            flushParagraph(sealed, fragments, BlockBoundary)
-            openBlockParser = Some(started.parser)
-            openBlockFrame = Some(started.frame)
-            return
-        }
-
-        if (let Some(node) <- tryLeafBlock(maybeHead, line)) {
-            flushParagraph(sealed, fragments, BlockBoundary)
-            emit(node, sealed, fragments)
-            return
-        }
-
-        if (let Some(parser) <- paragraphParser()) {
-            if (parser.canStart(session, line)) {
-                session.addPendingParagraphLine(SourceLine(
-                    parser.normalizeLine(session, line),
-                    session.currentLineSpan(),
-                    terminated: session.currentSourceLine().terminated
-                ))
-            }
-        }
-    }
-
-    private func flushParagraph(
-        sealed: ArrayList<Node>,
-        fragments: ArrayList<HtmlFragment>,
-        termination: ParagraphTermination
-    ): Unit {
-        if (session.pendingParagraphLines.isEmpty()) {
-            return
-        }
-
-        if (let Some(parser) <- paragraphParser()) {
-            let node = parser.finalize(
-                session,
-                session.pendingParagraphLines,
-                session.pendingParagraphSourceSpan(),
-                termination
-            )
-            session.clearPendingParagraph()
-            emit(node, sealed, fragments)
-        } else {
-            session.clearPendingParagraph()
-        }
+        kernel.feed(line)
     }
 
     private func emit(
@@ -338,7 +247,7 @@ public class IncrementalSession {
     }
 
     private func currentPendingTailState(): PendingTailState {
-        if (let Some(parser) <- openBlockParser) {
+        if (let Some(parser) <- kernel.activeParser) {
             let span = session.currentLineSpan()
             return PendingTailState(
                 summary: "open block: ${parser.name}",
@@ -379,49 +288,4 @@ public class IncrementalSession {
         return sb.toString()
     }
 
-    private func tryLeafBlock(maybeHead: ?Byte, line: String): ?Node {
-        for (parser in blockDispatchTable.candidatesForFirstNonSpace(maybeHead)) {
-            if (let Some(node) <- parser.tryParse(session, line)) {
-                return Some(node)
-            }
-        }
-        return None
-    }
-
-    private func paragraphParser(): ?ParagraphBlockParser {
-        if (paragraphBlockParsers.isEmpty()) {
-            return None
-        }
-        return Some(paragraphBlockParsers[0])
-    }
-
-    private func tryStartContinuationBlock(maybeHead: ?Byte, line: String): ?StartedContinuationBlock {
-        for (parser in continuationDispatchTable.candidatesForFirstNonSpace(maybeHead)) {
-            if (let Some(frame) <- parser.tryStart(session, line)) {
-                return Some(StartedContinuationBlock(parser, frame))
-            }
-        }
-        return None
-    }
-
-    private func firstNonSpaceByte(line: String): ?Byte {
-        var index: Int64 = 0
-        while (index < line.size && (line[index] == b' ' || line[index] == b'\t')) {
-            index += 1
-        }
-        if (index >= line.size) {
-            return None
-        }
-        return Some(line[index])
-    }
-}
-
-private class StartedContinuationBlock {
-    public let parser: ContinuationBlockParser
-    public let frame: BlockFrame
-
-    public init(parser: ContinuationBlockParser, frame: BlockFrame) {
-        this.parser = parser
-        this.frame = frame
-    }
 }

@@ -3,13 +3,14 @@ package markit.core.block
 import std.collection.{ArrayList, HashMap}
 import markit.core.nodes.Node
 import markit.core.session.ParseSession
+import markit.core.editing.{IncrementalParserFacet, ParserIsolationProof}
 
 public interface BlockState {}
 
 public class BlockFrame {
     public let state: BlockState
 
-    public init(state: BlockState) {
+    public BlockFrame(state: BlockState) {
         this.state = state
     }
 }
@@ -25,6 +26,11 @@ public interface ContinuationBlockParser {
     prop ownerPlugin: String
     prop priority: Int64
     prop startBytes: Array<Byte>
+
+    // No checkpoint or state restoration is invented for legacy implementations.
+    prop supportsIncremental: Bool { get() { return false } }
+    prop incrementalFacet: ?IncrementalParserFacet { get() { return None } }
+    prop incrementalIsolation: ?ParserIsolationProof { get() { return None } }
 
     func tryStart(session: ParseSession, line: String): ?BlockFrame
     func continueBlock(session: ParseSession, frame: BlockFrame, line: String): ContinueResult

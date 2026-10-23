@@ -8,7 +8,7 @@ public class MathBlockNode <: Node {
     public let content: String
     public let indentLevel: Int64
 
-    public init(
+    public MathBlockNode(
         id: Int64,
         sourceSpan: SourceSpan,
         content: String,

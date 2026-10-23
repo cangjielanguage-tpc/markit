@@ -11,7 +11,7 @@ public class MarkdownRendererRegistration {
     public let kind: String
     public let renderer: MarkdownRenderer
 
-    public init(kind: String, renderer: MarkdownRenderer) {
+    public MarkdownRendererRegistration(kind: String, renderer: MarkdownRenderer) {
         this.kind = kind
         this.renderer = renderer
     }

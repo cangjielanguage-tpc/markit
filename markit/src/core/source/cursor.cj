@@ -1,22 +1,14 @@
 package markit.core.source
 
 public struct CursorCheckpoint {
-    public let bytePos: Int64
-    public let runePos: Int64
-
-    public init(bytePos: Int64, runePos: Int64) {
-        this.bytePos = bytePos
-        this.runePos = runePos
-    }
+    public CursorCheckpoint(public let bytePos: Int64, public let runePos: Int64) {}
 }
 
 public class Cursor {
-    private let view: TextView
     private var bytePos: Int64
     private var runePos: Int64
 
-    public init(view: TextView) {
-        this.view = view
+    public Cursor(private let view: TextView) {
         this.bytePos = view.span.startByte
         this.runePos = view.span.startRune
     }

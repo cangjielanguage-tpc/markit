@@ -41,7 +41,7 @@ public class ProcessedFileResult {
      * @param title 页面标题
      * @param searchSections 搜索索引数据
      */
-    public init(
+    public ProcessedFileResult(
         inputFile: String,
         outputFile: String,
         relativePath: String,

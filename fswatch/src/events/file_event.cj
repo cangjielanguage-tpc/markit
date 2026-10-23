@@ -41,7 +41,7 @@ public struct FileEvent {
     /**
      * 构造函数（完整参数）
      */
-    public init(
+    public FileEvent(
         eventType: EventType,
         path: Path,
         timestamp: DateTime,

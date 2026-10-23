@@ -4,7 +4,7 @@ import std.collection.{ArrayList, HashMap}
 import mermaid4cj.core.{GanttDiagram, GanttParseResult, GanttTask}
 
 public class GanttParser {
-    public init() {}
+    public GanttParser() {}
 
     public func parse(source: String): GanttParseResult {
         let diagnostics = ArrayList<String>()

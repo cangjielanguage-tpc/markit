@@ -4,10 +4,10 @@ import seajson.JsonWriter
 import markit.core.nodes.Node
 import markit.core.source.SourceSpan
 
-public class HeadingNode <: Node {
+public open class HeadingNode <: Node {
     public let content: String
 
-    public init(
+    public HeadingNode(
         id: Int64,
         sourceSpan: SourceSpan,
         content: String,

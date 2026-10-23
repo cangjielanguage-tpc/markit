@@ -3,11 +3,7 @@ package markit.plugins.anchor
 import markit.core.plugin.{Plugin, PluginRegistrar}
 
 public class AutoAnchorPlugin <: Plugin {
-    private let config: AutoAnchorConfig
-
-    public init(config!: AutoAnchorConfig = AutoAnchorConfig()) {
-        this.config = config
-    }
+    public AutoAnchorPlugin(private let config!: AutoAnchorConfig = AutoAnchorConfig()) {}
 
     public prop name: String {
         get() {

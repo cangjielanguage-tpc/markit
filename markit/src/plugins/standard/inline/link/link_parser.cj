@@ -132,13 +132,5 @@ public class LinkParser <: InlineParser {
 }
 
 public class ParsedDestination {
-    public let url: String
-    public let title: String
-    public let closeParen: Int64
-
-    public init(url: String, title: String, closeParen: Int64) {
-        this.url = url
-        this.title = title
-        this.closeParen = closeParen
-    }
+    public ParsedDestination(public let url: String, public let title: String, public let closeParen: Int64) {}
 }

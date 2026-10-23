@@ -8,7 +8,7 @@ public class UnorderedListNode <: Node {
     public let tight: Bool
     public let baseIndent: Int64
 
-    public init(
+    public UnorderedListNode(
         id: Int64,
         sourceSpan: SourceSpan,
         tight: Bool,

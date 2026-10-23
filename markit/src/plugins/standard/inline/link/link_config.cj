@@ -1,23 +1,11 @@
 package markit.plugins.standard.inline.link
 
 public class LinkConfig {
-    public let fileTree: ?FileTree
-    public let renderMode: RenderMode
-    public let outputExtension: String
-    public let preserveFlatFilePaths: Bool
-    public let currentFilePath: String
-
-    public init(
-        fileTree!: ?FileTree = None,
-        renderMode!: RenderMode = RenderMode.Normal,
-        outputExtension!: String = "html",
-        preserveFlatFilePaths!: Bool = false,
-        currentFilePath!: String = ""
-    ) {
-        this.fileTree = fileTree
-        this.renderMode = renderMode
-        this.outputExtension = outputExtension
-        this.preserveFlatFilePaths = preserveFlatFilePaths
-        this.currentFilePath = currentFilePath
-    }
+    public LinkConfig(
+        public let fileTree!: ?FileTree = None,
+        public let renderMode!: RenderMode = RenderMode.Normal,
+        public let outputExtension!: String = "html",
+        public let preserveFlatFilePaths!: Bool = false,
+        public let currentFilePath!: String = ""
+    ) {}
 }

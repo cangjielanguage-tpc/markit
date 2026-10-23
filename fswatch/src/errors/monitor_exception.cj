@@ -24,7 +24,7 @@ public class MonitorException <: Exception {
     /**
      * 构造函数（完整参数）
      */
-    public init(
+    public MonitorException(
         error: MonitorError,
         context: String,
         innerException: ?Exception

@@ -10,7 +10,7 @@ import mermaid4cj.parser.FlowchartParser
 import mermaid4cj.svg.appendD3BasisPath
 
 class FixedMermaidTextMeasurer <: MermaidTextMeasurer {
-    public init() {}
+    public FixedMermaidTextMeasurer() {}
 
     public func measureText(text: String): Float64 {
         return Float64(text.size) * 25.0

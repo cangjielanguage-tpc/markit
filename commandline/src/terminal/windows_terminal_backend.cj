@@ -5,14 +5,9 @@ import std.sync.Mutex
 
 @When[os == "Windows"]
 public class NativeTerminalBackend <: TerminalBackend {
-    private let testKeyQueue: ArrayList<TerminalKey>
-    private let mutex: Mutex
     private var usesQueuedKeys: Bool = false
 
-    public init(testKeyQueue: ArrayList<TerminalKey>, mutex: Mutex) {
-        this.testKeyQueue = testKeyQueue
-        this.mutex = mutex
-    }
+    public NativeTerminalBackend(private let testKeyQueue: ArrayList<TerminalKey>, private let mutex: Mutex) {}
 
     public func supportsKeyNavigation(): Bool {
         return hasQueuedKeyInput()

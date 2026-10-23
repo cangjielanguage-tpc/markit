@@ -8,7 +8,7 @@ public class FootnoteReferenceNode <: Node {
     public let footnoteId: String
     public let footnoteNumber: Int64
 
-    public init(
+    public FootnoteReferenceNode(
         id: Int64,
         sourceSpan: SourceSpan,
         footnoteId: String,

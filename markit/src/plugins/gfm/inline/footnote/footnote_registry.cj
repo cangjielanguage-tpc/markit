@@ -4,16 +4,9 @@ import std.collection.{ArrayList, HashMap}
 import markit.core.session.{SessionState, SessionStateSnapshot}
 
 public class FootnoteDefinition {
-    public let id: String
-    public var content: String
-    public var number: Int64
     public let references = ArrayList<Int64>()
 
-    public init(id: String, content: String, number!: Int64 = 0) {
-        this.id = id
-        this.content = content
-        this.number = number
-    }
+    public FootnoteDefinition(public let id: String, public var content: String, public var number!: Int64 = 0) {}
 }
 
 public class FootnoteRegistry <: SessionState {

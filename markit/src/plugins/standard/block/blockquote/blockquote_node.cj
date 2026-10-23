@@ -3,8 +3,8 @@ package markit.plugins.standard.block.blockquote
 import markit.core.nodes.Node
 import markit.core.source.SourceSpan
 
-public class BlockquoteNode <: Node {
-    public init(
+public open class BlockquoteNode <: Node {
+    public BlockquoteNode(
         id: Int64,
         sourceSpan: SourceSpan
     ) {

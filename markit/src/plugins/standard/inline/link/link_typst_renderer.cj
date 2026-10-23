@@ -5,11 +5,7 @@ import markit.core.render.{RenderRegistry, TextWriter, TypstRenderer}
 import markit.utils.TypstEscaper
 
 public class LinkTypstRenderer <: TypstRenderer {
-    private let resolver: SmartHeadingLinkResolver
-
-    public init(resolver!: SmartHeadingLinkResolver = SmartHeadingLinkResolver(LinkConfig())) {
-        this.resolver = resolver
-    }
+    public LinkTypstRenderer(private let resolver!: SmartHeadingLinkResolver = SmartHeadingLinkResolver(LinkConfig())) {}
 
     public prop ownerPlugin: String {
         get() {

@@ -14,7 +14,7 @@ public class ListBlockState <: BlockState {
     public let items = ArrayList<ListItemData>()
     public let pendingBlankLines = ArrayList<SourceLine>()
 
-    public init(marker: ListMarker, sourceSpan: SourceSpan) {
+    public ListBlockState(marker: ListMarker, sourceSpan: SourceSpan) {
         this.ordered = marker.ordered
         this.baseIndent = marker.indent
         this.delimiter = marker.delimiter
@@ -54,7 +54,7 @@ public class ListItemData {
     public var sourceSpan: SourceSpan
     public let continuationLines = ArrayList<SourceLine>()
 
-    public init(marker: ListMarker, line: SourceLine) {
+    public ListItemData(marker: ListMarker, line: SourceLine) {
         this.number = marker.number
         this.marker = marker.marker
         this.delimiter = marker.delimiter
@@ -85,38 +85,16 @@ public class ListItemData {
 }
 
 public class ListMarker {
-    public let ordered: Bool
-    public let marker: Byte
-    public let delimiter: Byte
-    public let number: Int64
-    public let indent: Int64
-    public let content: String
-    public let contentStartByte: Int64
-    public let contentEndByte: Int64
-    public let contentStartRune: Int64
-    public let contentEndRune: Int64
-
-    public init(
-        ordered: Bool,
-        marker: Byte,
-        delimiter: Byte,
-        number: Int64,
-        indent: Int64,
-        content: String,
-        contentStartByte: Int64,
-        contentEndByte: Int64,
-        contentStartRune: Int64,
-        contentEndRune: Int64
-    ) {
-        this.ordered = ordered
-        this.marker = marker
-        this.delimiter = delimiter
-        this.number = number
-        this.indent = indent
-        this.content = content
-        this.contentStartByte = contentStartByte
-        this.contentEndByte = contentEndByte
-        this.contentStartRune = contentStartRune
-        this.contentEndRune = contentEndRune
-    }
+    public ListMarker(
+        public let ordered: Bool,
+        public let marker: Byte,
+        public let delimiter: Byte,
+        public let number: Int64,
+        public let indent: Int64,
+        public let content: String,
+        public let contentStartByte: Int64,
+        public let contentEndByte: Int64,
+        public let contentStartRune: Int64,
+        public let contentEndRune: Int64
+    ) {}
 }

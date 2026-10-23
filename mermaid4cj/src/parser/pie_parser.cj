@@ -4,7 +4,7 @@ import std.collection.{ArrayList, HashMap}
 import mermaid4cj.core.{PieDiagram, PieParseResult, PieSlice}
 
 public class PieParser {
-    public init() {}
+    public PieParser() {}
 
     public func parse(source: String): PieParseResult {
         let slices = ArrayList<PieSlice>()

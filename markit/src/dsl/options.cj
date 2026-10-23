@@ -10,7 +10,7 @@ public class DslOptions {
     public let includeI18n: Bool
     public let includeToc: Bool
 
-    public init(
+    public DslOptions(
         headingNumberingConfig!: HeadingNumberingConfig = HeadingNumberingConfig(),
         headingSlugConfig!: HeadingSlugConfig = HeadingSlugConfig(),
         linkConfig!: LinkConfig = LinkConfig(),

@@ -23,7 +23,7 @@ class D3BasisPath {
     var pointCount: Int64 = 0
     var lineState: Int64 = -1
 
-    init(out: StringBuilder) {
+    D3BasisPath(out: StringBuilder) {
         this.out = out
     }
 
@@ -103,11 +103,8 @@ class D3BasisPath {
 }
 
 public class FlowchartSvgWriter {
-    let textMeasurer: MermaidTextMeasurer
 
-    public init(textMeasurer!: MermaidTextMeasurer = DefaultMermaidTextMeasurer()) {
-        this.textMeasurer = textMeasurer
-    }
+    public FlowchartSvgWriter(let textMeasurer!: MermaidTextMeasurer = DefaultMermaidTextMeasurer()) {}
 
     public func write(diagram: FlowchartDiagram, layout: FlowchartLayoutResult, options: MermaidRenderOptions): String {
         let theme = SvgTheme.resolve(options.theme)

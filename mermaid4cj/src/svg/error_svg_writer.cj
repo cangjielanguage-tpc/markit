@@ -3,7 +3,7 @@ package mermaid4cj.svg
 import mermaid4cj.core.MermaidRenderOptions
 
 public class ErrorSvgWriter {
-    public init() {}
+    public ErrorSvgWriter() {}
 
     public func write(title: String, message: String, options: MermaidRenderOptions): String {
         let theme = SvgTheme.resolve(options.theme)

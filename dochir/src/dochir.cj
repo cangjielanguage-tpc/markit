@@ -20,7 +20,7 @@ public class DocChirConfig {
     public let assetRoot: String
     public let parallelJobs: Int64
 
-    public init(
+    public DocChirConfig(
         projectName!: String = "API Reference",
         outputRoot!: String = "dochir-output",
         modelDir!: String = DocModelStore.defaultModelDir(),

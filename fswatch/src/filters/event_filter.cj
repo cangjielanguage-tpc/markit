@@ -36,16 +36,11 @@ public interface EventFilter {
  * 支持多个过滤器的逻辑组合（AND、OR、NOT）。
  */
 public class CompositeEventFilter <: EventFilter {
-    private let filters: Array<EventFilter>
-    private let operation: Operation
     
     /**
      * 构造函数
      */
-    public init(filters: Array<EventFilter>, operation: Operation) {
-        this.filters = filters
-        this.operation = operation
-    }
+    public CompositeEventFilter(private let filters: Array<EventFilter>, private let operation: Operation) {}
     
     /**
      * 检查事件是否应该被处理
@@ -118,7 +113,7 @@ public class PathEventFilter <: EventFilter {
     /**
      * 构造函数
      */
-    public init(patterns: Array<PathPattern>, includeMode: Bool) {
+    public PathEventFilter(patterns: Array<PathPattern>, includeMode: Bool) {
         this.patterns = patterns
         this.includeMode = includeMode
     }
@@ -158,14 +153,11 @@ public class PathEventFilter <: EventFilter {
  * 基于事件类型过滤事件。
  */
 public class EventTypeFilter <: EventFilter {
-    private let allowedTypes: Array<EventType>
     
     /**
      * 构造函数
      */
-    public init(allowedTypes: Array<EventType>) {
-        this.allowedTypes = allowedTypes
-    }
+    public EventTypeFilter(private let allowedTypes: Array<EventType>) {}
     
     /**
      * 检查事件是否应该被处理
@@ -265,16 +257,11 @@ public class FileSizeFilter <: EventFilter {
  * 基于事件发生时间过滤事件。
  */
 public class TimeRangeFilter <: EventFilter {
-    private let startTime: ?DateTime
-    private let endTime: ?DateTime
     
     /**
      * 构造函数
      */
-    public init(startTime: ?DateTime, endTime: ?DateTime) {
-        this.startTime = startTime
-        this.endTime = endTime
-    }
+    public TimeRangeFilter(private let startTime: ?DateTime, private let endTime: ?DateTime) {}
     
     /**
      * 检查事件是否应该被处理

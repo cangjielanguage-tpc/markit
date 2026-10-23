@@ -7,7 +7,7 @@ import mathtex.parser.{MathTex, TexCommandRegistry}
 import mathtex.typst.MathTypstWriter
 
 public class MathRenderer {
-    public init() {}
+    public MathRenderer() {}
 
     public func renderHtmlAndMathMl(tex: String, options!: MathRenderOptions = MathRenderOptions()): MathRenderResult {
         return render(tex, MathOutputMode.HtmlAndMathMl, options)

@@ -25,7 +25,7 @@ public class StandardMarkdownBundle <: Bundle {
     private let linkConfig: LinkConfig
     private let blockAutoAnchor: Bool
 
-    public init(
+    public StandardMarkdownBundle(
         headingNumberingConfig!: HeadingNumberingConfig = HeadingNumberingConfig(),
         closableConfig!: HeadingClosableConfig = HeadingClosableConfig(),
         headingSlugConfig!: HeadingSlugConfig = HeadingSlugConfig(),

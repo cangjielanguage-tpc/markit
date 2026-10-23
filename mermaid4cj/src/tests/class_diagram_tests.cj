@@ -7,7 +7,7 @@ import std.unittest.testmacro.*
 import mermaid4cj.{ClassDef, MermaidHtmlOptions, MermaidRenderOptions, MermaidRenderer, MermaidTextMeasurer}
 
 class WideClassTextMeasurer <: MermaidTextMeasurer {
-    public init() {}
+    public WideClassTextMeasurer() {}
 
     public func measureText(text: String): Float64 {
         if (text.contains("+login(password: String) : bool")) {

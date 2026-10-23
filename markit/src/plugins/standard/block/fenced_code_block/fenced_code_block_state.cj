@@ -17,7 +17,7 @@ public class FencedCodeBlockState <: BlockState {
     public var closed: Bool = false
     public var closingLine: ?SourceLine = None
 
-    public init(
+    public FencedCodeBlockState(
         marker: Byte,
         fenceLength: Int64,
         indentWidth: Int64,

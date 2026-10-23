@@ -27,7 +27,7 @@ public class GrammarTokenizer <: CodeTokenizer {
         this.scopeStackCache = HashMap<String, Array<String>>()
     }
 
-    public init(grammar: Grammar, languageIds: Array<String>, externalGrammars: HashMap<String, Grammar>) {
+    public GrammarTokenizer(grammar: Grammar, languageIds: Array<String>, externalGrammars: HashMap<String, Grammar>) {
         this.grammar = grammar
         this.ids = languageIds
         this.externalGrammars = externalGrammars
@@ -1195,7 +1195,7 @@ class RuleMatch {
         this.searchCursor = start
     }
 
-    init(rule: GrammarPattern, grammar: Grammar, range: MatchRange, isBegin: Bool, searchCursor!: Int64 = range.start) {
+    RuleMatch(rule: GrammarPattern, grammar: Grammar, range: MatchRange, isBegin: Bool, searchCursor!: Int64 = range.start) {
         this.rule = rule
         this.grammar = grammar
         this.start = range.start
@@ -1207,77 +1207,35 @@ class RuleMatch {
 }
 
 class PatternSet {
-    let grammar: Grammar
-    let patterns: Array<GrammarPattern>
 
-    init(grammar: Grammar, patterns: Array<GrammarPattern>) {
-        this.grammar = grammar
-        this.patterns = patterns
-    }
+    PatternSet(let grammar: Grammar, let patterns: Array<GrammarPattern>) {}
 }
 
 class RuleScanner {
-    let candidates: Array<RuleCandidate>
 
-    init(candidates: Array<RuleCandidate>) {
-        this.candidates = candidates
-    }
+    RuleScanner(let candidates: Array<RuleCandidate>) {}
 }
 
 class RuleCandidate {
-    let pattern: GrammarPattern
-    let grammar: Grammar
-    let regex: CompiledRegexPattern
-    let isBegin: Bool
-    let needsCaptures: Bool
-    let maxCaptureIndex: Int64
 
-    init(pattern: GrammarPattern, grammar: Grammar, regex: CompiledRegexPattern, isBegin: Bool, needsCaptures: Bool, maxCaptureIndex: Int64) {
-        this.pattern = pattern
-        this.grammar = grammar
-        this.regex = regex
-        this.isBegin = isBegin
-        this.needsCaptures = needsCaptures
-        this.maxCaptureIndex = maxCaptureIndex
-    }
+    RuleCandidate(let pattern: GrammarPattern, let grammar: Grammar, let regex: CompiledRegexPattern, let isBegin: Bool, let needsCaptures: Bool, let maxCaptureIndex: Int64) {}
 
 }
 
 public class TokenizerDiagnosticSnapshot {
-    public let nonZeroCursorSubstringCount: Int64
-    public let nonZeroCursorSubstringBytes: Int64
-    public let captureSegmentSubstringCount: Int64
-    public let captureSegmentSubstringBytes: Int64
-    public let captureRangeOffsetCopies: Int64
-    public let ruleCandidateScans: Int64
-    public let regexFindCalls: Int64
-    public let captureGroupPositionProbes: Int64
-    public let scopeStackCacheHits: Int64
-    public let scopeStackCacheMisses: Int64
 
-    public init(
-        nonZeroCursorSubstringCount: Int64,
-        nonZeroCursorSubstringBytes: Int64,
-        captureSegmentSubstringCount: Int64,
-        captureSegmentSubstringBytes: Int64,
-        captureRangeOffsetCopies: Int64,
-        ruleCandidateScans: Int64,
-        regexFindCalls: Int64,
-        captureGroupPositionProbes: Int64,
-        scopeStackCacheHits: Int64,
-        scopeStackCacheMisses: Int64
-    ) {
-        this.nonZeroCursorSubstringCount = nonZeroCursorSubstringCount
-        this.nonZeroCursorSubstringBytes = nonZeroCursorSubstringBytes
-        this.captureSegmentSubstringCount = captureSegmentSubstringCount
-        this.captureSegmentSubstringBytes = captureSegmentSubstringBytes
-        this.captureRangeOffsetCopies = captureRangeOffsetCopies
-        this.ruleCandidateScans = ruleCandidateScans
-        this.regexFindCalls = regexFindCalls
-        this.captureGroupPositionProbes = captureGroupPositionProbes
-        this.scopeStackCacheHits = scopeStackCacheHits
-        this.scopeStackCacheMisses = scopeStackCacheMisses
-    }
+    public TokenizerDiagnosticSnapshot(
+        public let nonZeroCursorSubstringCount: Int64,
+        public let nonZeroCursorSubstringBytes: Int64,
+        public let captureSegmentSubstringCount: Int64,
+        public let captureSegmentSubstringBytes: Int64,
+        public let captureRangeOffsetCopies: Int64,
+        public let ruleCandidateScans: Int64,
+        public let regexFindCalls: Int64,
+        public let captureGroupPositionProbes: Int64,
+        public let scopeStackCacheHits: Int64,
+        public let scopeStackCacheMisses: Int64
+    ) {}
 }
 
 class TokenizerDiagnostics {
@@ -1332,7 +1290,7 @@ class ExpandedPattern {
     let matchMaxCaptureIndex: Int64
     let beginMaxCaptureIndex: Int64
 
-    init(pattern: GrammarPattern, grammar: Grammar) {
+    ExpandedPattern(pattern: GrammarPattern, grammar: Grammar) {
         this.pattern = pattern
         this.grammar = grammar
         this.matchRegex = if (pattern.matchPattern.isEmpty()) { None<CompiledRegexPattern> } else { RegexAdapter.compile(pattern.matchPattern, false) }
@@ -1345,52 +1303,25 @@ class ExpandedPattern {
 }
 
 class MatchRange {
-    let start: Int64
-    let end: Int64
-    let captures: Array<CaptureRange>
 
-    init(start: Int64, end: Int64, captures!: Array<CaptureRange> = []) {
-        this.start = start
-        this.end = end
-        this.captures = captures
-    }
+    MatchRange(let start: Int64, let end: Int64, let captures!: Array<CaptureRange> = []) {}
 }
 
 class CaptureRange {
-    let index: Int64
-    let start: Int64
-    let end: Int64
 
-    init(index: Int64, start: Int64, end: Int64) {
-        this.index = index
-        this.start = start
-        this.end = end
-    }
+    CaptureRange(let index: Int64, let start: Int64, let end: Int64) {}
 }
 
 class CompiledRegexPattern {
-    let original: String
-    let sanitized: String
-    let tooComplex: Bool
-    let originalContainsCursorAnchor: Bool
-    let lineStartAnchored: Bool
-    let regex: ?Regex
 
-    init(
-        original: String,
-        sanitized: String,
-        tooComplex: Bool,
-        originalContainsCursorAnchor: Bool,
-        lineStartAnchored: Bool,
-        regex: ?Regex
-    ) {
-        this.original = original
-        this.sanitized = sanitized
-        this.tooComplex = tooComplex
-        this.originalContainsCursorAnchor = originalContainsCursorAnchor
-        this.lineStartAnchored = lineStartAnchored
-        this.regex = regex
-    }
+    CompiledRegexPattern(
+        let original: String,
+        let sanitized: String,
+        let tooComplex: Bool,
+        let originalContainsCursorAnchor: Bool,
+        let lineStartAnchored: Bool,
+        let regex: ?Regex
+    ) {}
 }
 
 class RegexAdapter {

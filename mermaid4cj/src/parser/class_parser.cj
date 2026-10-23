@@ -13,7 +13,7 @@ import mermaid4cj.core.{
 }
 
 public class ClassDiagramParser {
-    public init() {}
+    public ClassDiagramParser() {}
 
     public func parse(source: String): ClassParseResult {
         let classes = ArrayList<ClassDef>()
@@ -467,23 +467,11 @@ public class ClassDiagramParser {
 }
 
 class ClassSplit {
-    let left: String
-    let right: String
 
-    init(left: String, right: String) {
-        this.left = left
-        this.right = right
-    }
+    ClassSplit(let left: String, let right: String) {}
 }
 
 class ClassIdLabel {
-    let id: String
-    let label: String
-    let genericType: ?String
 
-    init(id: String, label: String, genericType: ?String) {
-        this.id = id
-        this.label = label
-        this.genericType = genericType
-    }
+    ClassIdLabel(let id: String, let label: String, let genericType: ?String) {}
 }

@@ -4,11 +4,7 @@ import markit.core.nodes.Node
 import markit.core.render.{HtmlEscaper, HtmlRenderer, HtmlWriter, RenderRegistry}
 
 public class LinkHtmlRenderer <: HtmlRenderer {
-    private let resolver: SmartHeadingLinkResolver
-
-    public init(resolver!: SmartHeadingLinkResolver = SmartHeadingLinkResolver(LinkConfig())) {
-        this.resolver = resolver
-    }
+    public LinkHtmlRenderer(private let resolver!: SmartHeadingLinkResolver = SmartHeadingLinkResolver(LinkConfig())) {}
 
     public prop ownerPlugin: String {
         get() {

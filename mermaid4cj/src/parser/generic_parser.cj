@@ -4,7 +4,7 @@ import std.collection.{ArrayList, HashMap}
 import mermaid4cj.core.{DiagramKind, GenericDiagram, GenericEdge, GenericNode, GenericParseResult, GenericRow, GenericTask}
 
 public class GenericDiagramParser {
-    public init() {}
+    public GenericDiagramParser() {}
 
     public func parse(source: String, kind: DiagramKind): GenericParseResult {
         match (kind) {

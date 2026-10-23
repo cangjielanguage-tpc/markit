@@ -36,7 +36,7 @@ struct WatchScope {
     let isDirectoryTarget: Bool
     let recursive: Bool
 
-    init(path: Path, recursive: Bool) {
+    WatchScope(path: Path, recursive: Bool) {
         let canonicalPath = canonicalize(path.toString()).normalize()
         let fileInfo = FileInfo(canonicalPath)
         let isDirectoryTarget = fileInfo.isDirectory()
@@ -66,16 +66,13 @@ public class LinuxInotifyBackend <: AbstractMonitorBackend {
     private static let nativeEventMoved: Int32 = 4
     private static let nativeEventAttributeChanged: Int32 = 5
 
-    private let maxDepth: Int32
     private let watchScopes: HashMap<String, WatchScope> = HashMap<String, WatchScope>()
     private let receiverMutex = Mutex()
     private var nativeHandle: CPointer<Unit> = CPointer<Unit>()
     private var receiverActive: Bool = false
     private var receiverExited: Bool = true
 
-    public init(maxDepth: Int32) {
-        this.maxDepth = maxDepth
-    }
+    public LinuxInotifyBackend(private let maxDepth: Int32) {}
 
     public func getBackendType(): BackendType {
         return BackendType.Native

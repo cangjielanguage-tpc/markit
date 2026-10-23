@@ -15,7 +15,7 @@ public class MarkdownProcessor <: Processor {
     private var linkConfig: LinkConfig = GlobalContext.linkConfig ?? LinkConfig()
     private var headingInitialState: Array<Int64> = CliMarkitFactory.defaultHeadingState(config)
 
-    public init(themeName!: String = "") {
+    public MarkdownProcessor(themeName!: String = "") {
     }
 
     public func setLinkConfig(config: LinkConfig): Unit {

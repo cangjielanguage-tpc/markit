@@ -21,7 +21,7 @@ public class TypstProcessor <: Processor {
     private var linkConfig: LinkConfig = GlobalContext.linkConfig ?? LinkConfig()
     private var headingInitialState: Array<Int64> = CliMarkitFactory.defaultHeadingState(config)
 
-    public init(themeName!: String = "") {
+    public TypstProcessor(themeName!: String = "") {
     }
 
     public func setLinkConfig(config: LinkConfig): Unit {
@@ -159,7 +159,7 @@ class TypstAssetState {
     private var mermaidCounter: Int64 = 0
     private var lastMermaidIndex: Int64 = 0
 
-    public init(currentPagePath: String) {
+    public TypstAssetState(currentPagePath: String) {
         this.currentPagePath = if (currentPagePath.isEmpty()) { "merged.typ" } else { currentPagePath.replace("\\", "/") }
         let config = GlobalContext.renderConfig.getOrThrow()
         let pdfMode = config.outputFormat.toAsciiLower() == "pdf"
@@ -228,9 +228,5 @@ class TypstAssetState {
 }
 
 class TypstAssetInfo {
-    public let outputRelativePath: String
-
-    public init(outputRelativePath: String) {
-        this.outputRelativePath = outputRelativePath
-    }
+    public TypstAssetInfo(public let outputRelativePath: String) {}
 }

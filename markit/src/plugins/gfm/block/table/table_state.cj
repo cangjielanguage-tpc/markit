@@ -11,7 +11,7 @@ public class TableState <: BlockState {
     public let bodyLines = ArrayList<SourceLine>()
     public var sourceSpan: SourceSpan
 
-    public init(
+    public TableState(
         headerLine: SourceLine,
         alignmentLine: SourceLine,
         alignments: ArrayList<TableAlignment>

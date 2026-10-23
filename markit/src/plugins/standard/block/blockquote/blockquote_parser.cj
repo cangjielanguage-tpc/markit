@@ -1,11 +1,22 @@
 package markit.plugins.standard.block.blockquote
 
-import markit.core.block.{BlockFrame, ContinuationBlockParser, ContinueResult}
+import markit.core.block.{BlockFrame, ContinuationBlockParser, ContinueResult, BlockEditingContext}
 import markit.core.nodes.Node
 import markit.core.session.ParseSession
 import markit.core.source.{SyntheticSourceBuilder, SyntheticSourceParseInput}
+import markit.core.editing.{IncrementalParserFacet, ParserIsolationProof}
+import markit.plugins.standard.editing.{StandardBlockRecovery, standardClosedKernelCheckpoint}
+import markit.plugins.standard.block.heading.{parseMappedHeadingContributions, rebaseHeadingContributions}
+import markit.plugins.standard.block.paragraph.withMappedParagraphRaw
 
 public class BlockquoteParser <: ContinuationBlockParser {
+    private let facet = BlockquoteEditingFacet()
+    public prop supportsIncremental: Bool { get() { return true } }
+    public prop incrementalFacet: ?IncrementalParserFacet { get() { return Some(facet) } }
+    public prop incrementalIsolation: ?ParserIsolationProof {
+        get() { return Some(ParserIsolationProof(syntaxBoundary: true, stateBoundary: true,
+            semanticBoundary: true, evidence: "Shared quote matcher; mapped child recovery; owner-scoped effects")) }
+    }
     public prop name: String {
         get() {
             return "BlockquoteParser"
@@ -31,9 +42,14 @@ public class BlockquoteParser <: ContinuationBlockParser {
     }
 
     public func tryStart(session: ParseSession, line: String): ?BlockFrame {
-        if (let Some(stripped) <- stripMarker(line)) {
+        if (let Some(start) <- blockquoteContentStart(line)) {
             let state = BlockquoteState(session.currentLineSpan())
-            state.addLine(stripped, session.currentSourceLine())
+            if (let Some(context) <- session.editingContext) {
+                let syntax = facet.checkpoint(context).getOrThrow()
+                let closed = standardClosedKernelCheckpoint(session)
+                state.recovery = Some(StandardBlockRecovery(session.checkpoint(), syntax, closed, syntax, closed))
+            }
+            state.addLine(if (start < line.size) { line[start..] } else { "" }, session.currentSourceLine())
             return Some(BlockFrame(state))
         }
         return None
@@ -41,12 +57,12 @@ public class BlockquoteParser <: ContinuationBlockParser {
 
     public func continueBlock(session: ParseSession, frame: BlockFrame, line: String): ContinueResult {
         let state = (frame.state as BlockquoteState).getOrThrow()
-        if (let Some(stripped) <- stripMarker(line)) {
-            state.addLine(stripped, session.currentSourceLine())
+        if (let Some(start) <- blockquoteContentStart(line)) {
+            state.addLine(if (start < line.size) { line[start..] } else { "" }, session.currentSourceLine())
             return Open
         }
 
-        if (!line.trimAscii().isEmpty() && !startsOuterBlock(line)) {
+        if (blockquoteContinues(line)) {
             state.addLine(line, session.currentSourceLine())
             return Open
         }
@@ -56,10 +72,30 @@ public class BlockquoteParser <: ContinuationBlockParser {
 
     public func finalize(session: ParseSession, frame: BlockFrame): Node {
         let state = (frame.state as BlockquoteState).getOrThrow()
-        let node = session.attachNode(BlockquoteNode(
-            session.allocateNodeId(),
-            state.sourceSpan
-        ))
+        let id = session.allocateNodeId()
+        let node = session.attachNode(if (let Some(recovery) <- state.recovery) {
+            let context = (session.editingContext.getOrThrow() as BlockEditingContext).getOrThrow()
+            let parentDepth = blockquoteParentDepth(context, state.sourceSpan.startByte)
+            // Continuation starts are tested before the kernel flushes a
+            // preceding paragraph. Capture the closed entry after that flush,
+            // before parsing quote children, so recovery cannot replay it.
+            EditingBlockquoteNode(id, state.sourceSpan, StandardBlockRecovery(session.checkpoint(),
+                recovery.syntax, recovery.kernel, recovery.expectedExit, recovery.expectedKernel), facet,
+                blockquoteRawView(context, state.sourceSpan.startByte, state.sourceSpan.endByte, parentDepth, id), parentDepth)
+        } else { BlockquoteNode(id, state.sourceSpan) })
+        if (let Some(context) <- session.editingContext) {
+            let lines = blockquoteChildLines(state.lines)
+            let mappedContext = (context as BlockEditingContext).getOrThrow()
+            let children = parseMappedHeadingContributions(session, {
+                => withMappedParagraphRaw(mappedContext, { => session.parseDetachedLines(lines) })
+            })
+            for (child in children) {
+                freezeMappedBlockquoteRaw(child, lines, context.sourceVersion, context.documentId)
+                node.addChild(child)
+            }
+            rebaseHeadingContributions(session, children.toArray())
+            return node
+        }
         let synthetic = SyntheticSourceBuilder.build(state.lines, preserveTrailingNewline: false)
         for (child in session.parseDetachedLines(synthetic.lines)) {
             child.attachSource(synthetic.source)
@@ -84,67 +120,4 @@ public class BlockquoteParser <: ContinuationBlockParser {
         }
     }
 
-    private func stripMarker(line: String): ?String {
-        let indent = leadingQuoteIndent(line)
-        if (indent < 0) {
-            return None
-        }
-
-        let markerIndex = Int64(indent)
-        if (markerIndex >= line.size || line[markerIndex] != b'>') {
-            return None
-        }
-
-        var start = markerIndex + 1
-        if (start < line.size && line[start] == b' ') {
-            start += 1
-        }
-        if (start >= line.size) {
-            return Some("")
-        }
-        return Some(line[start..])
-    }
-
-    private func leadingQuoteIndent(line: String): Int64 {
-        var index: Int64 = 0
-        var indent: Int64 = 0
-        while (index < line.size && (line[index] == b' ' || line[index] == b'\t')) {
-            if (line[index] == b' ') {
-                indent += 1
-            } else {
-                indent += 4
-            }
-            if (indent > 3) {
-                return -1
-            }
-            index += 1
-        }
-        return index
-    }
-
-    private func startsOuterBlock(line: String): Bool {
-        let trimmed = line.trimAscii()
-        if (trimmed.isEmpty()) {
-            return false
-        }
-
-        let first = trimmed[0]
-        if (first == b'#' || first == b'>') {
-            return true
-        }
-
-        if (first == b'-' || first == b'*' || first == b'+' || (first >= b'0' && first <= b'9')) {
-            return true
-        }
-
-        if (first == b'`' || first == b'~') {
-            return true
-        }
-
-        if (first == b'_') {
-            return true
-        }
-
-        return false
-    }
 }

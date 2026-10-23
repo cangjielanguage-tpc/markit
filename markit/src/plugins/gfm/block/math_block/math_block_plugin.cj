@@ -3,11 +3,7 @@ package markit.plugins.gfm.block.math_block
 import markit.core.plugin.{Plugin, PluginRegistrar}
 
 public class MathBlockPlugin <: Plugin {
-    private let config: MathBlockConfig
-
-    public init(config!: MathBlockConfig = MathBlockConfig()) {
-        this.config = config
-    }
+    public MathBlockPlugin(private let config!: MathBlockConfig = MathBlockConfig()) {}
 
     public prop name: String {
         get() {

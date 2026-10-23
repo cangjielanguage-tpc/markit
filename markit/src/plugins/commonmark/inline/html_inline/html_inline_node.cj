@@ -35,7 +35,7 @@ public class HTMLInlineNode <: Node {
     public let attributes: HashMap<String, String>
     public let attributesStr: String
 
-    public init(
+    public HTMLInlineNode(
         id: Int64,
         sourceSpan: SourceSpan,
         tagName: String,

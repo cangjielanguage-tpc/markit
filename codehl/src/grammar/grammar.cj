@@ -5,88 +5,43 @@ import std.convert.Parsable
 import seajson.*
 
 public class Grammar {
-    public let name: String
-    public let scopeName: String
-    public let fileTypes: Array<String>
-    public let patterns: Array<GrammarPattern>
-    public let injections: Array<GrammarPattern>
-    public let repository: HashMap<String, GrammarPattern>
 
-    public init(
-        name: String,
-        scopeName: String,
-        patterns: Array<GrammarPattern>,
-        repository: HashMap<String, GrammarPattern>,
-        fileTypes!: Array<String> = [],
-        injections!: Array<GrammarPattern> = []
-    ) {
-        this.name = name
-        this.scopeName = scopeName
-        this.fileTypes = fileTypes
-        this.patterns = patterns
-        this.injections = injections
-        this.repository = repository
-    }
+    public Grammar(
+        public let name: String,
+        public let scopeName: String,
+        public let patterns: Array<GrammarPattern>,
+        public let repository: HashMap<String, GrammarPattern>,
+        public let fileTypes!: Array<String> = [],
+        public let injections!: Array<GrammarPattern> = []
+    ) {}
 }
 
 public class GrammarPattern {
-    public let name: String
-    public let contentName: String
-    public let matchPattern: String
-    public let include: String
-    public let begin: String
-    public let end: String
-    public let whilePattern: String
-    public let applyEndPatternLast: Bool
-    public let patterns: Array<GrammarPattern>
-    public let captures: HashMap<Int64, GrammarCapture>
-    public let beginCaptures: HashMap<Int64, GrammarCapture>
-    public let endCaptures: HashMap<Int64, GrammarCapture>
-    public let whileCaptures: HashMap<Int64, GrammarCapture>
 
-    public init(
-        name!: String = "",
-        contentName!: String = "",
-        matchPattern!: String = "",
-        include!: String = "",
-        begin!: String = "",
-        end!: String = "",
-        whilePattern!: String = "",
-        applyEndPatternLast!: Bool = false,
-        patterns!: Array<GrammarPattern> = [],
-        captures!: HashMap<Int64, GrammarCapture> = HashMap<Int64, GrammarCapture>(),
-        beginCaptures!: HashMap<Int64, GrammarCapture> = HashMap<Int64, GrammarCapture>(),
-        endCaptures!: HashMap<Int64, GrammarCapture> = HashMap<Int64, GrammarCapture>(),
-        whileCaptures!: HashMap<Int64, GrammarCapture> = HashMap<Int64, GrammarCapture>()
-    ) {
-        this.name = name
-        this.contentName = contentName
-        this.matchPattern = matchPattern
-        this.include = include
-        this.begin = begin
-        this.end = end
-        this.whilePattern = whilePattern
-        this.applyEndPatternLast = applyEndPatternLast
-        this.patterns = patterns
-        this.captures = captures
-        this.beginCaptures = beginCaptures
-        this.endCaptures = endCaptures
-        this.whileCaptures = whileCaptures
-    }
+    public GrammarPattern(
+        public let name!: String = "",
+        public let contentName!: String = "",
+        public let matchPattern!: String = "",
+        public let include!: String = "",
+        public let begin!: String = "",
+        public let end!: String = "",
+        public let whilePattern!: String = "",
+        public let applyEndPatternLast!: Bool = false,
+        public let patterns!: Array<GrammarPattern> = [],
+        public let captures!: HashMap<Int64, GrammarCapture> = HashMap<Int64, GrammarCapture>(),
+        public let beginCaptures!: HashMap<Int64, GrammarCapture> = HashMap<Int64, GrammarCapture>(),
+        public let endCaptures!: HashMap<Int64, GrammarCapture> = HashMap<Int64, GrammarCapture>(),
+        public let whileCaptures!: HashMap<Int64, GrammarCapture> = HashMap<Int64, GrammarCapture>()
+    ) {}
 }
 
 public class GrammarCapture {
-    public let name: String
-    public let patterns: Array<GrammarPattern>
 
-    public init(name!: String = "", patterns!: Array<GrammarPattern> = []) {
-        this.name = name
-        this.patterns = patterns
-    }
+    public GrammarCapture(public let name!: String = "", public let patterns!: Array<GrammarPattern> = []) {}
 }
 
 public class GrammarLoader {
-    public init() {}
+    public GrammarLoader() {}
 
     public func loadFromJson(json: String): Grammar {
         return load(parseJson(json))

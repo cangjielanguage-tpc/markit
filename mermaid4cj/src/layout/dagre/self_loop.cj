@@ -6,20 +6,15 @@ class SelfLoopGroup {
     let id: String
     let segments: ArrayList<DagreEdgeRef>
 
-    init(id: String) {
+    SelfLoopGroup(id: String) {
         this.id = id
         this.segments = ArrayList<DagreEdgeRef>()
     }
 }
 
 class SelfLoopLabelSize {
-    let width: Float64
-    let height: Float64
 
-    init(width: Float64, height: Float64) {
-        this.width = width
-        this.height = height
-    }
+    SelfLoopLabelSize(let width: Float64, let height: Float64) {}
 }
 
 public func shouldMergeSelfLoopSegments(diagramType: String): Bool {

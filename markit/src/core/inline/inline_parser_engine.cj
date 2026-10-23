@@ -8,7 +8,7 @@ import markit.core.source.SourceSpan
 public class InlineParserEngine {
     private let dispatchTable: InlineDispatchTable
 
-    public init(dispatchTable: InlineDispatchTable) {
+    public InlineParserEngine(dispatchTable: InlineDispatchTable) {
         this.dispatchTable = dispatchTable
     }
 

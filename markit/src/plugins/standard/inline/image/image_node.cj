@@ -9,7 +9,7 @@ public class ImageNode <: Node {
     public var src: String
     public var title: String
 
-    public init(
+    public ImageNode(
         id: Int64,
         sourceSpan: SourceSpan,
         alt: String,

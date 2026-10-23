@@ -8,7 +8,7 @@ public class UniversalInlineNode <: Node {
     public let content: String
     public let originalSyntax: String
 
-    public init(
+    public UniversalInlineNode(
         id: Int64,
         sourceSpan: SourceSpan,
         content: String,

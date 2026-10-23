@@ -3,129 +3,56 @@ package mermaid4cj.layout.dagre
 import std.collection.ArrayList
 
 public class DagrePoint {
-    public let x: Float64
-    public let y: Float64
 
-    public init(x: Float64, y: Float64) {
-        this.x = x
-        this.y = y
-    }
+    public DagrePoint(public let x: Float64, public let y: Float64) {}
 }
 
 public class DagreNode {
-    public let id: String
-    public let x: ?Float64
-    public let y: ?Float64
-    public let width: ?Float64
-    public let height: ?Float64
-    public let clusterNode: Bool
-    public let graph: ?MermaidDagreGraph
-    public let dir: ?String
-    public let explicitDir: Bool
 
-    public init(
-        id: String,
-        x!: ?Float64 = None,
-        y!: ?Float64 = None,
-        width!: ?Float64 = None,
-        height!: ?Float64 = None,
-        clusterNode!: Bool = false,
-        graph!: ?MermaidDagreGraph = None,
-        dir!: ?String = None,
-        explicitDir!: Bool = false
-    ) {
-        this.id = id
-        this.x = x
-        this.y = y
-        this.width = width
-        this.height = height
-        this.clusterNode = clusterNode
-        this.graph = graph
-        this.dir = dir
-        this.explicitDir = explicitDir
-    }
+    public DagreNode(
+        public let id: String,
+        public let x!: ?Float64 = None,
+        public let y!: ?Float64 = None,
+        public let width!: ?Float64 = None,
+        public let height!: ?Float64 = None,
+        public let clusterNode!: Bool = false,
+        public let graph!: ?MermaidDagreGraph = None,
+        public let dir!: ?String = None,
+        public let explicitDir!: Bool = false
+    ) {}
 }
 
 public class DagreSelfLoop {
-    public let id: String
-    public let order: Int64
 
-    public init(id: String, order: Int64) {
-        this.id = id
-        this.order = order
-    }
+    public DagreSelfLoop(public let id: String, public let order: Int64) {}
 }
 
 public class DagreEdge {
-    public let id: String
-    public let start: String
-    public let end: String
-    public let label: ?String
-    public let arrowTypeStart: ?String
-    public let arrowTypeEnd: ?String
-    public let length: Int64
-    public let points: Array<DagrePoint>
-    public let selfLoop: ?DagreSelfLoop
-    public let originalEdge: ?DagreEdge
-    public let x: ?Float64
-    public let y: ?Float64
-    public let width: ?Float64
-    public let height: ?Float64
-    public let labelStyle: ?String
-    public let fromCluster: ?String
-    public let toCluster: ?String
 
-    public init(
-        id: String,
-        start: String,
-        end: String,
-        label!: ?String = None,
-        arrowTypeStart!: ?String = None,
-        arrowTypeEnd!: ?String = None,
-        length!: Int64 = 1,
-        points!: Array<DagrePoint> = [],
-        selfLoop!: ?DagreSelfLoop = None,
-        originalEdge!: ?DagreEdge = None,
-        x!: ?Float64 = None,
-        y!: ?Float64 = None,
-        width!: ?Float64 = None,
-        height!: ?Float64 = None,
-        labelStyle!: ?String = None,
-        fromCluster!: ?String = None,
-        toCluster!: ?String = None
-    ) {
-        this.id = id
-        this.start = start
-        this.end = end
-        this.label = label
-        this.arrowTypeStart = arrowTypeStart
-        this.arrowTypeEnd = arrowTypeEnd
-        this.length = length
-        this.points = points
-        this.selfLoop = selfLoop
-        this.originalEdge = originalEdge
-        this.x = x
-        this.y = y
-        this.width = width
-        this.height = height
-        this.labelStyle = labelStyle
-        this.fromCluster = fromCluster
-        this.toCluster = toCluster
-    }
+    public DagreEdge(
+        public let id: String,
+        public let start: String,
+        public let end: String,
+        public let label!: ?String = None,
+        public let arrowTypeStart!: ?String = None,
+        public let arrowTypeEnd!: ?String = None,
+        public let length!: Int64 = 1,
+        public let points!: Array<DagrePoint> = [],
+        public let selfLoop!: ?DagreSelfLoop = None,
+        public let originalEdge!: ?DagreEdge = None,
+        public let x!: ?Float64 = None,
+        public let y!: ?Float64 = None,
+        public let width!: ?Float64 = None,
+        public let height!: ?Float64 = None,
+        public let labelStyle!: ?String = None,
+        public let fromCluster!: ?String = None,
+        public let toCluster!: ?String = None
+    ) {}
 }
 
 public class DagreEdgeRef {
-    public let edge: DagreEdge
-    public let start: String
-    public let end: String
-    public let name: String
 
-    public init(edge: DagreEdge, start: String, end: String, name: String) {
-        this.edge = edge
-        this.start = start
-        this.end = end
-        this.name = name
-    }
+    public DagreEdgeRef(public let edge: DagreEdge, public let start: String, public let end: String, public let name: String) {}
 }
 
 public class MermaidDagreGraph {
@@ -138,7 +65,7 @@ public class MermaidDagreGraph {
     private var graphMarginx: ?Float64 = None
     private var graphMarginy: ?Float64 = None
 
-    public init() {}
+    public MermaidDagreGraph() {}
 
     public func setGraph(rankdir!: ?String = None, nodesep!: ?Float64 = None, ranksep!: ?Float64 = None, marginx!: ?Float64 = None, marginy!: ?Float64 = None): MermaidDagreGraph {
         graphRankdir = rankdir
@@ -415,11 +342,6 @@ func containsGraphString(values: ArrayList<String>, value: String): Bool {
 }
 
 class DagreParentRef {
-    let id: String
-    let parentId: String
 
-    init(id: String, parentId: String) {
-        this.id = id
-        this.parentId = parentId
-    }
+    DagreParentRef(let id: String, let parentId: String) {}
 }

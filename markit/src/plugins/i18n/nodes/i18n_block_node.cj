@@ -8,7 +8,7 @@ public class I18nBlockNode <: Node {
     public let languageId: String
     public let content: String
 
-    public init(
+    public I18nBlockNode(
         id: Int64,
         sourceSpan: SourceSpan,
         languageId: String,

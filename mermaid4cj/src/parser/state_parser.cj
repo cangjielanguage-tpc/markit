@@ -4,7 +4,7 @@ import std.collection.{ArrayList, HashMap}
 import mermaid4cj.core.{StateDiagram, StateDirection, StateNode, StateNodeKind, StateParseResult, StateTransition}
 
 public class StateDiagramParser {
-    public init() {}
+    public StateDiagramParser() {}
 
     public func parse(source: String): StateParseResult {
         let nodes = ArrayList<StateNode>()
@@ -151,11 +151,6 @@ public class StateDiagramParser {
 }
 
 class ParsedState {
-    let id: String
-    let label: String
 
-    init(id: String, label: String) {
-        this.id = id
-        this.label = label
-    }
+    ParsedState(let id: String, let label: String) {}
 }

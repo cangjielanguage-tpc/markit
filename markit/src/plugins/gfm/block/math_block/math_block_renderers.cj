@@ -7,23 +7,11 @@ import markit.utils.{TextRenderUtils, TypstRenderUtils}
 import mathtex.{MathRenderOptions, MathRenderer}
 
 public class MathBlockConfig {
-    public let enableHtmlMathtex: Bool
-    public let enableTypstMathtex: Bool
-    public let autoAnchor: Bool
-
-    public init(enableHtmlMathtex!: Bool = true, enableTypstMathtex!: Bool = true, autoAnchor!: Bool = false) {
-        this.enableHtmlMathtex = enableHtmlMathtex
-        this.enableTypstMathtex = enableTypstMathtex
-        this.autoAnchor = autoAnchor
-    }
+    public MathBlockConfig(public let enableHtmlMathtex!: Bool = true, public let enableTypstMathtex!: Bool = true, public let autoAnchor!: Bool = false) {}
 }
 
 public class MathBlockHtmlRenderer <: HtmlRenderer {
-    private let config: MathBlockConfig
-
-    public init(config!: MathBlockConfig = MathBlockConfig()) {
-        this.config = config
-    }
+    public MathBlockHtmlRenderer(private let config!: MathBlockConfig = MathBlockConfig()) {}
 
     public prop ownerPlugin: String {
         get() {
@@ -88,11 +76,7 @@ public class MathBlockMarkdownRenderer <: MarkdownRenderer {
 }
 
 public class MathBlockTypstRenderer <: TypstRenderer {
-    private let config: MathBlockConfig
-
-    public init(config!: MathBlockConfig = MathBlockConfig()) {
-        this.config = config
-    }
+    public MathBlockTypstRenderer(private let config!: MathBlockConfig = MathBlockConfig()) {}
 
     public prop ownerPlugin: String {
         get() {

@@ -11,7 +11,7 @@ public class TypstRendererRegistration {
     public let kind: String
     public let renderer: TypstRenderer
 
-    public init(kind: String, renderer: TypstRenderer) {
+    public TypstRendererRegistration(kind: String, renderer: TypstRenderer) {
         this.kind = kind
         this.renderer = renderer
     }

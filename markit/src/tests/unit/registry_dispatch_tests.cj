@@ -100,17 +100,7 @@ class RegistryDispatchTests {
 }
 
 private class TestLeafParser <: LeafBlockParser {
-    private let parserName: String
-    private let priorityValue: Int64
-    private let startByteValues: Array<Byte>
-    private let anyNonBlank: Bool
-
-    public init(parserName: String, priorityValue: Int64, startByteValues: Array<Byte>, anyNonBlank: Bool) {
-        this.parserName = parserName
-        this.priorityValue = priorityValue
-        this.startByteValues = startByteValues
-        this.anyNonBlank = anyNonBlank
-    }
+    public TestLeafParser(private let parserName: String, private let priorityValue: Int64, private let startByteValues: Array<Byte>, private let anyNonBlank: Bool) {}
 
     public prop name: String {
         get() { return parserName }
@@ -140,15 +130,7 @@ private class TestLeafParser <: LeafBlockParser {
 private class TestContinuationState <: BlockState {}
 
 private class TestContinuationParser <: ContinuationBlockParser {
-    private let parserName: String
-    private let priorityValue: Int64
-    private let startByteValues: Array<Byte>
-
-    public init(parserName: String, priorityValue: Int64, startByteValues: Array<Byte>) {
-        this.parserName = parserName
-        this.priorityValue = priorityValue
-        this.startByteValues = startByteValues
-    }
+    public TestContinuationParser(private let parserName: String, private let priorityValue: Int64, private let startByteValues: Array<Byte>) {}
 
     public prop name: String {
         get() { return parserName }
@@ -180,15 +162,7 @@ private class TestContinuationParser <: ContinuationBlockParser {
 }
 
 private class TestInlineParser <: InlineParser {
-    private let parserName: String
-    private let priorityValue: Int64
-    private let startByteValues: Array<Byte>
-
-    public init(parserName: String, priorityValue: Int64, startByteValues: Array<Byte>) {
-        this.parserName = parserName
-        this.priorityValue = priorityValue
-        this.startByteValues = startByteValues
-    }
+    public TestInlineParser(private let parserName: String, private let priorityValue: Int64, private let startByteValues: Array<Byte>) {}
 
     public prop name: String {
         get() { return parserName }

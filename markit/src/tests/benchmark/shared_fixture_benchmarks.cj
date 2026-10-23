@@ -190,14 +190,8 @@ class SharedFixtureBenchmarks {
 }
 
 private class ChunkedBenchmarkInputStream <: InputStream {
-    private let bytes: Array<Byte>
-    private let chunkSize: Int64
+    public ChunkedBenchmarkInputStream(private let bytes: Array<Byte>, private let chunkSize: Int64) {}
     private var offset: Int64 = 0
-
-    public init(bytes: Array<Byte>, chunkSize: Int64) {
-        this.bytes = bytes
-        this.chunkSize = chunkSize
-    }
 
     public func read(buffer: Array<Byte>): Int64 {
         if (offset >= bytes.size) {

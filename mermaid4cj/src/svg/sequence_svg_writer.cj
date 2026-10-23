@@ -15,7 +15,7 @@ import mermaid4cj.core.{
 }
 
 public class SequenceSvgWriter {
-    public init() {}
+    public SequenceSvgWriter() {}
 
     public func write(diagram: SequenceDiagram, options: MermaidRenderOptions): String {
         let theme = SvgTheme.resolve(options.theme)

@@ -9,7 +9,7 @@ public class HtmlConfig {
     public var enableRootWrapper: Bool = false
     public var rootWrapperTag: String = "div"
 
-    public init() {}
+    public HtmlConfig() {}
 
     public func setGlobalCssClasses(classNames: ArrayList<String>): Unit {
         globalCssClasses.clear()

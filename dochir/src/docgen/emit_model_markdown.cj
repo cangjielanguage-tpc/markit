@@ -6,27 +6,11 @@ import std.collection.ArrayList
 import std.fs.{Directory, File, Path, exists, remove}
 
 class SourceTarget {
-    let file: String
-    let line: String
-
-    init(file: String, line: String) {
-        this.file = file
-        this.line = line
-    }
+    SourceTarget(let file: String, let line: String) {}
 }
 
 class SourceLinkConfig {
-    let projectName: String
-    let sourceRoot: String
-    let sourceRepository: String
-    let sourceBranch: String
-
-    init(projectName: String, sourceRoot: String, sourceRepository: String, sourceBranch: String) {
-        this.projectName = projectName
-        this.sourceRoot = sourceRoot
-        this.sourceRepository = sourceRepository
-        this.sourceBranch = sourceBranch
-    }
+    SourceLinkConfig(let projectName: String, let sourceRoot: String, let sourceRepository: String, let sourceBranch: String) {}
 
     func sourceUrl(packageName: String, source: String): ?String {
         if (sourceRepository.trimAscii().isEmpty() || sourceBranch.trimAscii().isEmpty() || source.trimAscii().isEmpty()) {
@@ -141,7 +125,7 @@ class SourceLinkConfig {
 class DocTemplate {
     private let zh: Bool
 
-    init(language: String) {
+    DocTemplate(language: String) {
         this.zh = language.toAsciiLower().startsWith("zh")
     }
 

@@ -7,6 +7,7 @@ import std.io.OutputStream
 import seajson.JsonWriter
 import markit.core.source.SourceBuffer
 import markit.core.source.SourceSpan
+import markit.core.editing.SourceVersionIdentity
 
 public open class Node {
     public let id: Int64
@@ -25,7 +26,7 @@ public open class Node {
     private var rawContentOverride: ?String = None
     private var renderHooks: ?NodeRenderHooks = None
 
-    public init(
+    public Node(
         kind: String,
         id!: Int64 = 0,
         sourceSpan!: SourceSpan = SourceSpan.empty(),
@@ -136,6 +137,50 @@ public open class Node {
 
     public func setRawContent(rawContent: String): Unit {
         rawContentOverride = Some(rawContent)
+    }
+
+    protected func overriddenRawContent(): ?String { return rawContentOverride }
+
+    // Used only together with an explicit codec declaration about the virtual
+    // rawContent getter. A retained but unrelated/mapped buffer is not proof.
+    public func rawContentIsSourceDerived(identity: SourceVersionIdentity): Bool {
+        if (rawContentOverride.isSome()) { return false }
+        if (let Some(source) <- sourceBuffer) { return source.isBoundTo(identity) }
+        return false
+    }
+
+    // Explicit reconstruction hook. Batch parsing never calls this method.
+    // Typed codecs create the correct concrete class and immutable ID/kind;
+    // this method copies the base data that derived classes cannot enumerate.
+    public func copyBaseTo(target: Node): Unit {
+        if (refEq(this, target)) {
+            throw IllegalArgumentException("Node reconstruction must allocate a detached instance")
+        }
+        if (target.id != id || target.kind != kind) {
+            throw IllegalArgumentException("Node reconstruction changed immutable ID or kind")
+        }
+        target.sourceSpan = sourceSpan
+        target.literal = literal
+        target.level = level
+        target.slug = slug
+        target.info = info
+        target.stringMeta.clear()
+        target.intMeta.clear()
+        target.boolMeta.clear()
+        for ((key, value) in stringMeta) { target.stringMeta[key] = value }
+        for ((key, value) in intMeta) { target.intMeta[key] = value }
+        for ((key, value) in boolMeta) { target.boolMeta[key] = value }
+        target.sourceBuffer = sourceBuffer
+        target.rawContentOverride = rawContentOverride
+        target.renderHooks = resolvedRenderHooks()
+    }
+
+    public func sharesSourceBinding(other: Node): Bool {
+        if (let Some(source) <- sourceBuffer) {
+            if (let Some(otherSource) <- other.sourceBuffer) { return refEq(source, otherSource) }
+            return false
+        }
+        return other.sourceBuffer.isNone()
     }
 
     protected func source(): ?SourceBuffer {

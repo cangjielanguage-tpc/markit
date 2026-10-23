@@ -8,13 +8,7 @@ import markit.plugins.standard.block.heading.HeadingNode
 import markit.utils.slug
 
 public class I18nPostProcessor {
-    private let defaultLanguage: String
-    private let targetLanguage: String
-
-    public init(defaultLanguage: String, targetLanguage: String) {
-        this.defaultLanguage = defaultLanguage
-        this.targetLanguage = targetLanguage
-    }
+    public I18nPostProcessor(private let defaultLanguage: String, private let targetLanguage: String) {}
 
     public init(config: I18nConfig) {
         this.defaultLanguage = config.defaultLanguage

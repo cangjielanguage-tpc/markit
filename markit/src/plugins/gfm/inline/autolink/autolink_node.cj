@@ -14,7 +14,7 @@ public class AutolinkNode <: Node {
     public let url: String
     public let displayText: String
 
-    public init(
+    public AutolinkNode(
         id: Int64,
         sourceSpan: SourceSpan,
         autolinkType: AutolinkType,

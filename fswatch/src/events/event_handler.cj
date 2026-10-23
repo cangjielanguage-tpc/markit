@@ -16,7 +16,7 @@ public class EventHandlerWrapper {
     /**
      * 构造函数（带错误处理器）
      */
-    public init(
+    public EventHandlerWrapper(
         handler: (FileEvent) -> Unit,
         errorHandler: (Exception) -> Unit
     ) {

@@ -26,16 +26,10 @@ import markit_kit.utils.CliMarkitFactory
  * 对应需求：1.1, 1.2, 1.3
  */
 public class ScanResult {
-    public let initialStates: HashMap<String, Array<Int64>>
-    public let headingsMap: HashMap<String, Array<HeadingInfo>>
-    
-    public init(
-        initialStates: HashMap<String, Array<Int64>>,
-        headingsMap: HashMap<String, Array<HeadingInfo>>
-    ) {
-        this.initialStates = initialStates
-        this.headingsMap = headingsMap
-    }
+    public ScanResult(
+        public let initialStates: HashMap<String, Array<Int64>>,
+        public let headingsMap: HashMap<String, Array<HeadingInfo>>
+    ) {}
 }
 
 /**

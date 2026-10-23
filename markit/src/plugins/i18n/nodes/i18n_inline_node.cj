@@ -9,7 +9,7 @@ public class I18nInlineNode <: Node {
     public let content: String
     public let originalSyntax: String
 
-    public init(
+    public I18nInlineNode(
         id: Int64,
         sourceSpan: SourceSpan,
         languageId: String,

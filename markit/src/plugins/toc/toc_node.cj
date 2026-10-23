@@ -10,7 +10,7 @@ public class TocNode <: Node {
     public let items = ArrayList<TocItem>()
     public let title: String
 
-    public init(title!: String = "Table of Contents") {
+    public TocNode(title!: String = "Table of Contents") {
         super("Toc", sourceSpan: SourceSpan.empty(), literal: title)
         this.title = title
     }

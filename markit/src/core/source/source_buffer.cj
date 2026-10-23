@@ -1,15 +1,24 @@
 package markit.core.source
 
 import std.collection.ArrayList
+import markit.core.editing.{EditableSourceVersion, SourceVersionIdentity}
 
 public class SourceBuffer {
     private let segments = ArrayList<SourceSegment>()
     private var acceptedBytes: Int64 = 0
     private var materializedText: ?String = None
+    private var editableView: ?EditableRopeVersion
     public let retentionMode: SourceRetentionMode
 
-    public init(retentionMode!: SourceRetentionMode = SourceRetentionMode.Essential) {
+    public SourceBuffer(retentionMode!: SourceRetentionMode = SourceRetentionMode.Essential,
+        editableSource!: ?EditableSourceVersion = None) {
         this.retentionMode = retentionMode
+        if (let Some(source) <- editableSource) {
+            if (let Some(rope) <- (source as EditableRopeVersion)) {
+                editableView = Some(rope)
+                acceptedBytes = rope.byteLength
+            } else { throw IllegalArgumentException("Editable SourceBuffer requires a rope source view") }
+        } else { editableView = None }
     }
 
     public prop byteSize: Int64 {
@@ -18,7 +27,32 @@ public class SourceBuffer {
         }
     }
 
+    // Provenance is established by the immutable view binding, never guessed
+    // from matching bytes/spans of an append or synthetic source buffer.
+    public func isBoundTo(identity: SourceVersionIdentity): Bool {
+        if (let Some(view) <- editableView) {
+            return view.identity.documentId == identity.documentId && view.identity.version == identity.version
+        }
+        return false
+    }
+
+    // ParseSession can follow accepted input without copying it or replacing
+    // its buffer identity. Published persistent payloads own detached contents;
+    // mutable legacy nodes attached to this buffer are not snapshot handles.
+    public func bindEditableSource(version: EditableSourceVersion): Unit {
+        let previous = editableView.getOrThrow()
+        let rope = (version as EditableRopeVersion).getOrThrow()
+        if (previous.identity.documentId != rope.identity.documentId ||
+            rope.identity.version < previous.identity.version) {
+            throw IllegalArgumentException("Invalid editable source binding")
+        }
+        editableView = Some(rope)
+        acceptedBytes = rope.byteLength
+        materializedText = None
+    }
+
     public func append(chunk: String): Int64 {
+        if (editableView.isSome()) { throw IllegalArgumentException("Immutable source view cannot append") }
         segments.add(SourceSegment(text: chunk))
         let accepted = Int64(chunk.size)
         acceptedBytes += accepted
@@ -27,6 +61,7 @@ public class SourceBuffer {
     }
 
     public func appendBytes(chunk: Array<Byte>): Int64 {
+        if (editableView.isSome()) { throw IllegalArgumentException("Immutable source view cannot append") }
         let acceptedChunk = chunk.clone()
         segments.add(SourceSegment(bytes: acceptedChunk, isByteSegment: true))
         let accepted = acceptedChunk.size
@@ -60,11 +95,11 @@ public class SourceBuffer {
     }
 
     public func retainsFullSource(): Bool {
-        return retentionMode == SourceRetentionMode.Full
+        return editableView.isSome() || retentionMode == SourceRetentionMode.Full
     }
 
     public func hasRetainedSource(): Bool {
-        return !segments.isEmpty()
+        return editableView.isSome() || !segments.isEmpty()
     }
 
     public func view(span: SourceSpan): TextView {
@@ -83,6 +118,7 @@ public class SourceBuffer {
         if (byteOffset < 0 || byteOffset >= acceptedBytes) {
             throw IllegalArgumentException("Invalid source byte offset: ${byteOffset}")
         }
+        if (let Some(rope) <- editableView) { return rope.readByte(byteOffset) }
 
         var base: Int64 = 0
         for (segment in segments) {
@@ -103,6 +139,7 @@ public class SourceBuffer {
         if (startByte < 0 || endByte < startByte || endByte > acceptedBytes) {
             throw IllegalArgumentException("Invalid source slice range: ${startByte}..${endByte}")
         }
+        if (let Some(rope) <- editableView) { return rope.sliceBytes(startByte, endByte) }
         if (startByte == endByte) {
             return ""
         }
@@ -164,6 +201,11 @@ public class SourceBuffer {
     public func materialize(): String {
         if (let Some(cached) <- materializedText) {
             return cached
+        }
+        if (let Some(rope) <- editableView) {
+            let text = rope.sliceBytes(0, rope.byteLength)
+            materializedText = Some(text)
+            return text
         }
 
         if (acceptedBytes == 0) {
@@ -237,19 +279,11 @@ public class SourceBuffer {
 }
 
 private class SourceSegment {
-    public let text: String
-    public let bytes: Array<Byte>
-    public let isByteSegment: Bool
-
-    public init(
-        text!: String = "",
-        bytes!: Array<Byte> = [],
-        isByteSegment!: Bool = false
-    ) {
-        this.text = text
-        this.bytes = bytes
-        this.isByteSegment = isByteSegment
-    }
+    public SourceSegment(
+        public let text!: String = "",
+        public let bytes!: Array<Byte> = [],
+        public let isByteSegment!: Bool = false
+    ) {}
 
     public func byteSize(): Int64 {
         return if (isByteSegment) { bytes.size } else { text.size }

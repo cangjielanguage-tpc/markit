@@ -11,7 +11,7 @@ public class RenderRegistry <: NodeRenderHooks {
     private let typstRenderers = HashMap<String, TypstRenderer>()
     private let htmlConfig: HtmlConfig
 
-    public init(htmlConfig!: HtmlConfig = HtmlConfig()) {
+    public RenderRegistry(htmlConfig!: HtmlConfig = HtmlConfig()) {
         this.htmlConfig = htmlConfig
     }
 
@@ -198,7 +198,7 @@ public class HtmlRendererRegistration {
     public let kind: String
     public let renderer: HtmlRenderer
 
-    public init(kind: String, renderer: HtmlRenderer) {
+    public HtmlRendererRegistration(kind: String, renderer: HtmlRenderer) {
         this.kind = kind
         this.renderer = renderer
     }

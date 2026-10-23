@@ -9,7 +9,7 @@ public class UnorderedListItemNode <: Node {
     public let indentLevel: Int64
     public let marker: Byte
 
-    public init(
+    public UnorderedListItemNode(
         id: Int64,
         sourceSpan: SourceSpan,
         content: String,

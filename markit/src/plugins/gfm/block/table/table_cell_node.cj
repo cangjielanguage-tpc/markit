@@ -9,7 +9,7 @@ public class TableCellNode <: Node {
     public let alignment: TableAlignment
     public let isHeader: Bool
 
-    public init(
+    public TableCellNode(
         id: Int64,
         sourceSpan: SourceSpan,
         content: String,

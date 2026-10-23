@@ -3,40 +3,22 @@ package mathtex.ast
 import std.collection.ArrayList
 
 public class MathSourceSpan {
-    public let startByte: Int64
-    public let endByte: Int64
-    public let startRune: Int64
-    public let endRune: Int64
 
-    public init(startByte!: Int64 = 0, endByte!: Int64 = 0, startRune!: Int64 = 0, endRune!: Int64 = 0) {
-        this.startByte = startByte
-        this.endByte = endByte
-        this.startRune = startRune
-        this.endRune = endRune
-    }
+    public MathSourceSpan(public let startByte!: Int64 = 0, public let endByte!: Int64 = 0, public let startRune!: Int64 = 0, public let endRune!: Int64 = 0) {}
 }
 
 public open class MathNode {
-    public let kind: String
-    public let sourceSpan: MathSourceSpan
-    public let literal: String
-    public let children: Array<MathNode>
 
-    public init(
-        kind: String,
-        sourceSpan!: MathSourceSpan = MathSourceSpan(),
-        literal!: String = "",
-        children!: Array<MathNode> = []
-    ) {
-        this.kind = kind
-        this.sourceSpan = sourceSpan
-        this.literal = literal
-        this.children = children
-    }
+    public MathNode(
+        public let kind: String,
+        public let sourceSpan!: MathSourceSpan = MathSourceSpan(),
+        public let literal!: String = "",
+        public let children!: Array<MathNode> = []
+    ) {}
 }
 
 public class MathSequenceNode <: MathNode {
-    public init(sourceSpan: MathSourceSpan, children: Array<MathNode>) {
+    public MathSequenceNode(sourceSpan: MathSourceSpan, children: Array<MathNode>) {
         super("Sequence", sourceSpan: sourceSpan, children: children)
     }
 }
@@ -45,7 +27,7 @@ public class MathSymbolNode <: MathNode {
     public let value: String
     public let family: String
 
-    public init(value: String, sourceSpan: MathSourceSpan, literal!: String = "", family!: String = "ord") {
+    public MathSymbolNode(value: String, sourceSpan: MathSourceSpan, literal!: String = "", family!: String = "ord") {
         super("Symbol", sourceSpan: sourceSpan, literal: if (literal.isEmpty()) { value } else { literal })
         this.value = value
         this.family = family
@@ -55,14 +37,14 @@ public class MathSymbolNode <: MathNode {
 public class MathTextNode <: MathNode {
     public let text: String
 
-    public init(text: String, sourceSpan: MathSourceSpan, literal!: String = "") {
+    public MathTextNode(text: String, sourceSpan: MathSourceSpan, literal!: String = "") {
         super("Text", sourceSpan: sourceSpan, literal: if (literal.isEmpty()) { text } else { literal })
         this.text = text
     }
 }
 
 public class MathGroupNode <: MathNode {
-    public init(sourceSpan: MathSourceSpan, children: Array<MathNode>) {
+    public MathGroupNode(sourceSpan: MathSourceSpan, children: Array<MathNode>) {
         super("Group", sourceSpan: sourceSpan, children: children)
     }
 }
@@ -70,7 +52,7 @@ public class MathGroupNode <: MathNode {
 public class MathCommandNode <: MathNode {
     public let name: String
 
-    public init(name: String, sourceSpan: MathSourceSpan, literal: String, children!: Array<MathNode> = []) {
+    public MathCommandNode(name: String, sourceSpan: MathSourceSpan, literal: String, children!: Array<MathNode> = []) {
         super("Command", sourceSpan: sourceSpan, literal: literal, children: children)
         this.name = name
     }
@@ -82,7 +64,7 @@ public class MathEnvironmentNode <: MathNode {
     public let columnAlignments: Array<String>
     public let columnSeparatorCounts: Array<Int64>
 
-    public init(
+    public MathEnvironmentNode(
         name: String,
         rows: Array<Array<MathNode>>,
         sourceSpan: MathSourceSpan,
@@ -113,7 +95,7 @@ public class MathDelimitedNode <: MathNode {
     public let body: MathNode
     public let right: MathNode
 
-    public init(left: MathNode, body: MathNode, right: MathNode, sourceSpan: MathSourceSpan, literal: String) {
+    public MathDelimitedNode(left: MathNode, body: MathNode, right: MathNode, sourceSpan: MathSourceSpan, literal: String) {
         super("Delimited", sourceSpan: sourceSpan, literal: literal, children: [left, body, right])
         this.left = left
         this.body = body
@@ -125,7 +107,7 @@ public class MathSizingNode <: MathNode {
     public let size: String
     public let body: MathNode
 
-    public init(size: String, body: MathNode, sourceSpan: MathSourceSpan, literal: String) {
+    public MathSizingNode(size: String, body: MathNode, sourceSpan: MathSourceSpan, literal: String) {
         super("Sizing", sourceSpan: sourceSpan, literal: literal, children: [body])
         this.size = size
         this.body = body
@@ -136,7 +118,7 @@ public class MathColorNode <: MathNode {
     public let color: String
     public let body: MathNode
 
-    public init(color: String, body: MathNode, sourceSpan: MathSourceSpan, literal: String) {
+    public MathColorNode(color: String, body: MathNode, sourceSpan: MathSourceSpan, literal: String) {
         super("Color", sourceSpan: sourceSpan, literal: literal, children: [body])
         this.color = color
         this.body = body
@@ -148,7 +130,7 @@ public class MathSupSubNode <: MathNode {
     public let sup: ?MathNode
     public let sub: ?MathNode
 
-    public init(base: MathNode, sourceSpan: MathSourceSpan, sup!: ?MathNode = None, sub!: ?MathNode = None) {
+    public MathSupSubNode(base: MathNode, sourceSpan: MathSourceSpan, sup!: ?MathNode = None, sub!: ?MathNode = None) {
         super("SupSub", sourceSpan: sourceSpan, children: childrenOf(base, sup, sub))
         this.base = base
         this.sup = sup
@@ -172,7 +154,7 @@ public class MathLimitsNode <: MathNode {
     public let base: MathNode
     public let mode: String
 
-    public init(base: MathNode, mode: String, sourceSpan: MathSourceSpan, literal: String) {
+    public MathLimitsNode(base: MathNode, mode: String, sourceSpan: MathSourceSpan, literal: String) {
         super("Limits", sourceSpan: sourceSpan, literal: literal, children: [base])
         this.base = base
         this.mode = mode
@@ -183,7 +165,7 @@ public class MathFractionNode <: MathNode {
     public let numerator: MathNode
     public let denominator: MathNode
 
-    public init(numerator: MathNode, denominator: MathNode, sourceSpan: MathSourceSpan) {
+    public MathFractionNode(numerator: MathNode, denominator: MathNode, sourceSpan: MathSourceSpan) {
         super("Fraction", sourceSpan: sourceSpan, literal: "\\frac", children: [numerator, denominator])
         this.numerator = numerator
         this.denominator = denominator
@@ -194,7 +176,7 @@ public class MathSqrtNode <: MathNode {
     public let radicand: MathNode
     public let index: ?MathNode
 
-    public init(radicand: MathNode, sourceSpan: MathSourceSpan, index!: ?MathNode = None) {
+    public MathSqrtNode(radicand: MathNode, sourceSpan: MathSourceSpan, index!: ?MathNode = None) {
         super("Sqrt", sourceSpan: sourceSpan, literal: "\\sqrt", children: childrenOf(radicand, index))
         this.radicand = radicand
         this.index = index
@@ -213,20 +195,13 @@ public class MathSqrtNode <: MathNode {
 public class MathErrorNode <: MathNode {
     public let message: String
 
-    public init(message: String, sourceSpan: MathSourceSpan, literal: String) {
+    public MathErrorNode(message: String, sourceSpan: MathSourceSpan, literal: String) {
         super("Error", sourceSpan: sourceSpan, literal: literal)
         this.message = message
     }
 }
 
 public class MathExpression {
-    public let root: MathNode
-    public let source: String
-    public let displayMode: Bool
 
-    public init(root: MathNode, source: String, displayMode!: Bool = false) {
-        this.root = root
-        this.source = source
-        this.displayMode = displayMode
-    }
+    public MathExpression(public let root: MathNode, public let source: String, public let displayMode!: Bool = false) {}
 }

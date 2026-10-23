@@ -7,25 +7,13 @@ import codehl.grammar.{Grammar, GrammarLoader}
 import seajson.*
 
 public class LanguageRegistration {
-    public let language: String
-    public let grammar: String
-    public let aliases: Array<String>
 
-    public init(language: String, grammar: String, aliases!: Array<String> = []) {
-        this.language = language
-        this.grammar = grammar
-        this.aliases = aliases
-    }
+    public LanguageRegistration(public let language: String, public let grammar: String, public let aliases!: Array<String> = []) {}
 }
 
 public class LanguageAlias {
-    public let alias: String
-    public let language: String
 
-    public init(alias: String, language: String) {
-        this.alias = alias
-        this.language = language
-    }
+    public LanguageAlias(public let alias: String, public let language: String) {}
 }
 
 public class LanguageRegistry {
@@ -41,7 +29,7 @@ public class LanguageRegistry {
     private let discoveredScopes: HashMap<String, String>
     private var grammarDiscoveryScanned: Bool
 
-    public init(
+    public LanguageRegistry(
         grammarDir!: String = "assets/grammars",
         grammarDirs!: Array<String> = [],
         languages!: Array<LanguageRegistration> = [],

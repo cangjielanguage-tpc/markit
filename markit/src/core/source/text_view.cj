@@ -1,13 +1,7 @@
 package markit.core.source
 
 public class TextView {
-    public let source: SourceBuffer
-    public let span: SourceSpan
-
-    public init(source: SourceBuffer, span: SourceSpan) {
-        this.source = source
-        this.span = span
-    }
+    public TextView(public let source: SourceBuffer, public let span: SourceSpan) {}
 
     public prop byteSize: Int64 {
         get() {

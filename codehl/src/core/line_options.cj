@@ -4,13 +4,8 @@ import std.collection.{ArrayList, HashMap}
 import std.convert.Parsable
 
 public class LineOptions {
-    public let highlightLines: Array<Int64>
-    public let i18nLines: HashMap<Int64, String>
 
-    public init(highlightLines: Array<Int64>, i18nLines: HashMap<Int64, String>) {
-        this.highlightLines = highlightLines
-        this.i18nLines = i18nLines
-    }
+    public LineOptions(public let highlightLines: Array<Int64>, public let i18nLines: HashMap<Int64, String>) {}
 }
 
 public class LineOptionsParser {

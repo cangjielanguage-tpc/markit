@@ -22,47 +22,20 @@ import markit.utils.HeadingSlugScope
  * 解析后的文件信息（用于两阶段渲染）
  */
 class ParsedFileInfo {
-    public let inputFile: String
-    public let outputFile: String
-    public let content: String
-    public let title: String
-    public let relativePath: String
-    public let doc: DocumentNode
-    public let searchSections: Array<SearchIndexSection>
-
-    public init(inputFile: String, outputFile: String, content: String, title: String, relativePath: String,
-        doc: DocumentNode, searchSections: Array<SearchIndexSection>) {
-        this.inputFile = inputFile
-        this.outputFile = outputFile
-        this.content = content
-        this.title = title
-        this.relativePath = relativePath
-        this.doc = doc
-        this.searchSections = searchSections
-    }
+    public ParsedFileInfo(public let inputFile: String, public let outputFile: String, public let content: String,
+        public let title: String, public let relativePath: String, public let doc: DocumentNode,
+        public let searchSections: Array<SearchIndexSection>) {}
 }
 
 public class MergedTypstHeadingLabel {
-    public let slug: String
-    public let mergedLabel: String
-
-    public init(slug: String, mergedLabel: String) {
-        this.slug = slug
-        this.mergedLabel = mergedLabel
-    }
+    public MergedTypstHeadingLabel(public let slug: String, public let mergedLabel: String) {}
 }
 
 public class MergedTypstRewritePlan {
-    public let firstLabelByPathAndSlug: HashMap<String, String>
-    public let primaryLabelByPath: HashMap<String, String>
-
-    public init(
-        firstLabelByPathAndSlug: HashMap<String, String>,
-        primaryLabelByPath: HashMap<String, String>
-    ) {
-        this.firstLabelByPathAndSlug = firstLabelByPathAndSlug
-        this.primaryLabelByPath = primaryLabelByPath
-    }
+    public MergedTypstRewritePlan(
+        public let firstLabelByPathAndSlug: HashMap<String, String>,
+        public let primaryLabelByPath: HashMap<String, String>
+    ) {}
 }
 
 /**

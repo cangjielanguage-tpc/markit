@@ -6,21 +6,11 @@ import markit.utils.TypstRenderUtils
 import mathtex.{MathRenderOptions, MathRenderer}
 
 public class InlineMathConfig {
-    public let enableHtmlMathtex: Bool
-    public let enableTypstMathtex: Bool
-
-    public init(enableHtmlMathtex!: Bool = true, enableTypstMathtex!: Bool = true) {
-        this.enableHtmlMathtex = enableHtmlMathtex
-        this.enableTypstMathtex = enableTypstMathtex
-    }
+    public InlineMathConfig(public let enableHtmlMathtex!: Bool = true, public let enableTypstMathtex!: Bool = true) {}
 }
 
 public class InlineMathHtmlRenderer <: HtmlRenderer {
-    private let config: InlineMathConfig
-
-    public init(config!: InlineMathConfig = InlineMathConfig()) {
-        this.config = config
-    }
+    public InlineMathHtmlRenderer(private let config!: InlineMathConfig = InlineMathConfig()) {}
 
     public prop ownerPlugin: String {
         get() {
@@ -65,11 +55,7 @@ public class InlineMathMarkdownRenderer <: MarkdownRenderer {
 }
 
 public class InlineMathTypstRenderer <: TypstRenderer {
-    private let config: InlineMathConfig
-
-    public init(config!: InlineMathConfig = InlineMathConfig()) {
-        this.config = config
-    }
+    public InlineMathTypstRenderer(private let config!: InlineMathConfig = InlineMathConfig()) {}
 
     public prop ownerPlugin: String {
         get() {

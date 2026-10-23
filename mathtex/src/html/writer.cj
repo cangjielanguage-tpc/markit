@@ -22,21 +22,8 @@ import mathtex.mathml.MathMlWriter
 import mathtex.util.HtmlEscaper
 
 private struct XArrowLayout {
-    let strut: String
-    let vlistHeight: String
-    let depth: String
-    let upperTop: String
-    let arrowTop: String
-    let lowerTop: String
 
-    init(strut: String, vlistHeight: String, depth: String, upperTop: String, arrowTop: String, lowerTop: String) {
-        this.strut = strut
-        this.vlistHeight = vlistHeight
-        this.depth = depth
-        this.upperTop = upperTop
-        this.arrowTop = arrowTop
-        this.lowerTop = lowerTop
-    }
+    XArrowLayout(let strut: String, let vlistHeight: String, let depth: String, let upperTop: String, let arrowTop: String, let lowerTop: String) {}
 }
 
 public class HtmlMathWriter {
@@ -45,7 +32,7 @@ public class HtmlMathWriter {
     private var displayMode: Bool = false
     private var currentStyle: String = "text"
 
-    public init() {}
+    public HtmlMathWriter() {}
 
     public func writeHtmlAndMathMl(expression: MathExpression, classPrefix: String, errorColor: String): String {
         this.displayMode = expression.displayMode

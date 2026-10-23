@@ -6,7 +6,7 @@ public interface MermaidTextMeasurer {
 }
 
 public class DefaultMermaidTextMeasurer <: MermaidTextMeasurer {
-    public init() {}
+    public DefaultMermaidTextMeasurer() {}
 
     public func measureText(text: String): Float64 {
         var width = 0.0

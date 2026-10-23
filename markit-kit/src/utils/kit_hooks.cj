@@ -23,7 +23,7 @@ public interface KitHookSink {
 }
 
 public class NoopKitHookSink <: KitHookSink {
-    public init() {}
+    public NoopKitHookSink() {}
 
     public func log(_level: KitLogLevel, _message: String): Unit {}
 

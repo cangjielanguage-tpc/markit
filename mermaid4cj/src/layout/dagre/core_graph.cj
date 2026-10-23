@@ -19,7 +19,7 @@ public class DagreGraphLabel {
     public var nestingRoot: ?String
     public var dummyChains: ArrayList<String>
 
-    public init(
+    public DagreGraphLabel(
         rankdir!: String = "tb",
         align!: ?String = None,
         acyclicer!: ?String = None,
@@ -72,7 +72,7 @@ public class DagreLayoutNode {
     public var maxRank: ?Int64
     public var selfEdges: ArrayList<DagreSelfEdge>
 
-    public init(
+    public DagreLayoutNode(
         id: String,
         x!: Float64 = 0.0,
         y!: Float64 = 0.0,
@@ -159,7 +159,7 @@ public class DagreLayoutEdge {
     public var cutvalue: ?Float64
     public var nestingEdge: Bool
 
-    public init(
+    public DagreLayoutEdge(
         id: String,
         minlen!: Int64 = 1,
         weight!: Float64 = 1.0,
@@ -202,45 +202,23 @@ public class DagreLayoutEdge {
 }
 
 public class DagreLayoutEdgeKey {
-    public let start: String
-    public let end: String
-    public let name: String
 
-    public init(start: String, end: String, name: String) {
-        this.start = start
-        this.end = end
-        this.name = name
-    }
+    public DagreLayoutEdgeKey(public let start: String, public let end: String, public let name: String) {}
 }
 
 public class DagreSelfEdge {
-    public let key: DagreLayoutEdgeKey
-    public let label: DagreLayoutEdge
 
-    public init(key: DagreLayoutEdgeKey, label: DagreLayoutEdge) {
-        this.key = key
-        this.label = label
-    }
+    public DagreSelfEdge(public let key: DagreLayoutEdgeKey, public let label: DagreLayoutEdge) {}
 }
 
 class DagreLayoutParentRef {
-    let id: String
-    let parentId: String
 
-    init(id: String, parentId: String) {
-        this.id = id
-        this.parentId = parentId
-    }
+    DagreLayoutParentRef(let id: String, let parentId: String) {}
 }
 
 class DagreLayoutEdgeRef {
-    let key: DagreLayoutEdgeKey
-    var edge: DagreLayoutEdge
 
-    init(key: DagreLayoutEdgeKey, edge: DagreLayoutEdge) {
-        this.key = key
-        this.edge = edge
-    }
+    DagreLayoutEdgeRef(let key: DagreLayoutEdgeKey, var edge: DagreLayoutEdge) {}
 }
 
 public class DagreLayoutGraph {
@@ -250,7 +228,7 @@ public class DagreLayoutGraph {
     private let parentList = ArrayList<DagreLayoutParentRef>()
     private var dummyCount: Int64 = 0
 
-    public init(label!: DagreGraphLabel = DagreGraphLabel()) {
+    public DagreLayoutGraph(label!: DagreGraphLabel = DagreGraphLabel()) {
         this.graphLabel = label
     }
 

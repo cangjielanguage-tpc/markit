@@ -9,7 +9,7 @@ public class LinkNode <: Node {
     public var url: String
     public var title: String
 
-    public init(
+    public LinkNode(
         id: Int64,
         sourceSpan: SourceSpan,
         content: String,

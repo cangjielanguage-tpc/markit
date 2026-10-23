@@ -19,7 +19,7 @@ public enum BreakType <: ToString {
 public class HardBreakNode <: Node {
     public let breakType: BreakType
 
-    public init(id: Int64, sourceSpan: SourceSpan, breakType: BreakType) {
+    public HardBreakNode(id: Int64, sourceSpan: SourceSpan, breakType: BreakType) {
         super("HardBreak", id: id, sourceSpan: sourceSpan, literal: match (breakType) {
             case TwoSpaces => "  \n"
             case Backslash => "\\\n"

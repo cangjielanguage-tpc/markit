@@ -6,7 +6,7 @@ import markit.core.source.SourceSpan
 public class TextNode <: Node {
     public let content: String
 
-    public init(
+    public TextNode(
         id: Int64,
         sourceSpan: SourceSpan,
         content: String

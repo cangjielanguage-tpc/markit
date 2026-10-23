@@ -373,23 +373,13 @@ public func dagreAddBorderNode(graph: DagreLayoutGraph, prefix: String, rank!: ?
 }
 
 class DagrePostorderEntry {
-    let low: Int64
-    let lim: Int64
 
-    init(low: Int64, lim: Int64) {
-        this.low = low
-        this.lim = lim
-    }
+    DagrePostorderEntry(let low: Int64, let lim: Int64) {}
 }
 
 class DagrePathData {
-    let path: ArrayList<String>
-    let lca: String
 
-    init(path: ArrayList<String>, lca: String) {
-        this.path = path
-        this.lca = lca
-    }
+    DagrePathData(let path: ArrayList<String>, let lca: String) {}
 }
 
 func dagrePostorder(graph: DagreLayoutGraph): HashMap<String, DagrePostorderEntry> {

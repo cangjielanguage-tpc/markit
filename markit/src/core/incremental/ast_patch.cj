@@ -21,7 +21,7 @@ public class AstPatch {
     public let markdown: String
     public let typst: String
 
-    public init(
+    public AstPatch(
         kind: AstPatchKind,
         nodeId: Int64,
         sourceSpan: SourceSpan,

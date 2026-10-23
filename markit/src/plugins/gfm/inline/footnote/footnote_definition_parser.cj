@@ -150,17 +150,7 @@ public class FootnoteDefinitionParser <: ContinuationBlockParser {
 }
 
 private class FootnoteDefinitionStart {
-    public let id: String
-    public let content: String
-    public let contentStartByte: Int64
-    public let contentStartRune: Int64
-
-    public init(id: String, content: String, contentStartByte: Int64, contentStartRune: Int64) {
-        this.id = id
-        this.content = content
-        this.contentStartByte = contentStartByte
-        this.contentStartRune = contentStartRune
-    }
+    public FootnoteDefinitionStart(public let id: String, public let content: String, public let contentStartByte: Int64, public let contentStartRune: Int64) {}
 }
 
 private class FootnoteDefinitionState <: BlockState {
@@ -170,7 +160,7 @@ private class FootnoteDefinitionState <: BlockState {
     private let lines = ArrayList<SourceLine>()
     private let firstLine: SourceLine
 
-    public init(
+    public FootnoteDefinitionState(
         footnoteId: String,
         firstContent: String,
         contentStartByte: Int64,

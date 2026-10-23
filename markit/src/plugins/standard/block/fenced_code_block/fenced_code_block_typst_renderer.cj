@@ -7,11 +7,7 @@ import markit.plugins.anchor.AnchorRenderUtils
 import markit.utils.TypstRenderUtils
 
 public class FencedCodeBlockTypstRenderer <: TypstRenderer {
-    private let targetLanguage: String
-
-    public init(targetLanguage!: String = "") {
-        this.targetLanguage = targetLanguage
-    }
+    public FencedCodeBlockTypstRenderer(private let targetLanguage!: String = "") {}
 
     public prop ownerPlugin: String {
         get() {

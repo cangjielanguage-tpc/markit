@@ -3,11 +3,7 @@ package markit.plugins.standard.block.fenced_code_block
 import markit.core.plugin.{Plugin, PluginRegistrar}
 
 public class FencedCodeBlockPlugin <: Plugin {
-    private let config: FencedCodeBlockConfig
-
-    public init(config!: FencedCodeBlockConfig = FencedCodeBlockConfig()) {
-        this.config = config
-    }
+    public FencedCodeBlockPlugin(private let config!: FencedCodeBlockConfig = FencedCodeBlockConfig()) {}
 
     public prop name: String {
         get() {

@@ -20,7 +20,7 @@ import mathtex.ast.{
 }
 
 public class MathTypstWriter {
-    public init() {}
+    public MathTypstWriter() {}
 
     public func writeInline(expression: MathExpression): String {
         let body = writeMath(expression.root).trimAscii()

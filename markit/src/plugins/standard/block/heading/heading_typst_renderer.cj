@@ -13,6 +13,7 @@ public class HeadingTypstRenderer <: TypstRenderer {
     }
 
     public func writeTypst(node: Node, out: TextWriter, registry: RenderRegistry): Unit {
+        if (let heading: EditingHeadingNode <- node) { if (!heading.visible) { return } }
         let level = if (node.level < 1 || node.level > 6) {
             1
         } else {

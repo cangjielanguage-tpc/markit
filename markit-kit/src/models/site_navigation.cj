@@ -9,7 +9,7 @@ import std.collection.ArrayList
 public class SiteNavigation {
     private let pages: ArrayList<PageInfo>
     
-    public init() {
+    public SiteNavigation() {
         this.pages = ArrayList<PageInfo>()
     }
     

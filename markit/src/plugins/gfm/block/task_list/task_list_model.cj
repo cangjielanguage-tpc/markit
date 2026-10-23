@@ -10,7 +10,7 @@ public class TaskListBlockState <: BlockState {
     public var sourceSpan: SourceSpan
     public let items = ArrayList<TaskListItemData>()
 
-    public init(marker: TaskListMarker, sourceSpan: SourceSpan) {
+    public TaskListBlockState(marker: TaskListMarker, sourceSpan: SourceSpan) {
         this.baseIndent = marker.indent
         this.sourceSpan = sourceSpan
     }
@@ -37,7 +37,7 @@ public class TaskListItemData {
     public var sourceSpan: SourceSpan
     public let continuationLines = ArrayList<SourceLine>()
 
-    public init(marker: TaskListMarker, line: SourceLine) {
+    public TaskListItemData(marker: TaskListMarker, line: SourceLine) {
         this.marker = marker.marker
         this.checked = marker.checked
         this.indent = marker.indent
@@ -61,20 +61,10 @@ public class TaskListItemData {
 }
 
 public class TaskListMarker {
-    public let marker: Byte
-    public let checked: Bool
-    public let indent: Int64
-    public let content: String
-
-    public init(
-        marker: Byte,
-        checked: Bool,
-        indent: Int64,
-        content: String
-    ) {
-        this.marker = marker
-        this.checked = checked
-        this.indent = indent
-        this.content = content
-    }
+    public TaskListMarker(
+        public let marker: Byte,
+        public let checked: Bool,
+        public let indent: Int64,
+        public let content: String
+    ) {}
 }

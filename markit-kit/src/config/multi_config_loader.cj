@@ -11,25 +11,13 @@ import markit.plugins.i18n.config.I18nConfig
  * 多配置文件加载结果
  */
 public class MultiConfigLoadResult {
-    public let success: Bool
-    public let configs: Array<MarkitConfig>
-    public let configPaths: Array<String>
-    public let workingDirectory: String
-    public let errors: Array<String>
-    
-    private init(
-        success: Bool,
-        configs: Array<MarkitConfig>,
-        configPaths: Array<String>,
-        workingDirectory: String,
-        errors: Array<String>
-    ) {
-        this.success = success
-        this.configs = configs
-        this.configPaths = configPaths
-        this.workingDirectory = workingDirectory
-        this.errors = errors
-    }
+    private MultiConfigLoadResult(
+        public let success: Bool,
+        public let configs: Array<MarkitConfig>,
+        public let configPaths: Array<String>,
+        public let workingDirectory: String,
+        public let errors: Array<String>
+    ) {}
     
     /**
      * 创建成功结果
@@ -93,13 +81,7 @@ public class MultiConfigLoadResult {
  * 验证结果
  */
 public class ValidationResult {
-    public let isValid: Bool
-    public let errors: Array<String>
-    
-    private init(isValid: Bool, errors: Array<String>) {
-        this.isValid = isValid
-        this.errors = errors
-    }
+    private ValidationResult(public let isValid: Bool, public let errors: Array<String>) {}
     
     public static func validResult(): ValidationResult {
         return ValidationResult(true, [])

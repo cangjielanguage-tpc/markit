@@ -7,7 +7,7 @@ public class DividerNode <: Node {
     public let marker: Byte
     public let markerCount: Int64
 
-    public init(
+    public DividerNode(
         id: Int64,
         sourceSpan: SourceSpan,
         marker!: Byte = b'-',

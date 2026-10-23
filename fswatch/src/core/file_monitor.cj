@@ -40,7 +40,7 @@ public struct PerformanceStats {
     public let memoryUsage: Int64
     public let uptimeMs: Int64  // 改为毫秒
     
-    public init(
+    public PerformanceStats(
         eventsProcessed: Int64,
         eventsPerSecond: Int64,
         averageProcessingTimeMs: Int64,
@@ -88,7 +88,7 @@ public class FileMonitor {
      * @param config 监听器配置，默认使用标准配置
      * @throws MonitorException.invalidConfiguration 当配置验证失败时抛出，包含具体的验证错误信息
      */
-    public init(config!: MonitorConfig = MonitorConfig.default()) {
+    public FileMonitor(config!: MonitorConfig = MonitorConfig.default()) {
         this.config = config.clone()
         
         // 验证配置

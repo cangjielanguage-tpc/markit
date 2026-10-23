@@ -4,39 +4,17 @@ import std.collection.{ArrayList, HashMap, HashSet}
 import mermaid4cj.core.{FlowDirection, FlowEdge, FlowEdgeMarker, FlowEdgeStyle, FlowNode, FlowNodeRef, FlowNodeShape, FlowNodeStyle, FlowParseResult, FlowSubgraph, FlowchartDiagram, TextRange}
 
 class ParsedEdgeSyntax {
-    let leftEnd: Int64
-    let targetStart: Int64
-    let label: ?TextRange
-    let style: FlowEdgeStyle
-    let length: Int64
-    let markerStart: FlowEdgeMarker
-    let markerEnd: FlowEdgeMarker
 
-    init(leftEnd: Int64, targetStart: Int64, label: ?TextRange, style: FlowEdgeStyle, length: Int64, markerStart: FlowEdgeMarker, markerEnd: FlowEdgeMarker) {
-        this.leftEnd = leftEnd
-        this.targetStart = targetStart
-        this.label = label
-        this.style = style
-        this.length = length
-        this.markerStart = markerStart
-        this.markerEnd = markerEnd
-    }
+    ParsedEdgeSyntax(let leftEnd: Int64, let targetStart: Int64, let label: ?TextRange, let style: FlowEdgeStyle, let length: Int64, let markerStart: FlowEdgeMarker, let markerEnd: FlowEdgeMarker) {}
 }
 
 class EdgeEndToken {
-    let start: Int64
-    let end: Int64
-    let marker: FlowEdgeMarker
 
-    init(start: Int64, end: Int64, marker: FlowEdgeMarker) {
-        this.start = start
-        this.end = end
-        this.marker = marker
-    }
+    EdgeEndToken(let start: Int64, let end: Int64, let marker: FlowEdgeMarker) {}
 }
 
 public class FlowchartParser {
-    public init() {}
+    public FlowchartParser() {}
 
     public func parse(source: String): FlowParseResult {
         let nodes = ArrayList<FlowNode>()

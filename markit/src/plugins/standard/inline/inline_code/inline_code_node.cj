@@ -8,7 +8,7 @@ public class InlineCodeNode <: Node {
     public let content: String
     public let fenceLength: Int64
 
-    public init(
+    public InlineCodeNode(
         id: Int64,
         sourceSpan: SourceSpan,
         content: String,

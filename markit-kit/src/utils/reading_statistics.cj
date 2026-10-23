@@ -4,13 +4,7 @@ import markit.core.nodes.Node
 
 /** Visible prose only: 400 CJK characters/minute and 200 Latin words/minute. */
 public class ReadingStatistics {
-    public let cjkCharacters: Int64
-    public let words: Int64
-
-    public init(cjkCharacters: Int64, words: Int64) {
-        this.cjkCharacters = cjkCharacters
-        this.words = words
-    }
+    public ReadingStatistics(public let cjkCharacters: Int64, public let words: Int64) {}
 
     public prop totalTexts: Int64 {
         get() { cjkCharacters + words }

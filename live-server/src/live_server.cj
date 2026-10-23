@@ -10,29 +10,11 @@ import std.net.{IPSocketAddress, SocketException, SocketTimeoutException, Stream
 import std.sync.{AtomicBool, AtomicInt64, Mutex}
 
 class HttpRequest {
-    public let method: String
-    public let path: String
-    public let version: String
-
-    public init(method: String, path: String, version: String) {
-        this.method = method
-        this.path = path
-        this.version = version
-    }
+    public HttpRequest(public let method: String, public let path: String, public let version: String) {}
 }
 
 private class WatchRegistration {
-    public let path: String
-    public let recursive: Bool
-    public let debounce: Duration
-    public let handler: (Array<String>) -> Unit
-
-    public init(path: String, recursive: Bool, debounce: Duration, handler: (Array<String>) -> Unit) {
-        this.path = path
-        this.recursive = recursive
-        this.debounce = debounce
-        this.handler = handler
-    }
+    public WatchRegistration(public let path: String, public let recursive: Bool, public let debounce: Duration, public let handler: (Array<String>) -> Unit) {}
 }
 
 /**
@@ -51,7 +33,7 @@ public class LiveServer {
     private let fileMonitors: ArrayList<FileMonitor> = ArrayList<FileMonitor>()
     private let watchRegistrations: ArrayList<WatchRegistration> = ArrayList<WatchRegistration>()
 
-    public init(rootPath: String, host: String, port: Int32) {
+    public LiveServer(rootPath: String, host: String, port: Int32) {
         this.rootPath = Path(rootPath).toString()
         this.host = host
         this.port = port

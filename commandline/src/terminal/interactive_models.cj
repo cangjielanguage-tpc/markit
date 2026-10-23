@@ -13,7 +13,7 @@ public class SelectMenuState {
     public let optionCount: Int
     public var cursor: Int = 0
 
-    public init(optionCount: Int, defaultIndex!: ?Int = None) {
+    public SelectMenuState(optionCount: Int, defaultIndex!: ?Int = None) {
         if (optionCount <= 0) {
             throw Exception("SelectMenuState requires at least one option")
         }
@@ -43,7 +43,7 @@ public class MultiSelectMenuState {
     public var cursor: Int = 0
     private let selected: ArrayList<Int>
 
-    public init(optionCount: Int, defaultIndices!: Array<Int> = []) {
+    public MultiSelectMenuState(optionCount: Int, defaultIndices!: Array<Int> = []) {
         if (optionCount <= 0) {
             throw Exception("MultiSelectMenuState requires at least one option")
         }

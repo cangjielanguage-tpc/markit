@@ -3,34 +3,17 @@ package mermaid4cj.svg
 import mermaid4cj.core.MermaidTheme
 
 public class SvgTheme {
-    public let background: String
-    public let nodeFill: String
-    public let nodeStroke: String
-    public let text: String
-    public let edge: String
-    public let edgeLabelBackground: String
-    public let errorFill: String
-    public let errorStroke: String
 
-    public init(
-        background: String,
-        nodeFill: String,
-        nodeStroke: String,
-        text: String,
-        edge: String,
-        edgeLabelBackground: String,
-        errorFill: String,
-        errorStroke: String
-    ) {
-        this.background = background
-        this.nodeFill = nodeFill
-        this.nodeStroke = nodeStroke
-        this.text = text
-        this.edge = edge
-        this.edgeLabelBackground = edgeLabelBackground
-        this.errorFill = errorFill
-        this.errorStroke = errorStroke
-    }
+    public SvgTheme(
+        public let background: String,
+        public let nodeFill: String,
+        public let nodeStroke: String,
+        public let text: String,
+        public let edge: String,
+        public let edgeLabelBackground: String,
+        public let errorFill: String,
+        public let errorStroke: String
+    ) {}
 
     public static func resolve(theme: MermaidTheme): SvgTheme {
         match (theme) {

@@ -50,15 +50,10 @@ public class NativeTerminalBackend <: TerminalBackend {
     private static let vtimeIndex: Int = 5
     private static let vminIndex: Int = 6
     private static let tcsetNow: Int32 = 0
-    private let testKeyQueue: ArrayList<TerminalKey>
-    private let mutex: Mutex
     private var originalMode: ?UnixTermios = None
     private var usesQueuedKeys: Bool = false
 
-    public init(testKeyQueue: ArrayList<TerminalKey>, mutex: Mutex) {
-        this.testKeyQueue = testKeyQueue
-        this.mutex = mutex
-    }
+    public NativeTerminalBackend(private let testKeyQueue: ArrayList<TerminalKey>, private let mutex: Mutex) {}
 
     public func supportsKeyNavigation(): Bool {
         if (hasQueuedKeyInput()) {

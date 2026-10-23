@@ -5,7 +5,8 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs/promises');
 const os = require('node:os');
 const path = require('node:path');
-const { PreviewSession } = require('../src/session');
+const { loadNodeCliSession } = require('./helpers/node-cli-session');
+const PreviewSession = loadNodeCliSession('fake-markit.js');
 
 const source = '# 中文 heading\n\nFirst viewport.\n\n[forward][ref]\n\n[ref]: https://example.com\n';
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
@@ -13,7 +14,7 @@ const deferred = () => { let resolve; const promise = new Promise(done => { reso
 
 // This intentionally small executable exercises the real pipe/process lifecycle without
 // requiring a native build, VS Code, or a browser. Native parser equality has separate tests.
-const fakeCli = `#!/usr/bin/env node
+const fakeCli = `
 'use strict';
 const fs = require('node:fs');
 const path = require('node:path');
@@ -25,14 +26,19 @@ const output = value('-o');
 fs.mkdirSync(output, { recursive: true });
 const mode = process.env.MARKIT_FAKE_MODE || 'normal';
 const html = '<html><head><title>Preview</title></head><body class="document-mode"><div class="content"><script id="markit-page-markdown-source">' + Buffer.from(mode === 'stale' ? 'different source' : source).toString('hex') + '</script></div></body></html>';
-const frame = data => process.stdout.write('MARKIT_PREVIEW\\t' + JSON.stringify(data) + '\\n');
+const frame = data => {
+  const bytes = Buffer.from('MARKIT_PREVIEW\\t' + JSON.stringify(data) + '\\n');
+  if (mode === 'fragmented') {
+    for (let index = 0; index < bytes.length; index++) process.stdout.write(bytes.subarray(index, index + 1));
+  } else process.stdout.write(bytes);
+};
 const input = readline.createInterface({ input: process.stdin });
 let stage = 0;
 input.on('line', line => {
   if (line !== 'ack') process.exit(4);
   fs.appendFileSync(path.join(output, 'acks'), line + '\\n');
   if (stage++ === 0) {
-    frame({ type:'preview', operations:[{id:1,kind:'append',html:'<h1>First viewport</h1>'}], consumedBytes:32,totalBytes:Buffer.byteLength(source) });
+    frame({ type:'preview', operations:[{id:1,kind:'append',html:mode === 'fragmented' ? '<h1>甲😀</h1>' : '<h1>First viewport</h1>'}], consumedBytes:32,totalBytes:Buffer.byteLength(source) });
   } else {
     fs.writeFileSync(path.join(output, 'finished'), 'complete');
     input.close();
@@ -51,7 +57,7 @@ else frame({type:'preview',operations:[],consumedBytes:0,totalBytes:Buffer.byteL
 
 async function fixture(t, options = {}) {
   const root = await fs.mkdtemp(path.join(os.tmpdir(), 'markit-stream-test-'));
-  const executable = path.join(root, 'fake-markit');
+  const executable = path.join(root, 'fake-markit.js');
   await fs.writeFile(executable, fakeCli, { mode: 0o755 });
   const session = new PreviewSession({ root, variants: [] }, {
     executable, startupTimeoutMs: 3000, ...options
@@ -128,6 +134,21 @@ test('canceling an outstanding presentation suppresses ACK and stale publication
   await session.render();
   assert.equal(published(), 1);
   assert(session.current.renderId > oldId);
+});
+
+test('real pipe preserves fragmented UTF-8 frames through the Node fixture launcher', { timeout: 10000 }, async t => {
+  const frames = [];
+  const { session, published } = await fixture(t, {
+    environment: { MARKIT_FAKE_MODE: 'fragmented' },
+    onPreview: async (_page, frame) => frames.push(frame)
+  });
+  await session.render();
+  assert.equal(frames.length, 2);
+  assert.deepEqual(frames.map(frame => frame.batchId), [1, 2]);
+  assert.equal(frames[1].operations[0].html, '<h1>甲😀</h1>');
+  assert.equal(await fs.readFile(path.join(session.output, 'acks'), 'utf8'), 'ack\nack\n');
+  assert.equal(published(), 1);
+  assert.equal(session.child, undefined);
 });
 
 test('each repeated render starts fresh batch IDs and advances render identity', { timeout: 10000 }, async t => {

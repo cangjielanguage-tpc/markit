@@ -3,11 +3,7 @@ package markit.plugins.standard.block.list
 import markit.core.plugin.{Plugin, PluginRegistrar}
 
 public class ListPlugin <: Plugin {
-    private let config: ListConfig
-
-    public init(config!: ListConfig = ListConfig()) {
-        this.config = config
-    }
+    public ListPlugin(private let config!: ListConfig = ListConfig()) {}
 
     public prop name: String {
         get() {

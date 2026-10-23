@@ -173,13 +173,5 @@ public class I18nBlockParser <: ContinuationBlockParser {
 }
 
 private struct I18nBlockStart {
-    public let languageId: String
-    public let universal: Bool
-    public let indentLevel: Int64
-
-    public init(languageId: String, universal: Bool, indentLevel: Int64) {
-        this.languageId = languageId
-        this.universal = universal
-        this.indentLevel = indentLevel
-    }
+    public I18nBlockStart(public let languageId: String, public let universal: Bool, public let indentLevel: Int64) {}
 }

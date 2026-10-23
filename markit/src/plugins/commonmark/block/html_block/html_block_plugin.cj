@@ -3,11 +3,7 @@ package markit.plugins.commonmark.block.html_block
 import markit.core.plugin.{Plugin, PluginRegistrar}
 
 public class HTMLBlockPlugin <: Plugin {
-    private let config: HtmlBlockConfig
-
-    public init(config!: HtmlBlockConfig = HtmlBlockConfig()) {
-        this.config = config
-    }
+    public HTMLBlockPlugin(private let config!: HtmlBlockConfig = HtmlBlockConfig()) {}
 
     public prop name: String {
         get() {

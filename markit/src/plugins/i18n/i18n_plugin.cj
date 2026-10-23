@@ -13,7 +13,7 @@ public class I18nPlugin <: Plugin {
     public let config: I18nConfig
     private let postProcessor: I18nPostProcessor
 
-    public init(config!: I18nConfig = I18nConfig()) {
+    public I18nPlugin(config!: I18nConfig = I18nConfig()) {
         this.config = config
         this.postProcessor = I18nPostProcessor(config)
     }

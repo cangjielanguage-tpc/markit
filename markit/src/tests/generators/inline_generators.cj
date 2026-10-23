@@ -3,14 +3,8 @@ package markit.tests.generators
 import std.random.Random
 
 public class InlineGenerators {
-    private let config: GeneratorConfig
-    private let random: Random
+    public InlineGenerators(private let config: GeneratorConfig, private let random: Random) {}
     private let words = ["bold", "italic", "code", "link", "中文", "stream"]
-
-    public init(config: GeneratorConfig, random: Random) {
-        this.config = config
-        this.random = random
-    }
 
     public func generateBold(): TestCase {
         let text = generateText(1, 3)

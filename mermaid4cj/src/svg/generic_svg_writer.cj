@@ -5,7 +5,7 @@ import std.math.{cos, sin}
 import mermaid4cj.core.{DiagramKind, GenericDiagram, GenericEdge, GenericNode, GenericRow, GenericTask, MermaidRenderOptions}
 
 public class GenericSvgWriter {
-    public init() {}
+    public GenericSvgWriter() {}
 
     public func write(diagram: GenericDiagram, options: MermaidRenderOptions): String {
         match (diagram.kind) {
@@ -424,11 +424,6 @@ public class GenericSvgWriter {
 }
 
 class NodePos {
-    let x: Float64
-    let y: Float64
 
-    init(x: Float64, y: Float64) {
-        this.x = x
-        this.y = y
-    }
+    NodePos(let x: Float64, let y: Float64) {}
 }

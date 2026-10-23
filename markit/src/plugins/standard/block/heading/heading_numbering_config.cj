@@ -9,7 +9,7 @@ public class HeadingNumberingConfig {
     public let separator: String
     public let resetBeforeParse: Bool
 
-    public init(
+    public HeadingNumberingConfig(
         enabled!: Bool = false,
         startFrom!: (Int64, Int64, Int64, Int64, Int64, Int64) = (1, 1, 1, 1, 1, 1),
         maxDepth!: Int64 = 6,
@@ -50,13 +50,14 @@ public class HeadingNumberingConfig {
 
     public prop startFrom: Array<Int64> {
         get() {
-            return startFromValues
+            return startFromValues.clone()
         }
     }
 
     public prop initialCounters: ?Array<Int64> {
         get() {
-            return initialCounterValues
+            if (let Some(values) <- initialCounterValues) { return Some(values.clone()) }
+            return None
         }
     }
 }

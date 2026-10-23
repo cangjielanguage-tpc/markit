@@ -11,7 +11,7 @@ public class Highlighter {
     private let defaultTheme: ?Theme
     private let themes: ThemeRegistry
 
-    public init(
+    public Highlighter(
         theme!: ?Theme = None,
         grammarDir!: String = "assets/grammars",
         themeDir!: String = "assets/themes",

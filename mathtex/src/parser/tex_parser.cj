@@ -30,7 +30,7 @@ class TexParser {
     private let macroParamCounts = ArrayList<Int64>()
     private var cursor: Int64 = 0
 
-    init(source: String, displayMode: Bool, allowMiddle!: Bool = false) {
+    TexParser(source: String, displayMode: Bool, allowMiddle!: Bool = false) {
         this.source = source
         this.displayMode = displayMode
         this.allowMiddle = allowMiddle

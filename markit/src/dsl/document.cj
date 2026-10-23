@@ -11,7 +11,7 @@ public class DslDocument {
     private let blockSpecs = ArrayList<BlockSpec>()
     public let options: DslOptions
 
-    public init(options!: DslOptions = DslOptions()) {
+    public DslDocument(options!: DslOptions = DslOptions()) {
         this.options = options
     }
 

@@ -84,46 +84,20 @@ public class ParseModeFixture {
 }
 
 public class ParseModeResult {
-    public let mode: String
-    public let html: String
-    public let markdown: String
-    public let typst: String
-    public let json: String
-    public let tree: String
-    public let root: Node
-    public let finalUpdate: IncrementalUpdate
-    public let emittedHtml: String
-    public let updateCount: Int64
-    public let sealedBlockCount: Int64
-    public let astPatchCount: Int64
-
-    public init(
-        mode: String,
-        html: String,
-        markdown: String,
-        typst: String,
-        json: String,
-        tree: String,
-        root: Node,
-        finalUpdate: IncrementalUpdate,
-        emittedHtml: String,
-        updateCount: Int64,
-        sealedBlockCount: Int64,
-        astPatchCount: Int64
-    ) {
-        this.mode = mode
-        this.html = html
-        this.markdown = markdown
-        this.typst = typst
-        this.json = json
-        this.tree = tree
-        this.root = root
-        this.finalUpdate = finalUpdate
-        this.emittedHtml = emittedHtml
-        this.updateCount = updateCount
-        this.sealedBlockCount = sealedBlockCount
-        this.astPatchCount = astPatchCount
-    }
+    public ParseModeResult(
+        public let mode: String,
+        public let html: String,
+        public let markdown: String,
+        public let typst: String,
+        public let json: String,
+        public let tree: String,
+        public let root: Node,
+        public let finalUpdate: IncrementalUpdate,
+        public let emittedHtml: String,
+        public let updateCount: Int64,
+        public let sealedBlockCount: Int64,
+        public let astPatchCount: Int64
+    ) {}
 }
 
 public class ParseModeTestKit {

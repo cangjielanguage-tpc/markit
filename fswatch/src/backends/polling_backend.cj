@@ -16,7 +16,7 @@ struct FileState {
     var isDirectory: Bool
     var exists: Bool
     
-    init(path: Path) {
+    FileState(path: Path) {
         this.path = path
         
         try {
@@ -70,7 +70,7 @@ public class PollingBackend <: AbstractMonitorBackend {
     /**
      * 构造函数
      */
-    public init(pollInterval: Int64, maxDepth: Int32) {
+    public PollingBackend(pollInterval: Int64, maxDepth: Int32) {
         this.pollInterval = pollInterval
         this.maxDepth = maxDepth
     }

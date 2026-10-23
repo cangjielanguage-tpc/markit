@@ -4,7 +4,7 @@ import markit.core.nodes.Node
 import markit.core.source.SourceSpan
 
 public class SoftBreakNode <: Node {
-    public init(
+    public SoftBreakNode(
         id: Int64,
         sourceSpan: SourceSpan
     ) {

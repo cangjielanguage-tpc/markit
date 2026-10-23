@@ -507,23 +507,11 @@ public class ListBlockParser <: ContinuationBlockParser {
 }
 
 private class ListMarkerContent {
-    public let text: String
-    public let startByte: Int64
-    public let endByte: Int64
-    public let startRune: Int64
-    public let endRune: Int64
-
-    public init(
-        text: String,
-        startByte: Int64,
-        endByte: Int64,
-        startRune: Int64,
-        endRune: Int64
-    ) {
-        this.text = text
-        this.startByte = startByte
-        this.endByte = endByte
-        this.startRune = startRune
-        this.endRune = endRune
-    }
+    public ListMarkerContent(
+        public let text: String,
+        public let startByte: Int64,
+        public let endByte: Int64,
+        public let startRune: Int64,
+        public let endRune: Int64
+    ) {}
 }

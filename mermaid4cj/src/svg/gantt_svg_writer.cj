@@ -3,7 +3,7 @@ package mermaid4cj.svg
 import mermaid4cj.core.{GanttDiagram, GanttTask, MermaidRenderOptions}
 
 public class GanttSvgWriter {
-    public init() {}
+    public GanttSvgWriter() {}
 
     public func write(diagram: GanttDiagram, options: MermaidRenderOptions): String {
         let theme = SvgTheme.resolve(options.theme)

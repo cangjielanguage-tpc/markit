@@ -14,7 +14,7 @@ public class CommonMarkAutolinkNode <: Node {
     public let url: String
     public let displayText: String
 
-    public init(
+    public CommonMarkAutolinkNode(
         id: Int64,
         sourceSpan: SourceSpan,
         autolinkType: AutolinkType,

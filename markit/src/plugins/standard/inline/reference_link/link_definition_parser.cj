@@ -1,11 +1,21 @@
 package markit.plugins.standard.inline.reference_link
 
-import markit.core.block.LeafBlockParser
+import markit.core.block.{LeafBlockParser, BlockKernelCheckpoint}
 import markit.core.inline.InlineUtils
 import markit.core.nodes.Node
-import markit.core.session.ParseSession
+import markit.core.session.{ParseSession, ParseSessionCheckpoint}
+import markit.core.block.BlockEditingContext
+import markit.core.editing.{IncrementalParserFacet, IncrementalCheckpoint, ParserIsolationProof}
+import markit.plugins.standard.editing.{StandardBlockRecovery, standardClosedKernelCheckpoint, standardLeafSessionCheckpoint}
 
 public class LinkDefinitionParser <: LeafBlockParser {
+    private let facet = ReferenceDefinitionFacet()
+    public prop supportsIncremental: Bool { get() { return true } }
+    public prop incrementalFacet: ?IncrementalParserFacet { get() { return Some(facet) } }
+    public prop incrementalIsolation: ?ParserIsolationProof {
+        get() { return Some(ParserIsolationProof(syntaxBoundary: true, stateBoundary: true,
+            semanticBoundary: true, evidence: "shared single-line definition matcher and owner-keyed candidates")) }
+    }
     public prop name: String {
         get() {
             return "LinkDefinitionParser"
@@ -75,13 +85,21 @@ public class LinkDefinitionParser <: LeafBlockParser {
         if (registry.isNone()) {
             return None
         }
-        registry.getOrThrow().addDefinition(label, url, title)
-
-        return Some(session.attachNode(Node(
-            "LinkDefinition",
-            id: session.allocateNodeId(),
-            sourceSpan: session.currentLineSpan()
-        )))
+        let editing = session.editingContext
+        let saved: ?ParseSessionCheckpoint = if (editing.isSome()) { Some(standardLeafSessionCheckpoint(session)) } else { Option<ParseSessionCheckpoint>.None }
+        let entry: ?IncrementalCheckpoint = if (let Some(context) <- editing) { facet.checkpoint(context) } else { Option<IncrementalCheckpoint>.None }
+        let id = session.allocateNodeId()
+        let closed: ?BlockKernelCheckpoint = if (editing.isSome()) { Some(standardClosedKernelCheckpoint(session)) } else { Option<BlockKernelCheckpoint>.None }
+        let recovery: ?StandardBlockRecovery = if (editing.isSome()) {
+            Some(StandardBlockRecovery(saved.getOrThrow(), entry.getOrThrow(), closed.getOrThrow(),
+                entry.getOrThrow(), closed.getOrThrow()))
+        } else { Option<StandardBlockRecovery>.None }
+        let node = session.attachNode(ReferenceDefinitionNode(id, session.currentLineSpan(), label, url, title,
+            recovery: recovery))
+        if (let Some(context) <- editing) {
+            facet.contribute((context as BlockEditingContext).getOrThrow(), node)
+        } else { registry.getOrThrow().addCandidate(id, label, url, title, node.sourceSpan.startByte) }
+        return Some(node)
     }
 
     private func getRegistry(session: ParseSession): ?ReferenceLinkRegistry {
@@ -180,13 +198,5 @@ public class LinkDefinitionParser <: LeafBlockParser {
 }
 
 private class ParsedTitle {
-    public let found: Bool
-    public let title: String
-    public let endPos: Int64
-
-    public init(found: Bool, title: String, endPos: Int64) {
-        this.found = found
-        this.title = title
-        this.endPos = endPos
-    }
+    public ParsedTitle(public let found: Bool, public let title: String, public let endPos: Int64) {}
 }

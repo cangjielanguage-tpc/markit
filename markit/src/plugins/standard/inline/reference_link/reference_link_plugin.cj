@@ -9,6 +9,12 @@ import markit.plugins.standard.inline.image.ImageNode
 import markit.plugins.standard.inline.link.LinkNode
 
 public class ReferenceLinkPlugin <: Plugin {
+    private let referenceParser: ReferenceLinkParser
+    private let imageParser: ImageReferenceParser
+    public init() { referenceParser = ReferenceLinkParser(); imageParser = ImageReferenceParser() }
+    public init(referenceParser: ReferenceLinkParser, imageParser: ImageReferenceParser) {
+        this.referenceParser = referenceParser; this.imageParser = imageParser
+    }
     public static let stateKey = SessionStateKey<ReferenceLinkRegistry>("ReferenceLinkPlugin", "registry")
 
     public prop name: String {
@@ -26,13 +32,16 @@ public class ReferenceLinkPlugin <: Plugin {
     public func register(registrar: PluginRegistrar): Unit {
         registrar.registerState(ReferenceLinkPlugin.stateKey, { => ReferenceLinkRegistry() })
         registrar.registerLeafBlockParser(LinkDefinitionParser())
-        registrar.registerInlineParser(ReferenceLinkParser())
-        registrar.registerInlineParser(ImageReferenceParser())
+        registrar.registerInlineParser(referenceParser)
+        registrar.registerInlineParser(imageParser)
         registrar.registerNodeEmissionFilter(LinkDefinitionEmissionFilter())
         registrar.registerHtmlRenderer("LinkDefinition", LinkDefinitionHtmlRenderer())
         registrar.registerMarkdownRenderer("LinkDefinition", LinkDefinitionMarkdownRenderer())
         registrar.registerTypstRenderer("LinkDefinition", LinkDefinitionTypstRenderer())
         registrar.registerSessionFinalizeProcessor(resolveForwardReferences)
+        registrar.registerEditingPhase("standard.reference.definitions", name, version: "1")
+        registrar.registerEditingPhase("standard.reference.views", name,
+            dependencies: ["standard.reference.definitions"], version: "1")
     }
 
     private static func resolveForwardReferences(session: ParseSession): Unit {
@@ -41,58 +50,33 @@ public class ReferenceLinkPlugin <: Plugin {
             return
         }
         if (let registry: ReferenceLinkRegistry <- state.getOrThrow()) {
-            walkAndResolve(session.root, registry, session)
+            // The parser already owns the complete reference index. Finalize
+            // never searches unrelated subtrees or removes the original label.
+            for (node in registry.getUnresolvedRefs()) { resolveIndexed(node, registry, session) }
+            for (node in registry.getUnresolvedImages()) { resolveIndexed(node, registry, session) }
         }
     }
 
-    private static func walkAndResolve(node: Node, registry: ReferenceLinkRegistry, session: ParseSession): Bool {
-        var changed = false
-        var index: Int64 = 0
-        while (index < node.children.size) {
-            let child = node.children[index]
-            var resolvedChild = child
-            if (let link: LinkNode <- child) {
-                let label = link.string("refLabel")
-                if (label.isSome()) {
-                    let def = registry.getDefinition(label.getOrThrow())
-                    if (def.isSome()) {
-                        link.url = def.getOrThrow().url
-                        link.title = InlineUtils.processEscapes(def.getOrThrow().title)
-                        link.removeString("refLabel")
-                        changed = true
-                    } else {
-                        resolvedChild = unresolvedReferenceText(link, node)
-                        node.children[index] = resolvedChild
-                        changed = true
-                    }
+    private static func resolveIndexed(node: Node, registry: ReferenceLinkRegistry, session: ParseSession): Unit {
+        let label = node.string("refLabel")
+        if (label.isNone()) { return }
+        let def = registry.getDefinition(label.getOrThrow())
+        if (let Some(value) <- def) {
+            if (let link: LinkNode <- node) { link.url = value.url; link.title = InlineUtils.processEscapes(value.title) }
+            if (let image: ImageNode <- node) { image.src = value.url; image.title = InlineUtils.processEscapes(value.title) }
+        } else if (let Some(parent) <- node.parent) {
+            var index: Int64 = 0
+            while (index < parent.children.size) {
+                if (refEq(parent.children[index], node)) {
+                    let text = unresolvedReferenceText(node, parent)
+                    session.attachNode(text)
+                    parent.children[index] = text
+                    break
                 }
-            } else if (let image: ImageNode <- child) {
-                let label = image.string("refLabel")
-                if (label.isSome()) {
-                    let def = registry.getDefinition(label.getOrThrow())
-                    if (def.isSome()) {
-                        image.src = def.getOrThrow().url
-                        image.title = InlineUtils.processEscapes(def.getOrThrow().title)
-                        image.removeString("refLabel")
-                        changed = true
-                    } else {
-                        resolvedChild = unresolvedReferenceText(image, node)
-                        node.children[index] = resolvedChild
-                        changed = true
-                    }
-                }
-            }
-            if (walkAndResolve(resolvedChild, registry, session)) {
-                changed = true
-            }
-            index += 1
-        }
-        if (changed) {
-            if (let Some(target) <- patchTarget(node)) {
-                session.patches.replace(target)
+                index += 1
             }
         }
-        return changed
+        if (let Some(target) <- patchTarget(node)) { session.patches.replace(target) }
     }
 
     private static func patchTarget(node: Node): ?Node {
@@ -116,6 +100,10 @@ public class ReferenceLinkPlugin <: Plugin {
             InlineUtils.processEscapes(node.rawContent())
         )
         text.parent = Some(parent)
+        for (key in ["refLabel", "refForm", "refRaw", "refText"]) {
+            if (let Some(value) <- node.string(key)) { text.setString(key, value) }
+        }
+        text.setBool("refImage", node.bool("refImage") ?? false)
         return text
     }
 }

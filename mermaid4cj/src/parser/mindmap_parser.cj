@@ -4,7 +4,7 @@ import std.collection.ArrayList
 import mermaid4cj.core.{MindmapDiagram, MindmapNode, MindmapNodeShape, MindmapParseResult}
 
 public class MindmapParser {
-    public init() {}
+    public MindmapParser() {}
 
     public func parse(source: String): MindmapParseResult {
         let nodes = ArrayList<MindmapNode>()
@@ -164,11 +164,6 @@ public class MindmapParser {
 }
 
 class ParsedMindmapNode {
-    let label: String
-    let shape: MindmapNodeShape
 
-    init(label: String, shape: MindmapNodeShape) {
-        this.label = label
-        this.shape = shape
-    }
+    ParsedMindmapNode(let label: String, let shape: MindmapNodeShape) {}
 }

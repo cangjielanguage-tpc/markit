@@ -7,11 +7,7 @@ import markit.core.session.ParseSession
 import markit.core.source.SourceLine
 
 public class FencedCodeBlockParser <: ContinuationBlockParser {
-    private let config: FencedCodeBlockConfig
-
-    public init(config!: FencedCodeBlockConfig = FencedCodeBlockConfig()) {
-        this.config = config
-    }
+    public FencedCodeBlockParser(private let config!: FencedCodeBlockConfig = FencedCodeBlockConfig()) {}
 
     public prop name: String {
         get() {

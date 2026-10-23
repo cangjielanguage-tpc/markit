@@ -5,7 +5,7 @@ import mermaid4cj.core.{MermaidRenderOptions, MindmapDiagram, MindmapNode, Mindm
 import mermaid4cj.layout.{MindmapLayoutEdge, MindmapLayoutNode, MindmapLayoutResult}
 
 public class MindmapSvgWriter {
-    public init() {}
+    public MindmapSvgWriter() {}
 
     public func write(diagram: MindmapDiagram, layout: MindmapLayoutResult, options: MermaidRenderOptions): String {
         let theme = SvgTheme.resolve(options.theme)

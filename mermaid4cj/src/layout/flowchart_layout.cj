@@ -49,107 +49,43 @@ import mermaid4cj.layout.dagre.{
 }
 
 public class LayoutNode {
-    public let id: String
-    public let x: Float64
-    public let y: Float64
-    public let width: Float64
-    public let height: Float64
 
-    public init(id: String, x: Float64, y: Float64, width: Float64, height: Float64) {
-        this.id = id
-        this.x = x
-        this.y = y
-        this.width = width
-        this.height = height
-    }
+    public LayoutNode(public let id: String, public let x: Float64, public let y: Float64, public let width: Float64, public let height: Float64) {}
 }
 
 public class LayoutEdge {
-    public let source: String
-    public let target: String
-    public let x1: Float64
-    public let y1: Float64
-    public let x2: Float64
-    public let y2: Float64
-    public let points: Array<AnchorPoint>
-    public let labelX: ?Float64
-    public let labelY: ?Float64
 
-    public init(
-        source: String,
-        target: String,
-        x1: Float64,
-        y1: Float64,
-        x2: Float64,
-        y2: Float64,
-        points!: Array<AnchorPoint> = [],
-        labelX!: ?Float64 = None,
-        labelY!: ?Float64 = None
-    ) {
-        this.source = source
-        this.target = target
-        this.x1 = x1
-        this.y1 = y1
-        this.x2 = x2
-        this.y2 = y2
-        this.points = points
-        this.labelX = labelX
-        this.labelY = labelY
-    }
+    public LayoutEdge(
+        public let source: String,
+        public let target: String,
+        public let x1: Float64,
+        public let y1: Float64,
+        public let x2: Float64,
+        public let y2: Float64,
+        public let points!: Array<AnchorPoint> = [],
+        public let labelX!: ?Float64 = None,
+        public let labelY!: ?Float64 = None
+    ) {}
 }
 
 public class LayoutCluster {
-    public let id: String
-    public let title: TextRange
-    public let parentId: ?String
-    public let x: Float64
-    public let y: Float64
-    public let width: Float64
-    public let height: Float64
 
-    public init(id: String, title: TextRange, parentId: ?String, x: Float64, y: Float64, width: Float64, height: Float64) {
-        this.id = id
-        this.title = title
-        this.parentId = parentId
-        this.x = x
-        this.y = y
-        this.width = width
-        this.height = height
-    }
+    public LayoutCluster(public let id: String, public let title: TextRange, public let parentId: ?String, public let x: Float64, public let y: Float64, public let width: Float64, public let height: Float64) {}
 }
 
 public class AnchorPoint {
-    public let x: Float64
-    public let y: Float64
 
-    public init(x: Float64, y: Float64) {
-        this.x = x
-        this.y = y
-    }
+    public AnchorPoint(public let x: Float64, public let y: Float64) {}
 }
 
 public class FlowchartLayoutResult {
-    public let width: Float64
-    public let height: Float64
-    public let nodes: Array<LayoutNode>
-    public let edges: Array<LayoutEdge>
-    public let clusters: Array<LayoutCluster>
 
-    public init(width: Float64, height: Float64, nodes: Array<LayoutNode>, edges: Array<LayoutEdge>, clusters!: Array<LayoutCluster> = []) {
-        this.width = width
-        this.height = height
-        this.nodes = nodes
-        this.edges = edges
-        this.clusters = clusters
-    }
+    public FlowchartLayoutResult(public let width: Float64, public let height: Float64, public let nodes: Array<LayoutNode>, public let edges: Array<LayoutEdge>, public let clusters!: Array<LayoutCluster> = []) {}
 }
 
 public class FlowchartLayout {
-    let textMeasurer: MermaidTextMeasurer
 
-    public init(textMeasurer!: MermaidTextMeasurer = DefaultMermaidTextMeasurer()) {
-        this.textMeasurer = textMeasurer
-    }
+    public FlowchartLayout(let textMeasurer!: MermaidTextMeasurer = DefaultMermaidTextMeasurer()) {}
 
     public func layout(diagram: FlowchartDiagram): FlowchartLayoutResult {
         let dagreGraph = buildFlowchartDagreGraph(diagram)

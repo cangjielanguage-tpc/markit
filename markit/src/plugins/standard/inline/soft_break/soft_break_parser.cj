@@ -3,8 +3,16 @@ package markit.plugins.standard.inline.soft_break
 import markit.core.inline.{InlineParseResult, InlineParser, InlineUtils}
 import markit.core.session.ParseSession
 import markit.core.source.SourceSpan
+import markit.core.editing.*
+
+public func matchesSoftBreak(read: (Int64) -> ?Byte, at: Int64): Bool {
+    return read(at) == Some(b'\n')
+}
 
 public class SoftBreakParser <: InlineParser {
+    private let facet = SoftBreakEditingFacet()
+    public prop supportsIncremental: Bool { get() { return true } }
+    public prop incrementalFacet: ?IncrementalParserFacet { get() { return Some(facet) } }
     public prop name: String {
         get() {
             return "SoftBreakParser"
@@ -30,7 +38,7 @@ public class SoftBreakParser <: InlineParser {
     }
 
     public func tryParse(session: ParseSession, input: String, startByte: Int64, endByte: Int64, baseSpan: SourceSpan): ?InlineParseResult {
-        if (startByte >= endByte || input[startByte] != b'\n') {
+        if (!matchesSoftBreak({ at: Int64 => if (at < endByte) { Some(input[at]) } else { Option<Byte>.None } }, startByte)) {
             return None
         }
 

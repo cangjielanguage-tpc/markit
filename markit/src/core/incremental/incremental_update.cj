@@ -12,7 +12,7 @@ public class IncrementalUpdate {
     public let bytesCommitted: Int64
     public let isFinal: Bool
 
-    public init(
+    public IncrementalUpdate(
         sealedBlocks!: ArrayList<Node> = ArrayList<Node>(),
         emittedHtmlFragments!: ArrayList<HtmlFragment> = ArrayList<HtmlFragment>(),
         astPatches!: ArrayList<AstPatch> = ArrayList<AstPatch>(),

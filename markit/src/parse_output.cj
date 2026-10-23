@@ -14,7 +14,7 @@ public class ParseOutput {
     private let tables: SessionSymbolTableStore
     private let renderRegistry: RenderRegistry
 
-    public init(
+    public ParseOutput(
         snapshot: DocumentSnapshot,
         finalUpdate: IncrementalUpdate,
         symbolTables: SessionSymbolTableStore,

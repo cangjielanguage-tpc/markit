@@ -4,7 +4,7 @@ import std.collection.HashMap
 import mermaid4cj.core.{ErCardinality, ErDiagram, ErDirection, ErEntity, ErRelationship, MermaidRenderOptions}
 
 public class ErSvgWriter {
-    public init() {}
+    public ErSvgWriter() {}
 
     public func write(diagram: ErDiagram, options: MermaidRenderOptions): String {
         let theme = SvgTheme.resolve(options.theme)
@@ -334,25 +334,11 @@ public class ErSvgWriter {
 }
 
 class ErBox {
-    let x: Float64
-    let y: Float64
-    let width: Float64
-    let height: Float64
 
-    init(x: Float64, y: Float64, width: Float64, height: Float64) {
-        this.x = x
-        this.y = y
-        this.width = width
-        this.height = height
-    }
+    ErBox(let x: Float64, let y: Float64, let width: Float64, let height: Float64) {}
 }
 
 class ErPoint {
-    let x: Float64
-    let y: Float64
 
-    init(x: Float64, y: Float64) {
-        this.x = x
-        this.y = y
-    }
+    ErPoint(let x: Float64, let y: Float64) {}
 }

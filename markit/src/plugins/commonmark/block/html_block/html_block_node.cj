@@ -35,7 +35,7 @@ public class HTMLBlockNode <: Node {
     public let isContentProtected: Bool
     public let attributes: HashMap<String, String>
 
-    public init(
+    public HTMLBlockNode(
         id: Int64,
         sourceSpan: SourceSpan,
         raw: String,

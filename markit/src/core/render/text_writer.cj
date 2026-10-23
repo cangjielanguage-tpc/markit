@@ -21,7 +21,7 @@ public class StringTextWriter <: TextWriter {
 public class OutputStreamTextWriter <: TextWriter {
     private let output: OutputStream
 
-    public init(output: OutputStream) {
+    public OutputStreamTextWriter(output: OutputStream) {
         this.output = output
     }
 

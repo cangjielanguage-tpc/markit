@@ -118,11 +118,5 @@ public class ParagraphChildrenBuilder {
 }
 
 class ParagraphInlineContent {
-    public let text: String
-    public let runeCount: Int64
-
-    public init(text: String, runeCount: Int64) {
-        this.text = text
-        this.runeCount = runeCount
-    }
+    public ParagraphInlineContent(public let text: String, public let runeCount: Int64) {}
 }

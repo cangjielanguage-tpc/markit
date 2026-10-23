@@ -86,22 +86,8 @@ public class FileThemeLoader {
  * 基于文件的主题实现
  */
 public class FileTheme <: Theme {
-    private let name: String
-    private let description: String
-    private let themePath: String
-    private let supportsWebsite: Bool
-    private let websiteTemplate: String
-    private let stylesFile: String
-
-    private init(name: String, description: String, themePath: String, supportsWebsite: Bool, websiteTemplate: String,
-        stylesFile: String) {
-        this.name = name
-        this.description = description
-        this.themePath = themePath
-        this.supportsWebsite = supportsWebsite
-        this.websiteTemplate = websiteTemplate
-        this.stylesFile = stylesFile
-    }
+    private FileTheme(private let name: String, private let description: String, private let themePath: String,
+        private let supportsWebsite: Bool, private let websiteTemplate: String, private let stylesFile: String) {}
 
     /**
      * 从配置文件创建主题

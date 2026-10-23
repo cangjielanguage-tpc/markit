@@ -13,7 +13,7 @@ public class MathRenderOptions {
     public let throwOnError: Bool
     public let errorColor: String
 
-    public init(
+    public MathRenderOptions(
         displayMode!: Bool = false,
         classPrefix!: String = "katex",
         throwOnError!: Bool = false,

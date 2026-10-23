@@ -7,7 +7,7 @@ import markit.core.source.SourceSpan
 public class InlineMathNode <: Node {
     public let content: String
 
-    public init(
+    public InlineMathNode(
         id: Int64,
         sourceSpan: SourceSpan,
         content: String,

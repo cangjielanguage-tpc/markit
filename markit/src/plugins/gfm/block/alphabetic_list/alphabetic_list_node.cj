@@ -11,7 +11,7 @@ public class AlphabeticListNode <: Node {
     public let isUpperCase: Bool
     public let delimiter: Byte
 
-    public init(
+    public AlphabeticListNode(
         id: Int64,
         sourceSpan: SourceSpan,
         tight: Bool,

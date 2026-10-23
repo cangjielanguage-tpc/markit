@@ -16,7 +16,7 @@ class FunctionBuild {
     let errors: ArrayList<DocTag>
     let examples: ArrayList<String>
 
-    init(fields: Array<String>) {
+    FunctionBuild(fields: Array<String>) {
         this.owner = fields[1]
         this.name = fields[2]
         this.title = fields[3]
@@ -55,7 +55,7 @@ class EnumCtorBuild {
     let description: String
     let params: ArrayList<DocParam>
 
-    init(fields: Array<String>) {
+    EnumCtorBuild(fields: Array<String>) {
         this.name = fields[1]
         this.declaration = fields[2]
         this.returnType = fields[3]
@@ -82,7 +82,7 @@ class TypeBuild {
     let methods: ArrayList<DocFunction>
     let enumConstructors: ArrayList<DocEnumConstructor>
 
-    init(fields: Array<String>) {
+    TypeBuild(fields: Array<String>) {
         this.packageName = fields[1]
         this.name = fields[2]
         this.kind = fields[3]

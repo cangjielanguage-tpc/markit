@@ -8,7 +8,7 @@ public class ItalicNode <: Node {
     public let content: String
     public let delimiter: String
 
-    public init(
+    public ItalicNode(
         id: Int64,
         sourceSpan: SourceSpan,
         content: String,

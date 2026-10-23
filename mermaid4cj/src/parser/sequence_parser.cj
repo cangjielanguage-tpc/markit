@@ -17,7 +17,7 @@ import mermaid4cj.core.{
 }
 
 public class SequenceParser {
-    public init() {}
+    public SequenceParser() {}
 
     public func parse(source: String): SequenceParseResult {
         let participants = ArrayList<SequenceParticipant>()
@@ -476,13 +476,6 @@ public class SequenceParser {
 }
 
 class ParticipantSpec {
-    let id: String
-    let description: String
-    let participantType: SequenceParticipantType
 
-    init(id: String, description: String, participantType: SequenceParticipantType) {
-        this.id = id
-        this.description = description
-        this.participantType = participantType
-    }
+    ParticipantSpec(let id: String, let description: String, let participantType: SequenceParticipantType) {}
 }

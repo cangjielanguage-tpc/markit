@@ -4,7 +4,7 @@ import std.collection.ArrayList
 import mathtex.ast.MathExpression
 
 public class MathTex {
-    public init() {}
+    public MathTex() {}
 
     public func createSession(displayMode!: Bool = false): MathParseSession {
         return MathParseSession(displayMode: displayMode)
@@ -23,7 +23,7 @@ public class MathParseSession {
     private let displayMode: Bool
     private var finalized: Bool = false
 
-    public init(displayMode!: Bool = false) {
+    public MathParseSession(displayMode!: Bool = false) {
         this.displayMode = displayMode
     }
 
@@ -103,30 +103,16 @@ public class MathParseSession {
 }
 
 public class MathParseUpdate {
-    public let bytesAccepted: Int64
-    public let bytesCommitted: Int64
-    public let pendingByteSize: Int64
-    public let isFinal: Bool
 
-    public init(
-        bytesAccepted!: Int64 = 0,
-        bytesCommitted!: Int64 = 0,
-        pendingByteSize!: Int64 = 0,
-        isFinal!: Bool = false
-    ) {
-        this.bytesAccepted = bytesAccepted
-        this.bytesCommitted = bytesCommitted
-        this.pendingByteSize = pendingByteSize
-        this.isFinal = isFinal
-    }
+    public MathParseUpdate(
+        public let bytesAccepted!: Int64 = 0,
+        public let bytesCommitted!: Int64 = 0,
+        public let pendingByteSize!: Int64 = 0,
+        public let isFinal!: Bool = false
+    ) {}
 }
 
 public class MathParseOutput {
-    public let expression: MathExpression
-    public let finalUpdate: MathParseUpdate
 
-    public init(expression: MathExpression, finalUpdate: MathParseUpdate) {
-        this.expression = expression
-        this.finalUpdate = finalUpdate
-    }
+    public MathParseOutput(public let expression: MathExpression, public let finalUpdate: MathParseUpdate) {}
 }

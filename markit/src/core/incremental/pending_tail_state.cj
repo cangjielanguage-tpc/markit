@@ -10,7 +10,7 @@ public class PendingTailState {
     public let endRuneOffset: Int64
     public let previewText: String
 
-    public init(
+    public PendingTailState(
         summary!: String = "",
         openBlockKind!: String = "",
         pendingParagraphLineCount!: Int64 = 0,

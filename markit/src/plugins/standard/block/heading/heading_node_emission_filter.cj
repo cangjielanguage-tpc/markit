@@ -12,6 +12,7 @@ public class HeadingNodeEmissionFilter <: NodeEmissionFilter {
     }
 
     public func accept(session: ParseSession, node: Node): Bool {
+        if (session.editingContext.isSome()) { return true }
         let state = session.symbolTables.get(HeadingPlugin.stateKey)
         return state.acceptTopLevelNode(node)
     }

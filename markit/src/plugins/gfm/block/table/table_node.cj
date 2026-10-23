@@ -9,7 +9,7 @@ public class TableNode <: Node {
     public let alignments: ArrayList<TableAlignment>
     public let columnCount: Int64
 
-    public init(
+    public TableNode(
         id: Int64,
         sourceSpan: SourceSpan,
         alignments: ArrayList<TableAlignment>,

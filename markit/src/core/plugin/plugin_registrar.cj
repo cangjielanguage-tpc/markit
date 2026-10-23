@@ -8,13 +8,7 @@ import markit.core.render.{HtmlRenderer, HtmlRendererRegistration, MarkdownRende
 import markit.core.session.{ParseSession, SessionState, SessionStateKey, SessionSymbolTableStore}
 
 public class SessionStateRegistration {
-    public let dynamicName: String
-    private let factory: () -> SessionState
-
-    public init(dynamicName: String, factory: () -> SessionState) {
-        this.dynamicName = dynamicName
-        this.factory = factory
-    }
+    public SessionStateRegistration(public let dynamicName: String, private let factory: () -> SessionState) {}
 
     public func create(): SessionState {
         return factory()
@@ -34,6 +28,20 @@ public class PluginRegistrar {
     public let typstRenderers = ArrayList<TypstRendererRegistration>()
     public let sessionFinalizeProcessors = ArrayList<(ParseSession) -> Unit>()
     public let postFinalizeProcessors = ArrayList<(Node, SessionSymbolTableStore) -> Unit>()
+    private var editingPhases: ?ArrayList<EditingPhaseRegistration> = None
+
+    // Explicit editing metadata only; legacy registration pays no phase-list
+    // allocation and no provider code is called by ordinary parse/append.
+    public func registerEditingPhase(id: String, owner: String,
+        dependencies!: Array<String> = [], version!: String = "1"): Unit {
+        if (editingPhases.isNone()) { editingPhases = Some(ArrayList<EditingPhaseRegistration>()) }
+        editingPhases.getOrThrow().add(EditingPhaseRegistration(id, owner,
+            dependencies: dependencies, version: version))
+    }
+
+    public func getEditingPhases(): ?ArrayList<EditingPhaseRegistration> {
+        return editingPhases
+    }
 
     public func registerState<T>(
         key: SessionStateKey<T>,

@@ -4,16 +4,17 @@ import seajson.JsonWriter
 import markit.core.nodes.Node
 import markit.core.source.SourceSpan
 
-public class ParagraphNode <: Node {
-    public let content: String
+public open class ParagraphNode <: Node {
+    private let storedContent: String
+    public open prop content: String { get() { return storedContent } }
 
-    public init(
+    public ParagraphNode(
         id: Int64,
         sourceSpan: SourceSpan,
         content: String
     ) {
         super("Paragraph", id: id, sourceSpan: sourceSpan, literal: content)
-        this.content = content
+        this.storedContent = content
     }
 
     public override prop name: String {

@@ -32,7 +32,7 @@ public class CommonMarkBundle <: Bundle {
     private let linkConfig: LinkConfig
     private let blockAutoAnchor: Bool
 
-    public init(
+    public CommonMarkBundle(
         headingNumberingConfig!: HeadingNumberingConfig = HeadingNumberingConfig(),
         closableConfig!: HeadingClosableConfig = HeadingClosableConfig(),
         headingSlugConfig!: HeadingSlugConfig = HeadingSlugConfig(),

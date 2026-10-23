@@ -26,7 +26,7 @@ public class StringHtmlWriter <: HtmlWriter {
 public class OutputStreamHtmlWriter <: HtmlWriter {
     private let output: OutputStream
 
-    public init(output: OutputStream) {
+    public OutputStreamHtmlWriter(output: OutputStream) {
         this.output = output
     }
 

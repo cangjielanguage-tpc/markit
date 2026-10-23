@@ -45,7 +45,7 @@ public class PathPattern {
     /**
      * 构造函数
      */
-    public init(
+    public PathPattern(
         pattern: String,
         patternType: PatternType,
         caseSensitive: Bool

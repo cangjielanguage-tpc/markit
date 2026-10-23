@@ -5,19 +5,12 @@ import markit.core.session.SessionStateKey
 
 public class HeadingPlugin <: Plugin {
     public static let stateKey = SessionStateKey<HeadingSessionState>("HeadingPlugin", "heading")
-    private let numberingConfig: HeadingNumberingConfig
-    private let closableConfig: HeadingClosableConfig
-    private let slugConfig: HeadingSlugConfig
 
-    public init(
-        numberingConfig!: HeadingNumberingConfig = HeadingNumberingConfig(),
-        closableConfig!: HeadingClosableConfig = HeadingClosableConfig(),
-        slugConfig!: HeadingSlugConfig = HeadingSlugConfig()
-    ) {
-        this.numberingConfig = numberingConfig
-        this.closableConfig = closableConfig
-        this.slugConfig = slugConfig
-    }
+    public HeadingPlugin(
+        private let numberingConfig!: HeadingNumberingConfig = HeadingNumberingConfig(),
+        private let closableConfig!: HeadingClosableConfig = HeadingClosableConfig(),
+        private let slugConfig!: HeadingSlugConfig = HeadingSlugConfig()
+    ) {}
 
     public prop name: String {
         get() {

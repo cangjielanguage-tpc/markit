@@ -182,7 +182,7 @@ public class ProgressLogger {
     private var currentMessage: String = ""
     private var interactiveActive: Bool = false
 
-    public init(enableColor!: Bool = true) {
+    public ProgressLogger(enableColor!: Bool = true) {
         this.reader = getStdIn()
         this.writer = getStdOut()
         this.enableColor = enableColor

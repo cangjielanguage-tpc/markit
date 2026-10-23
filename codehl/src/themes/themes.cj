@@ -6,35 +6,17 @@ import std.sync.Mutex
 import seajson.*
 
 public class Theme {
-    public let name: String
-    public let foreground: String
-    public let background: String
-    public let rules: Array<ThemeRule>
 
-    public init(name!: String = "", foreground!: String = "", background!: String = "", rules!: Array<ThemeRule> = []) {
-        this.name = name
-        this.foreground = foreground
-        this.background = background
-        this.rules = rules
-    }
+    public Theme(public let name!: String = "", public let foreground!: String = "", public let background!: String = "", public let rules!: Array<ThemeRule> = []) {}
 }
 
 public class ThemeRule {
-    public let scope: String
-    public let foreground: String
-    public let fontStyle: String
-    public let hasFontStyle: Bool
 
-    public init(scope: String, foreground!: String = "", fontStyle!: String = "", hasFontStyle!: Bool = false) {
-        this.scope = scope
-        this.foreground = foreground
-        this.fontStyle = fontStyle
-        this.hasFontStyle = hasFontStyle
-    }
+    public ThemeRule(public let scope: String, public let foreground!: String = "", public let fontStyle!: String = "", public let hasFontStyle!: Bool = false) {}
 }
 
 public class ThemeLoader {
-    public init() {}
+    public ThemeLoader() {}
 
     public func loadFromJson(json: String): Theme {
         return load(parseJson(json))
@@ -118,7 +100,7 @@ public class ThemeRegistry {
     private let themeDirs: Array<String>
     private let themeCache: HashMap<String, Theme>
 
-    public init(themeDir!: String = "assets/themes", themeDirs!: Array<String> = []) {
+    public ThemeRegistry(themeDir!: String = "assets/themes", themeDirs!: Array<String> = []) {
         this.themeDirs = if (themeDirs.isEmpty()) { [themeDir] } else { themeDirs }
         this.themeCache = HashMap<String, Theme>()
     }
@@ -190,7 +172,7 @@ public class ThemeResolver {
     private let styleCache: HashMap<String, String>
     private let styleCacheMutex: Mutex
 
-    public init(theme: Theme) {
+    public ThemeResolver(theme: Theme) {
         this.theme = theme
         this.styleCache = HashMap<String, String>()
         this.styleCacheMutex = Mutex()

@@ -10,7 +10,7 @@ public class OrderedListNode <: Node {
     public let startNumber: Int64
     public let delimiter: Byte
 
-    public init(
+    public OrderedListNode(
         id: Int64,
         sourceSpan: SourceSpan,
         tight: Bool,

@@ -11,6 +11,7 @@ public class HeadingHtmlRenderer <: HtmlRenderer {
     }
 
     public func writeHtml(node: Node, out: HtmlWriter, registry: RenderRegistry): Unit {
+        if (let heading: EditingHeadingNode <- node) { if (!heading.visible) { return } }
         let level = if (node.level < 1 || node.level > 6) {
             1
         } else {

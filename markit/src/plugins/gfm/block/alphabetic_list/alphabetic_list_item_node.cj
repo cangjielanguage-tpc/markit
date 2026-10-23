@@ -10,7 +10,7 @@ public class AlphabeticListItemNode <: Node {
     public let letter: Byte
     public let delimiter: Byte
 
-    public init(
+    public AlphabeticListItemNode(
         id: Int64,
         sourceSpan: SourceSpan,
         content: String,

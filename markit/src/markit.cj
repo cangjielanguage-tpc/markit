@@ -2,22 +2,49 @@ package markit
 
 import markit.bundles.StandardMarkdownBundle
 import markit.config.HtmlConfig as GlobalHtmlConfig
-import markit.core.block.{BlockDispatchTable, BlockTreeBuilder, ContinuationBlockDispatchTable, ParagraphBlockParser}
-import markit.core.inline.InlineParserEngine
-import markit.core.incremental.{IncrementalSession, IncrementalUpdate}
-import markit.core.nodes.Node
-import markit.core.plugin.{Bundle, NodeBatchProcessor, NodeEmissionFilter, Plugin, PluginRegistry}
+import markit.core.block.{BlockDispatchTable, BlockTreeBuilder, BlockParsingKernel, BlockEditingFacet, ContinuationBlockDispatchTable, ParagraphBlockParser}
+import markit.core.inline.{InlineParserEngine, InlineParser, InlineEditingFacet}
+import markit.core.document.DocumentSnapshot
+import markit.core.incremental.{IncrementalSession, IncrementalUpdate, DocumentEditingSession}
+import markit.core.nodes.{Node, NodeCodec}
+import markit.core.plugin.{Bundle, EditingCapabilityPlan, NodeBatchProcessor, NodeEmissionFilter, Plugin, PluginRegistry}
+import markit.core.editing.{EditingPolicy, EditableSourceVersion}
 import markit.core.session.{ParagraphTermination, ParseOptions, ParseSession, SessionSymbolTableStore}
-import markit.core.source.{SourceBuffer, SourceLine, SourceSpan}
+import markit.core.source.{SourceBuffer, SourceLine, SourceSpan, EditableRopeStore}
 import std.collection.ArrayList
 import std.io.InputStream
 
+private func executableInlineFacet(parser: InlineParser): ?InlineEditingFacet {
+    if (!parser.supportsIncremental) { return None }
+    if (let Some(declared) <- parser.incrementalFacet) {
+        if (let Some(facet) <- (declared as InlineEditingFacet)) {
+            if (!facet.owner.isEmpty() && facet.owner == parser.ownerPlugin && !facet.grammarVersion.isEmpty() &&
+                facet.hasStateCodec && facet.hasEffectRollback && facet.hasReadEvidence && facet.hasNodeCodec &&
+                (facet as Object).isSome()) { return Some(facet) }
+        }
+    }
+    return None
+}
+
+private func inlineExecutionMatches(parsers: Array<InlineParser>, facets: Array<InlineEditingFacet>,
+    grammars: Array<String>): Bool {
+    if (parsers.size != facets.size || facets.size != grammars.size) { return false }
+    for (i in 0..parsers.size) {
+        let current = executableInlineFacet(parsers[i])
+        if (current.isNone()) { return false }
+        let actual = current.getOrThrow()
+        if (!refEq((actual as Object).getOrThrow(), (facets[i] as Object).getOrThrow()) ||
+            actual.grammarVersion != grammars[i]) { return false }
+    }
+    return true
+}
+
 public class Markit {
-    private let registry: PluginRegistry
+    private var registry: PluginRegistry
     private var pendingDefaultStandardBundle: Bool = false
     private var runtimePlan: ?MarkitRuntimePlan = None
 
-    public init(useStandard!: Bool = true) {
+    public Markit(useStandard!: Bool = true) {
         registry = PluginRegistry()
         if (useStandard) {
             pendingDefaultStandardBundle = true
@@ -58,11 +85,27 @@ public class Markit {
 
     public func createSession(options!: ParseOptions = ParseOptions()): IncrementalSession {
         let plan = ensureRuntimePlan()
-        let parseSession = ParseSession(
-            SourceBuffer(retentionMode: options.sourceRetentionMode),
-            options,
-            registry.createSymbolTables()
+        let parseSession = createParserSession(plan, options, SourceBuffer(retentionMode: options.sourceRetentionMode))
+        let incrementalSession = IncrementalSession(
+            parseSession,
+            plan.continuationDispatchTable,
+            plan.blockDispatchTable,
+            plan.paragraphBlockParsers,
+            plan.nodeEmissionFilters,
+            registry.createRenderRegistry(htmlConfig: GlobalHtmlConfig.snapshot())
         )
+        for (processor in plan.postFinalizeProcessors) {
+            incrementalSession.addPostFinalizeHook(processor)
+        }
+        for (processor in plan.sessionFinalizeProcessors) {
+            incrementalSession.addSessionFinalizeHook(processor)
+        }
+        return incrementalSession
+    }
+
+    private func createParserSession(plan: MarkitRuntimePlan, options: ParseOptions,
+        source: SourceBuffer, editing!: Bool = false): ParseSession {
+        let parseSession = ParseSession(source, options, registry.createSymbolTables(checkpointEnabled: editing))
         parseSession.setInlineParser({
             session: ParseSession,
             text: String,
@@ -89,7 +132,7 @@ public class Markit {
                 nodes = processor.process(parseSession, nodes)
             }
             nodes
-        })
+        }, sandboxedStates: editing)
         parseSession.setRegisteredBlockStartDetector({
             session: ParseSession,
             line: String =>
@@ -99,7 +142,7 @@ public class Markit {
                 }
             }
             return false
-        })
+        }, sandboxed: editing)
         parseSession.setParagraphNodeFactory({
             lines: ArrayList<SourceLine>,
             sourceSpan: SourceSpan,
@@ -118,21 +161,97 @@ public class Markit {
                 plan.paragraphBlockParsers[0].finalize(parseSession, lines, sourceSpan, termination)
             }
         })
-        let incrementalSession = IncrementalSession(
-            parseSession,
-            plan.continuationDispatchTable,
-            plan.blockDispatchTable,
-            plan.paragraphBlockParsers,
-            plan.nodeEmissionFilters,
-            registry.createRenderRegistry(htmlConfig: GlobalHtmlConfig.snapshot())
-        )
-        for (processor in plan.postFinalizeProcessors) {
-            incrementalSession.addPostFinalizeHook(processor)
+        return parseSession
+    }
+
+    public func createEditingSession(documentId: String, text: String, codec: NodeCodec,
+        policy!: EditingPolicy = EditingPolicy.Compat): DocumentEditingSession {
+        let candidateRegistry = if (pendingDefaultStandardBundle) {
+            let candidate = PluginRegistry(); candidate.register(StandardMarkdownBundle()); candidate
+        } else { registry }
+        let capability = candidateRegistry.createEditingPlan(policy: policy, freezeOnAccepted: false)
+        capability.requireAccepted()
+        let providers = ArrayList<BlockEditingFacet>()
+        var executable = capability.fullyIncrementalReady
+        for (entry in capability.parsers) {
+            let requiresBlock = entry.registration.category != "inline"
+            if (let Some(facet) <- entry.registration.facet) {
+                if (let Some(block) <- (facet as BlockEditingFacet)) {
+                    if (block.grammarVersion.isEmpty()) { executable = false }
+                    var seen = false
+                    let identity = block as Object
+                    if (identity.isNone()) { executable = false }
+                    for (provider in providers) {
+                        let previous = provider as Object
+                        if (identity.isSome() && previous.isSome() && refEq(identity.getOrThrow(), previous.getOrThrow())) { seen = true }
+                    }
+                    if (!seen) { providers.add(block) }
+                } else if (requiresBlock) { executable = false }
+            } else if (requiresBlock) { executable = false }
         }
-        for (processor in plan.sessionFinalizeProcessors) {
-            incrementalSession.addSessionFinalizeHook(processor)
+        // The generic capability inventory cannot establish an executable
+        // inline protocol. Inspect actual registrations without freezing or
+        // creating a source/session, then freeze their object identities.
+        let inlineParsers = candidateRegistry.inlineParsersForEditing()
+        let inlineFacets = ArrayList<InlineEditingFacet>()
+        let inlineGrammars = ArrayList<String>()
+        for (parser in inlineParsers) {
+            if (let Some(facet) <- executableInlineFacet(parser)) {
+                inlineFacets.add(facet); inlineGrammars.add(facet.grammarVersion)
+            } else { executable = false }
         }
-        return incrementalSession
+        let frozenInlineFacets = inlineFacets.toArray()
+        let frozenInlineGrammars = inlineGrammars.toArray()
+        if (executable && !inlineExecutionMatches(inlineParsers, frozenInlineFacets, frozenInlineGrammars)) { executable = false }
+        if (!executable && policy == EditingPolicy.Strict) {
+            throw IllegalArgumentException("Strict editing requires executable block and inline recovery facets")
+        }
+        if (pendingDefaultStandardBundle) { registry = candidateRegistry; pendingDefaultStandardBundle = false }
+        let plan = ensureRuntimePlan()
+        let source = EditableRopeStore(documentId, text: text)
+        let parser = createParserSession(plan, ParseOptions(emitHtmlFragments: false, emitPreview: false),
+            SourceBuffer(editableSource: Some(source.current)), editing: executable)
+        let fallback: ?(EditableSourceVersion) -> DocumentSnapshot = if (executable) { None } else {
+            Some({ version: EditableSourceVersion => this.parse(version.sliceBytes(0, version.byteLength)).snapshot })
+        }
+        let validateExecution: ?() -> Unit = if (executable) {
+            Some({ =>
+                if (!inlineExecutionMatches(inlineParsers, frozenInlineFacets, frozenInlineGrammars)) {
+                    throw IllegalArgumentException("Editing inline execution identity changed")
+                }
+            })
+        } else { Option<() -> Unit>.None }
+        return DocumentEditingSession(source, parser,
+            { session: ParseSession => BlockParsingKernel(session, plan.continuationDispatchTable,
+                plan.blockDispatchTable, plan.paragraphBlockParsers, trimNormalizedSpan: false) },
+            providers.toArray(), codec, fallbackParser: fallback, validateExecution: validateExecution)
+    }
+
+    // Editing records are opt-in. Batch parse, append and ensureRuntimePlan do
+    // not call this API or inspect parser editing providers.
+    public func createEditingPlan(policy!: EditingPolicy = EditingPolicy.Compat,
+        grammarVersion!: String = "1", configurationVersion!: String = "unspecified"): EditingCapabilityPlan {
+        if (pendingDefaultStandardBundle) {
+            // A rejected strict request must not publish the lazy default bundle
+            // or change later .use(StandardMarkdownBundle(...)) replacement.
+            let candidate = PluginRegistry()
+            candidate.register(StandardMarkdownBundle())
+            let plan = candidate.createEditingPlan(policy: policy, grammarVersion: grammarVersion,
+                configurationVersion: configurationVersion)
+            if (plan.accepted) {
+                registry = candidate
+                pendingDefaultStandardBundle = false
+            }
+            return plan
+        }
+        return registry.createEditingPlan(policy: policy, grammarVersion: grammarVersion,
+            configurationVersion: configurationVersion)
+    }
+
+    public func getEditingPlan(policy!: EditingPolicy = EditingPolicy.Compat,
+        grammarVersion!: String = "1", configurationVersion!: String = "unspecified"): EditingCapabilityPlan {
+        return createEditingPlan(policy: policy, grammarVersion: grammarVersion,
+            configurationVersion: configurationVersion)
     }
 
     public func parse(markdown: String): ParseOutput {
@@ -254,7 +373,7 @@ class MarkitRuntimePlan {
     let sessionFinalizeProcessors: ArrayList<(ParseSession) -> Unit>
     let postFinalizeProcessors: ArrayList<(Node, SessionSymbolTableStore) -> Unit>
 
-    init(
+    MarkitRuntimePlan(
         continuationDispatchTable: ContinuationBlockDispatchTable,
         blockDispatchTable: BlockDispatchTable,
         inlineParserEngine: InlineParserEngine,

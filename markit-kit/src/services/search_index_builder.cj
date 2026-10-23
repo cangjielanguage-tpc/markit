@@ -10,21 +10,8 @@ import seajson.{JsonWriter, buildJsonArray}
  * 搜索索引项
  */
 public class SearchIndexSection {
-    public var id: String
-    public var title: String
-    public var content: String
-    public var url: String
-    public var pageTitle: String
-    public var breadcrumb: Array<String>
-
-    public init(id: String, title: String, content: String, url: String, pageTitle: String, breadcrumb: Array<String>) {
-        this.id = id
-        this.title = title
-        this.content = content
-        this.url = url
-        this.pageTitle = pageTitle
-        this.breadcrumb = breadcrumb
-    }
+    public SearchIndexSection(public var id: String, public var title: String, public var content: String,
+        public var url: String, public var pageTitle: String, public var breadcrumb: Array<String>) {}
 
     public func writeObject(w: JsonWriter): JsonWriter {
         w.name("id").value(id)

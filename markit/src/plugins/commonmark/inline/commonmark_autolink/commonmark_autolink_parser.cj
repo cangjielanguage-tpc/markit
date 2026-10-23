@@ -160,13 +160,5 @@ public class CommonMarkAutolinkParser <: InlineParser {
 }
 
 private class AutolinkInfo {
-    public let autolinkType: AutolinkType
-    public let url: String
-    public let displayText: String
-
-    public init(autolinkType: AutolinkType, url: String, displayText: String) {
-        this.autolinkType = autolinkType
-        this.url = url
-        this.displayText = displayText
-    }
+    public AutolinkInfo(public let autolinkType: AutolinkType, public let url: String, public let displayText: String) {}
 }

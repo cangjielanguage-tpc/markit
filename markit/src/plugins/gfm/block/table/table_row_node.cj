@@ -7,7 +7,7 @@ import markit.core.source.SourceSpan
 public class TableRowNode <: Node {
     public let isHeader: Bool
 
-    public init(
+    public TableRowNode(
         id: Int64,
         sourceSpan: SourceSpan,
         isHeader: Bool

@@ -4,7 +4,7 @@ import std.collection.HashMap
 import mermaid4cj.core.{ClassDef, ClassDiagram, ClassMember, ClassRelation, MermaidRenderOptions}
 
 public class ClassSvgWriter {
-    public init() {}
+    public ClassSvgWriter() {}
 
     public func write(diagram: ClassDiagram, options: MermaidRenderOptions): String {
         let theme = SvgTheme.resolve(options.theme)
@@ -361,25 +361,11 @@ public class ClassSvgWriter {
 }
 
 class ClassBox {
-    let x: Float64
-    let y: Float64
-    let width: Float64
-    let height: Float64
 
-    init(x: Float64, y: Float64, width: Float64, height: Float64) {
-        this.x = x
-        this.y = y
-        this.width = width
-        this.height = height
-    }
+    ClassBox(let x: Float64, let y: Float64, let width: Float64, let height: Float64) {}
 }
 
 class ClassPoint {
-    let x: Float64
-    let y: Float64
 
-    init(x: Float64, y: Float64) {
-        this.x = x
-        this.y = y
-    }
+    ClassPoint(let x: Float64, let y: Float64) {}
 }

@@ -106,7 +106,7 @@ public class MonitorConfig {
     /**
      * 构造函数
      */
-    public init() {}
+    public MonitorConfig() {}
     
     /**
      * 创建默认配置

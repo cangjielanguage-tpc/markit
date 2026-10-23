@@ -3,8 +3,7 @@ package markit.tests.generators
 import std.random.Random
 
 public class BlockGenerators {
-    private let config: GeneratorConfig
-    private let random: Random
+    public BlockGenerators(private let config: GeneratorConfig, private let random: Random) {}
     private let words = [
         "alpha",
         "beta",
@@ -14,11 +13,6 @@ public class BlockGenerators {
         "parser",
         "emoji"
     ]
-
-    public init(config: GeneratorConfig, random: Random) {
-        this.config = config
-        this.random = random
-    }
 
     public func generateHeading(): TestCase {
         let level = random.nextInt64(6) + 1

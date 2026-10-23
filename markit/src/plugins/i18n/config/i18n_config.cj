@@ -8,7 +8,7 @@ public struct I18nConfig {
     public let homeText: String
     public let documentationText: String
 
-    public init(
+    public I18nConfig(
         defaultLanguage!: String = "en",
         targetLanguage!: String = "en",
         homeText!: String = "Home",

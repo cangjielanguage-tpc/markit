@@ -164,23 +164,11 @@ public class HTMLInlineParser <: InlineParser {
 }
 
 private class ParsedInlineTag {
-    public let tagName: String
-    public let isClosing: Bool
-    public let isSelfClosing: Bool
-    public let attributes: HashMap<String, String>
-    public let attributesStr: String
-
-    public init(
-        tagName: String,
-        isClosing: Bool,
-        isSelfClosing: Bool,
-        attributes: HashMap<String, String>,
-        attributesStr: String
-    ) {
-        this.tagName = tagName
-        this.isClosing = isClosing
-        this.isSelfClosing = isSelfClosing
-        this.attributes = attributes
-        this.attributesStr = attributesStr
-    }
+    public ParsedInlineTag(
+        public let tagName: String,
+        public let isClosing: Bool,
+        public let isSelfClosing: Bool,
+        public let attributes: HashMap<String, String>,
+        public let attributesStr: String
+    ) {}
 }

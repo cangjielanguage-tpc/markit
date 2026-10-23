@@ -4,7 +4,6 @@ import std.collection.{ArrayList, HashMap, HashSet}
 import markit.core.nodes.Node
 
 public class AutoAnchorPostProcessor {
-    private let config: AutoAnchorConfig
     private let seen = HashSet<String>()
     private let listCounters = HashMap<String, Int64>()
     private let sectionNumbers = Array<Int64>(6, repeat: 0)
@@ -14,9 +13,7 @@ public class AutoAnchorPostProcessor {
     private var tableIndex: Int64 = 0
     private var blockIndex: Int64 = 0
 
-    public init(config: AutoAnchorConfig) {
-        this.config = config
-    }
+    public AutoAnchorPostProcessor(private let config: AutoAnchorConfig) {}
 
     public func process(root: Node): Unit {
         walkChildren(root, "")

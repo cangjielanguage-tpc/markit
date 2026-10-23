@@ -14,7 +14,7 @@ public class I18nBlockState <: BlockState {
     public var sourceSpan: SourceSpan
     public var closed: Bool = false
 
-    public init(
+    public I18nBlockState(
         languageId: String,
         universal: Bool,
         indentLevel: Int64,
